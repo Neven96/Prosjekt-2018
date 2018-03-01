@@ -3,16 +3,16 @@
   <head>
     <meta charset="UTF-8"/>
     <title>ting</title>
-    <script>
-      require("babel-register");
-      require("./src/app.js");
-    </script>
+
   </head>
   <body>
-    <div class="page" id="hjem">
-      <div id="innhold">
-
-      </div>
+    <div id="root">
+      <script>
+        require("babel-register");
+        require("./src/app.js");
+      </script>
     </div>
   </body>
 </html>
+
+<div id="root"></div>

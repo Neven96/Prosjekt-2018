@@ -26,3 +26,25 @@ function connect() {
   });
 }
 connect();
+
+class Bruker {
+  loggInnBruker(epost, passord, callback) {
+    connection.query("SELECT Medlemsnr FROM Medlem WHERE Epost = ? AND Passord = ?", [epost, passord], (error, result) => {
+      if (error) throw error;
+
+      callback(result);
+    });
+  }
+
+  hentBruker(medlemsnr, callback) {
+    connection.query("SELECT * FROM Medlem WHERE Medlemsnr = ?", [medlemsnr], (error, result) => {
+      if (error) throw error;
+
+      callback(result[0]);
+    });
+  }
+}
+
+let bruker = new Bruker();
+
+export {bruker};

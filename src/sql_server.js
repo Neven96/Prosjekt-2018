@@ -43,6 +43,14 @@ class Bruker {
       callback(result[0]);
     });
   }
+
+  registrerBruker(fnavn, enavn, tlf, adresse, postnr, poststed, epost, passord, callback) {
+    connection.query("INSERT INTO Medlem (Fornavn, Etternavn, Telefon, Adresse, Epost, Passord) VALUES (?, ?, ?, ?, ?, ?)", [fnavn, enavn, tlf, adressee, post, passord], (error, result) => {
+      if (error) throw error;
+
+      callback(result);
+    });
+  }
 }
 
 let bruker = new Bruker();

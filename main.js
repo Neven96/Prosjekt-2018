@@ -5,8 +5,9 @@ const BrowserWindow = electron.BrowserWindow;
 let mainWindow;
 
 app.on('ready', () => {
-  mainWindow = new BrowserWindow({useContentSize:true, width:1920, height:1080, maxWidth:1920, maxHeight:1080});
+  mainWindow = new BrowserWindow({useContentSize:true, maxWidth:1920, maxHeight:1080});
 
+  mainWindow.maximize();
   // Open Development Tools
   mainWindow.openDevTools();
 

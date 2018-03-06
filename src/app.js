@@ -20,7 +20,7 @@ class Hjem extends React.Component {
             <hr></hr>
           </div>
           <div>
-            <p>Røde Kors saker om Røde Kors ting</p>
+            <p></p>
           </div>
         </div>
       );
@@ -31,7 +31,7 @@ class Hjem extends React.Component {
           <h1>Røde Kors</h1>
           <div>
             <hr></hr>
-            <Link to="/">Hjem</Link><span> </span>
+            <Link to="/hjem">Hjem</Link><span> </span>
             <Link to="/hjelp">Hjelp</Link><span> </span>
             <Link to="/bruker/${medlemsNr}">Profil</Link><span> </span>
             <button ref="loggUtKnapp" onClick={() => {erInnlogget = false,
@@ -41,18 +41,20 @@ class Hjem extends React.Component {
             <hr></hr>
           </div>
           <div>
-            <p>Røde Kors saker om Røde Kors ting</p>
+            <p></p>
           </div>
         </div>
       );
     }
   }
-  if (erInnlogget) {
-    this.refs.loggInnKnapp.onclick = () => {
-      erInnlogget = false;
-      history.push("/hjem/");
-      console.log("Logget ut");
-    }
+}
+
+class Nyheter extends React.Component {
+  render() {
+    return(
+      <div>
+      </div>
+    );
   }
 }
 
@@ -77,6 +79,7 @@ class LoggInn extends React.Component {
   render() {
     return (
       <div>
+        <p ref="feilInnlogging"></p>
         Epost: <input type="text" ref="brukernavnInput" />
         <br></br>
         Passord: <input type="password" ref="passordInput" />
@@ -100,6 +103,7 @@ class LoggInn extends React.Component {
         }
         else {
           console.log("Feil epost/passord");
+          this.refs.feilInnlogging.innerText = "Feil epost/passord";
         }
         console.log(medlemsNr);
       });
@@ -145,30 +149,67 @@ class RegistrerBruker extends React.Component {
   render() {
     return (
       <div>
-        Fornavn: <input type="text" ref="registrerFornavnInput" size="20" />
-        Etternavn: <input type="text" ref="registrerEtternavnInput" size="20" />
+        Fornavn*: <input type="text" ref="registrerFnavnInput" size="20" />
+        Etternavn*: <input type="text" ref="registrerEnavnInput" size="20" />
         <br></br>
-        Mobil: <input type="number" ref="registrerTlfInput" />
+        Mobil*: <input type="number" ref="registrerTlfInput" />
         <br></br>
-        Adresse: <input type="text" ref="registrerAdresseInput" />
+        Adresse*: <input type="text" ref="registrerAdresseInput" />
         <br></br>
-        Postnummer: <input type="number" ref="registrerPostnummerInput" maxLength="4" size="4" />
-        Poststed: <input type="text" ref="registrerPoststedInput" size="20" />
+        Postnummer*: <input type="number" ref="registrerPostnrInput" maxLength="4" size="4" />
+        Poststed*: <input type="text" ref="registrerPoststedInput" size="20" />
         <br></br>
-        Epost: <input type="text" ref="registrerEpostInput" />
+        Epost*: <input type="text" ref="registrerEpostInput" />
         <br></br>
-        Passord: <input type="password" ref="registrerPassordInput" />
+        Passord*: <input type="password" ref="registrerPassordInput" />
         <br></br>
+        <p ref="feilRegistrering"></p>
         <button ref="registrerKnapp">Registrer</button>
       </div>
     );
   }
 
   componentDidMount() {
+    let fnavn;
+    let enavn;
+    let tlf;
+    let adresse;
+    let epost;
+    let passord;
+
     this.refs.registrerKnapp.onclick = () => {
-      console.log("Registrert");
+      fnavn = this.refs.registrerFnavnInput.value;
+      enavn = this.refs.registrerEnavnInput.value;
+      tlf = this.refs.registrerTlfInput.value;
+      adresse = this.refs.registrerAdresseInput.value;
+      postnr = this.refs.registrerPostnrInput.value;
+      poststed = this.refs.registrerPoststedInput.value;
+      epost = this.refs.registrerEpostInput.value;
+      passord = this.refs.registrerPassordInput.value;
+
+      if (erTom(fnavn) || erTom(enavn) || erTom(tlf) || erTom(adresse) || erTom(epost) || erTom(passord)) {
+        this.refs.feilRegistrering.innerText = "Du må ha med alle feltene";
+        console.log(fnavn);
+      } else {
+        bruker.registrerBruker(fnavn, enavn, tlf, adresse, postnr, poststed, epost, passord, (result) => {
+          this.refs.registrerFnavnInput.value = "";
+          this.refs.registrerEnavnInput.value = "";
+          this.refs.registrerTlfInput.value = "";
+          this.refs.registrerAdresseInput.value = "";
+          this.refs.registrerPostnrInput.value = "";
+          this.refs.registrerPoststedInput.value = "";
+          this.refs.registrerEpostInput.value = "";
+          this.refs.registrerPassordInput.value = "";
+          history.push("/logginn");
+          console.log("Registrert");
+        })
+      }
     }
   }
+}
+
+function erTom(str) {
+  return (!str || 0 === str.length);
 }
 
 ReactDOM.render((

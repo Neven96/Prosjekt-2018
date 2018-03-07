@@ -32,7 +32,7 @@ class Bruker {
     connection.query("SELECT Medlemsnr FROM Medlem WHERE Epost = ? AND Passord = ?", [epost, passord], (error, result) => {
       if (error) throw error;
 
-      callback(result);
+      callback(result[0]);
     });
   }
 
@@ -49,6 +49,21 @@ class Bruker {
       if (error) throw error;
 
       callback(result);
+    });
+  }
+
+  eksistererBrukerEpost(epost, callback) {
+    connection.query("SELECT 1 FROM Medlem WHERE Epost = ?", [epost], (error, result) => {
+      if (error) throw error;
+
+      callback(result[0]);
+    });
+  }
+  eksistererBrukerTlf(tlf, callback) {
+    connection.query("SELECT 1 FROM Medlem WHERE Telefon = ?", [tlf], (error, result) => {
+      if (error) throw error;
+
+      callback(result[0]);
     });
   }
 }

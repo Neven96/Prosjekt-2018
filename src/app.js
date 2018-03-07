@@ -5,19 +5,21 @@ import {createHashHistory} from "history";
 import {bruker} from "./sql_server";
 
 export const history = createHashHistory();
+var medlemsNr;
+var erInnlogget = false;
 
 class Hjem extends React.Component {
   render() {
     if (!erInnlogget) {
       return (
         <div>
-          <h1>Røde Kors</h1>
+          <h1>Røde Kors +</h1>
           <div>
-            <hr></hr>
-            <Link to="/hjem">Hjem</Link><span> </span>
-            <Link to="/hjelp">Hjelp</Link><span> </span>
-            <Link to="/logginn">Logg inn</Link>
-            <hr></hr>
+            <hr />
+            <span><Link to="/hjem">Hjem</Link> </span>
+            <span><Link to="/hjelp">Hjelp</Link> </span>
+            <span><Link to="/logginn">Logg inn</Link></span>
+            <hr />
           </div>
           <div>
             <p></p>
@@ -28,17 +30,17 @@ class Hjem extends React.Component {
     if (erInnlogget) {
       return (
         <div>
-          <h1>Røde Kors</h1>
+          <h1>Røde Kors +</h1>
           <div>
-            <hr></hr>
-            <Link to="/hjem">Hjem</Link><span> </span>
-            <Link to="/hjelp">Hjelp</Link><span> </span>
-            <Link to="/bruker/${medlemsNr}">Profil</Link><span> </span>
-            <button ref="loggUtKnapp" onClick={() => {erInnlogget = false,
+            <hr />
+            <span><Link to="/hjem">Hjem</Link> </span>
+            <span><Link to="/hjelp">Hjelp</Link> </span>
+            <span><Link to="/bruker/${medlemsNr}">Profil</Link> </span>
+            <span><button ref="loggUtKnapp" onClick={() => {erInnlogget = false,
               history.push("/hjem/"),
               console.log("Logget ut"),
-              this.forceUpdate()}}>Logg ut</button>
-            <hr></hr>
+              this.forceUpdate()}}>Logg ut</button></span>
+            <hr />
           </div>
           <div>
             <p></p>
@@ -47,12 +49,19 @@ class Hjem extends React.Component {
       );
     }
   }
+
+  componentDidMount() {
+    history.push("/hjem/");
+  }
 }
 
 class Nyheter extends React.Component {
   render() {
     return(
       <div>
+        <p>Nyheter om Røde Kors og andre ting tang</p>
+        <p>Breaking News!!!</p>
+        <p>Røde Kors får nytt vaktsystem</p>
       </div>
     );
   }
@@ -68,9 +77,6 @@ class Hjelp extends React.Component {
   }
 }
 
-var medlemsNr;
-var erInnlogget = false;
-
 class LoggInn extends React.Component {
   constructor() {
     super();
@@ -80,10 +86,9 @@ class LoggInn extends React.Component {
     return (
       <div>
         <p ref="feilInnlogging"></p>
-        Epost: <input type="text" ref="brukernavnInput" />
-        <br></br>
+        Epost: <input type="text" ref="brukernavnInput" /><br />
         Passord: <input type="password" ref="passordInput" />
-        <br></br>
+        <span><Link to="/glemtpassord">Glemt passord</Link></span><br />
         <button ref="loggInnKnapp">Logg inn</button>
         <p>Har du ikke bruker, registrer deg <span><Link to="/registrerBruker">her</Link></span></p>
       </div>
@@ -92,11 +97,12 @@ class LoggInn extends React.Component {
 
   componentDidMount() {
     this.refs.loggInnKnapp.onclick = () => {
+      medlemsNr = "";
       bruker.loggInnBruker(this.refs.brukernavnInput.value, this.refs.passordInput.value, (result) => {
         this.refs.brukernavnInput.value = "";
         this.refs.passordInput.value = "";
-        if(result[0] != undefined) {
-          medlemsNr = result[0].Medlemsnr;
+        if(result != undefined) {
+          medlemsNr = result.Medlemsnr;
           console.log("Logget inn");
           history.push("/hjem/");
           erInnlogget = true;
@@ -111,33 +117,13 @@ class LoggInn extends React.Component {
   }
 }
 
-class Profil extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.bruker = {};
-
-    this.medlemsnr = props.match.params.medlemsnr;
-  }
+class GlemtPassord extends React.Component {
   render() {
-    return (
+    return(
       <div>
-        <ul>
-          <li>{this.bruker.Fornavn+" "+this.bruker.Etternavn}</li>
-          <li>{this.bruker.Adresse}</li>
-          <li>{this.bruker.Telefon}</li>
-          <li>{this.bruker.Epost}</li>
-          <li>{this.bruker.Medlemsnr}</li>
-        </ul>
+        <p>Passord kan huskes her</p>
       </div>
     );
-  }
-
-  componentDidMount() {
-    bruker.hentBruker(medlemsNr, (result) => {
-      this.bruker = result;
-      this.forceUpdate();
-    })
   }
 }
 
@@ -170,12 +156,7 @@ class RegistrerBruker extends React.Component {
   }
 
   componentDidMount() {
-    let fnavn;
-    let enavn;
-    let tlf;
-    let adresse;
-    let epost;
-    let passord;
+    let fnavn; let enavn; let tlf; let adresse; let postnr; let poststed; let epost; let passord;
 
     this.refs.registrerKnapp.onclick = () => {
       fnavn = this.refs.registrerFnavnInput.value;
@@ -189,21 +170,95 @@ class RegistrerBruker extends React.Component {
 
       if (erTom(fnavn) || erTom(enavn) || erTom(tlf) || erTom(adresse) || erTom(epost) || erTom(passord)) {
         this.refs.feilRegistrering.innerText = "Du må ha med alle feltene";
-        console.log(fnavn);
       } else {
-        bruker.registrerBruker(fnavn, enavn, tlf, adresse, postnr, poststed, epost, passord, (result) => {
-          this.refs.registrerFnavnInput.value = "";
-          this.refs.registrerEnavnInput.value = "";
-          this.refs.registrerTlfInput.value = "";
-          this.refs.registrerAdresseInput.value = "";
-          this.refs.registrerPostnrInput.value = "";
-          this.refs.registrerPoststedInput.value = "";
-          this.refs.registrerEpostInput.value = "";
-          this.refs.registrerPassordInput.value = "";
-          history.push("/logginn");
-          console.log("Registrert");
-        })
+        bruker.eksistererBrukerEpost(epost, (result) => {
+          console.log(result);
+          if (result == undefined) {
+            bruker.eksistererBrukerTlf(tlf, (result) => {
+              console.log(result);
+              if (result == undefined) {
+                bruker.registrerBruker(fnavn, enavn, tlf, adresse, postnr, poststed, epost, passord, (result) => {
+                  this.refs.registrerFnavnInput.value = "";
+                  this.refs.registrerEnavnInput.value = "";
+                  this.refs.registrerTlfInput.value = "";
+                  this.refs.registrerAdresseInput.value = "";
+                  this.refs.registrerPostnrInput.value = "";
+                  this.refs.registrerPoststedInput.value = "";
+                  this.refs.registrerEpostInput.value = "";
+                  this.refs.registrerPassordInput.value = "";
+                  history.push("/logginn");
+                  console.log("Registrert");
+                });
+              }
+              else {
+                this.refs.feilRegistrering.innerText = "Brukeren er allerede registrert";
+              }
+            });
+          }
+          else {
+            this.refs.feilRegistrering.innerText = "Brukeren er allerede registrert";
+          }
+        });
       }
+    }
+  }
+}
+
+class Profil extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.bruker = {};
+
+    this.medlemsnr = props.match.params.medlemsnr;
+  }
+  render() {
+    return (
+      <div>
+        <p><Link to="/bruker/${medlemsNr}/redigerprofil">Rediger profil</Link></p>
+        <ul>
+          <li>{this.bruker.Fornavn+" "+this.bruker.Etternavn}</li>
+          <li>{this.bruker.Adresse} "Postnummer" "Poststed"</li>
+          <li>{this.bruker.Telefon}</li>
+          <li>{this.bruker.Epost}</li>
+          <li>{this.bruker.Medlemsnr}</li>
+        </ul>
+        <p><Link to="/bruker/${medlemsNr}/kalender">Kommende arrangementer</Link></p>
+      </div>
+    );
+  }
+
+  componentDidMount() {
+    bruker.hentBruker(medlemsNr, (result) => {
+      this.bruker = result;
+      this.forceUpdate();
+    })
+  }
+}
+
+class RedigerProfil extends React.Component {
+  render() {
+    return(
+      <div>
+        <p>Her kan man redigere profilen sin</p>
+      </div>
+    );
+  }
+}
+
+class Kalender extends React.Component {
+  render() {
+    return (
+      <div>
+      Kalender kommer her!!!
+      </div>
+    );
+  }
+
+  componentDidMount() {
+    let j = 1;
+    for (var i = 0; i < 100; i++) {
+      j++;
     }
   }
 }
@@ -217,11 +272,14 @@ ReactDOM.render((
     <div>
       <Hjem />
       <Switch>
-        <Route exact path="/hjem" />
+        <Route exact path="/hjem" component={Nyheter} />
         <Route exact path="/hjelp" component={Hjelp} />
         <Route exact path="/logginn" component={LoggInn} />
-        <Route exact path="/bruker/:medlemsnr" component={Profil} />
+        <Route exact path="/glemtpassord" component={GlemtPassord} />
         <Route exact path="/registrerBruker" component={RegistrerBruker} />
+        <Route exact path="/bruker/:medlemsnr" component={Profil} />
+        <Route exact path="/bruker/:medlemsnr/redigerprofil" component={RedigerProfil} />
+        <Route exact path="/bruker/:medlemsnr/kalender" component={Kalender} />
       </Switch>
     </div>
   </HashRouter>

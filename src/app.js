@@ -172,10 +172,10 @@ class RegistrerBruker extends React.Component {
         this.refs.feilRegistrering.innerText = "Du må ha med alle feltene";
       } else {
         bruker.eksistererBrukerEpost(epost, (result) => {
-          console.log(result);
+          console.log("Epostregistrering fungerer");
           if (result == undefined) {
             bruker.eksistererBrukerTlf(tlf, (result) => {
-              console.log(result);
+              console.log("Tlfregistrering fungerer");
               if (result == undefined) {
                 bruker.registrerBruker(fnavn, enavn, tlf, adr, postnr, poststed, epost, passord, (result) => {
                   fnavn = "";
@@ -246,6 +246,7 @@ class RedigerProfil extends React.Component {
       super(props);
 
       this.bruker = {};
+      this.brukerSted = {};
 
       this.medlemsnr = props.match.params.medlemsnr;
   }
@@ -262,7 +263,6 @@ class RedigerProfil extends React.Component {
         <input type="text" ref="oppdaterAdr" />
         <br />
         <input type="number" ref="oppdaterPostnr" placeholder="Postnummer" />
-        <input type="text" ref="oppdaterPoststed" placeholder="Poststed" />
         <br />
         <p ref="feilOppdatering"></p>
         <button ref="oppdaterBruker">Oppdater</button>
@@ -272,7 +272,7 @@ class RedigerProfil extends React.Component {
   }
 
   componentDidMount() {
-    let oppFnavn; let oppEnavn; let oppTlf; let oppAdr;
+    let oppFnavn; let oppEnavn; let oppTlf; let oppAdr; let oppPostnr;
     bruker.hentBruker(medlemsNr, (result) => {
       this.bruker = result;
       this.forceUpdate();
@@ -281,25 +281,39 @@ class RedigerProfil extends React.Component {
       this.refs.oppdaterTlf.value = this.bruker.Telefon;
       this.refs.oppdaterAdr.value = this.bruker.Adresse;
     });
+    bruker.hentBrukerSted(medlemsNr, (result) => {
+      this.brukerSted = result;
+      this.forceUpdate();
+      this.refs.oppdaterPostnr.value = this.brukerSted.Postnr;
+    });
 
     this.refs.oppdaterBruker.onclick = () => {
       oppFnavn = this.refs.oppdaterFornavn.value;
       oppEnavn = this.refs.oppdaterEtternavn.value;
       oppTlf = this.refs.oppdaterTlf.value;
       oppAdr = this.refs.oppdaterAdr.value;
-      if (erTom(oppFnavn) || erTom(oppEnavn) || erTom(oppTlf) || erTom(oppAdr)) {
+      oppPostnr = this.refs.oppdaterPostnr.value;
+      if (erTom(oppFnavn) || erTom(oppEnavn) || erTom(oppTlf) || erTom(oppAdr) || erTom(oppPostnr)) {
         this.refs.feilOppdatering.innerText = "Ingen felter kan være tomme";
       } else {
-        bruker.eksistererBrukerTlfOppdater(medlemsNr, oppTlf, (result) => {
-          if (result == undefined) {
-            bruker.oppdaterBruker(medlemsNr, oppFnavn, oppEnavn, oppTlf, oppAdr, (result) => {
-              console.log("Oppdatering funker");
-              history.push("/bruker/${medlemsNr}");
+        bruker.eksistererStedPostnr(oppPostnr, (result) => {
+          console.log(result);
+          if (result != undefined) {
+            console.log("Postnummeroppdater funker");
+            bruker.eksistererBrukerTlfOppdater(medlemsNr, oppTlf, (result) => {
+              if (result == undefined) {
+                console.log("Tlfsjekkoppdater funker");
+                bruker.oppdaterBruker(medlemsNr, oppFnavn, oppEnavn, oppTlf, oppAdr, oppPostnr, (result) => {
+                  console.log("Oppdatering funker");
+                  history.push("/bruker/${medlemsNr}");
+                });
+              }
+              else {
+                this.refs.feilOppdatering.innerText = "Telefonnummeret er allerede i bruk";
+              }
             });
-            console.log("Tlfsjekk funker");
-          }
-          else {
-            this.refs.feilOppdatering.innerText = "Telefonnummeret er allerede i bruk";
+          } else {
+            this.refs.feilOppdatering.innerText = "Postnummeret eksisterer ikke";
           }
         });
       }

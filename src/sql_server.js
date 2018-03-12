@@ -81,9 +81,16 @@ class Bruker {
       callback(result[0]);
     });
   }
+  eksistererStedPostnr(postnr, callback) {
+    connection.query("SELECT 1 FROM Sted WHERE Postnr = ?", [postnr], (error, result) => {
+      if (error) throw error;
 
-  oppdaterBruker(id, fnavn, enavn, tlf, adresse, callback) {
-    connection.query("UPDATE Medlem SET Fornavn = ?, Etternavn = ?, Telefon = ?, Adresse = ? WHERE Medlemsnr = ?", [fnavn, enavn, tlf, adresse, id], (error, result) => {
+      callback(result[0]);
+    });
+  }
+
+  oppdaterBruker(id, fnavn, enavn, tlf, adresse, postnr, callback) {
+    connection.query("UPDATE Medlem SET Fornavn = ?, Etternavn = ?, Telefon = ?, Adresse = ?, Postnr = ? WHERE Medlemsnr = ?", [fnavn, enavn, tlf, adresse, postnr, id], (error, result) => {
       if (error) throw error;
 
       callback();

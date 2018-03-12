@@ -13,12 +13,12 @@ class Hjem extends React.Component {
     if (!erInnlogget) {
       return (
         <div>
-          <h1>Røde Kors +</h1>
+          <h1 ref="overskrift" className="overskrift">Røde Kors +</h1>
           <div>
             <hr />
-            <span><Link to="/hjem">Hjem</Link> </span>
-            <span><Link to="/hjelp">Hjelp</Link> </span>
-            <span><Link to="/logginn">Logg inn</Link></span>
+            <span><Link to="/hjem" className="linker">Hjem</Link> </span>
+            <span><Link to="/hjelp" className="linker">Hjelp</Link> </span>
+            <span><Link to="/logginn" className="linker">Logg inn</Link></span>
             <hr />
           </div>
           <div>
@@ -30,13 +30,13 @@ class Hjem extends React.Component {
     if (erInnlogget) {
       return (
         <div>
-          <h1>Røde Kors +</h1>
+          <h1 ref="overskrift" className="overskrift">Røde Kors +</h1>
           <div>
             <hr />
-            <span><Link to="/hjem">Hjem</Link> </span>
-            <span><Link to="/hjelp">Hjelp</Link> </span>
-            <span><Link to="/bruker/${medlemsNr}">Profil</Link> </span>
-            <span><button ref="loggUtKnapp" onClick={() => {erInnlogget = false,
+            <span><Link to="/hjem" className="linker">Hjem</Link> </span>
+            <span><Link to="/hjelp" className="linker">Hjelp</Link> </span>
+            <span><Link to="/bruker/${medlemsNr}" className="linker">Profil</Link> </span>
+            <span><button ref="loggUtKnapp" className="knapper" onClick={() => {erInnlogget = false,
               history.push("/hjem/"),
               console.log("Logget ut"),
               this.forceUpdate()}}>Logg ut</button></span>
@@ -86,11 +86,11 @@ class LoggInn extends React.Component {
     return (
       <div>
         <p ref="feilInnlogging"></p>
-        Epost: <input type="text" ref="brukernavnInput" /><br />
+        Epost: <input type="text" ref="brukernavnInput" autoFocus /><br />
         Passord: <input type="password" ref="passordInput" />
-        <span><Link to="/glemtpassord">Glemt passord</Link></span><br />
-        <button ref="loggInnKnapp">Logg inn</button>
-        <p>Har du ikke bruker, registrer deg <span><Link to="/registrerBruker">her</Link></span></p>
+        <span><Link to="/glemtpassord" className="linker">Glemt passord</Link></span><br />
+        <button ref="loggInnKnapp" className="knapper">Logg inn</button>
+        <p>Har du ikke bruker, registrer deg <span><Link to="/registrerBruker" className="linker">her</Link></span></p>
       </div>
     )
   }
@@ -140,7 +140,7 @@ class RegistrerBruker extends React.Component {
         <br></br>
         Mobil*: <input type="number" ref="registrerTlfInput" />
         <br></br>
-        Adresse*: <input type="text" ref="registrerAdresseInput" />
+        Adresse*: <input type="text" ref="registrerAdrInput" />
         <br></br>
         Postnummer*: <input type="number" ref="registrerPostnrInput" maxLength="4" size="4" />
         Poststed*: <input type="text" ref="registrerPoststedInput" size="20" />
@@ -150,25 +150,25 @@ class RegistrerBruker extends React.Component {
         Passord*: <input type="password" ref="registrerPassordInput" />
         <br></br>
         <p ref="feilRegistrering"></p>
-        <button ref="registrerKnapp">Registrer</button>
+        <button ref="registrerKnapp" className="knapper">Registrer</button>
       </div>
     );
   }
 
   componentDidMount() {
-    let fnavn; let enavn; let tlf; let adresse; let postnr; let poststed; let epost; let passord;
+    let fnavn; let enavn; let tlf; let adr; let postnr; let poststed; let epost; let passord;
 
     this.refs.registrerKnapp.onclick = () => {
       fnavn = this.refs.registrerFnavnInput.value;
       enavn = this.refs.registrerEnavnInput.value;
       tlf = this.refs.registrerTlfInput.value;
-      adresse = this.refs.registrerAdresseInput.value;
+      adr = this.refs.registrerAdrInput.value;
       postnr = this.refs.registrerPostnrInput.value;
       poststed = this.refs.registrerPoststedInput.value;
       epost = this.refs.registrerEpostInput.value;
       passord = this.refs.registrerPassordInput.value;
 
-      if (erTom(fnavn) || erTom(enavn) || erTom(tlf) || erTom(adresse) || erTom(epost) || erTom(passord)) {
+      if (erTom(fnavn) || erTom(enavn) || erTom(tlf) || erTom(adr) || erTom(epost) || erTom(passord)) {
         this.refs.feilRegistrering.innerText = "Du må ha med alle feltene";
       } else {
         bruker.eksistererBrukerEpost(epost, (result) => {
@@ -177,15 +177,15 @@ class RegistrerBruker extends React.Component {
             bruker.eksistererBrukerTlf(tlf, (result) => {
               console.log(result);
               if (result == undefined) {
-                bruker.registrerBruker(fnavn, enavn, tlf, adresse, postnr, poststed, epost, passord, (result) => {
-                  this.refs.registrerFnavnInput.value = "";
-                  this.refs.registrerEnavnInput.value = "";
-                  this.refs.registrerTlfInput.value = "";
-                  this.refs.registrerAdresseInput.value = "";
-                  this.refs.registrerPostnrInput.value = "";
-                  this.refs.registrerPoststedInput.value = "";
-                  this.refs.registrerEpostInput.value = "";
-                  this.refs.registrerPassordInput.value = "";
+                bruker.registrerBruker(fnavn, enavn, tlf, adr, postnr, poststed, epost, passord, (result) => {
+                  fnavn = "";
+                  enavn = "";
+                  tlf = "";
+                  adr = "";
+                  postnr = "";
+                  poststed = "";
+                  epost = "";
+                  passord = "";
                   history.push("/logginn");
                   console.log("Registrert");
                 });
@@ -209,21 +209,22 @@ class Profil extends React.Component {
     super(props);
 
     this.bruker = {};
+    this.brukerSted = {};
 
     this.medlemsnr = props.match.params.medlemsnr;
   }
   render() {
     return (
       <div>
-        <p><Link to="/bruker/${medlemsNr}/redigerprofil">Rediger profil</Link></p>
+        <p><Link to="/bruker/${medlemsNr}/redigerprofil" className="linker">Rediger profil</Link></p>
         <ul>
           <li>{this.bruker.Fornavn+" "+this.bruker.Etternavn}</li>
-          <li>{this.bruker.Adresse} "Postnummer" "Poststed"</li>
+          <li>{this.bruker.Adresse+" "+this.brukerSted.Postnr+" "+this.brukerSted.Poststed}</li>
           <li>{this.bruker.Telefon}</li>
           <li>{this.bruker.Epost}</li>
           <li>{this.bruker.Medlemsnr}</li>
         </ul>
-        <p><Link to="/bruker/${medlemsNr}/kalender">Kommende arrangementer</Link></p>
+        <p><Link to="/bruker/${medlemsNr}/kalender" className="linker">Kommende arrangementer</Link></p>
       </div>
     );
   }
@@ -232,17 +233,82 @@ class Profil extends React.Component {
     bruker.hentBruker(medlemsNr, (result) => {
       this.bruker = result;
       this.forceUpdate();
-    })
+    });
+    bruker.hentBrukerSted(medlemsNr, (result) => {
+      this.brukerSted = result;
+      this.forceUpdate();
+    });
   }
 }
 
 class RedigerProfil extends React.Component {
+  constructor(props) {
+      super(props);
+
+      this.bruker = {};
+
+      this.medlemsnr = props.match.params.medlemsnr;
+  }
+
   render() {
     return(
       <div>
-        <p>Her kan man redigere profilen sin</p>
+        <input type="text" ref="oppdaterFornavn" />
+        <br />
+        <input type="text" ref="oppdaterEtternavn" />
+        <br />
+        <input type="number" ref="oppdaterTlf" />
+        <br />
+        <input type="text" ref="oppdaterAdr" />
+        <br />
+        <input type="number" ref="oppdaterPostnr" placeholder="Postnummer" />
+        <input type="text" ref="oppdaterPoststed" placeholder="Poststed" />
+        <br />
+        <p ref="feilOppdatering"></p>
+        <button ref="oppdaterBruker">Oppdater</button>
+        <button ref="kansellerOppdatering">Lukk</button>
       </div>
     );
+  }
+
+  componentDidMount() {
+    let oppFnavn; let oppEnavn; let oppTlf; let oppAdr;
+    bruker.hentBruker(medlemsNr, (result) => {
+      this.bruker = result;
+      this.forceUpdate();
+      this.refs.oppdaterFornavn.value = this.bruker.Fornavn;
+      this.refs.oppdaterEtternavn.value = this.bruker.Etternavn;
+      this.refs.oppdaterTlf.value = this.bruker.Telefon;
+      this.refs.oppdaterAdr.value = this.bruker.Adresse;
+    });
+
+    this.refs.oppdaterBruker.onclick = () => {
+      oppFnavn = this.refs.oppdaterFornavn.value;
+      oppEnavn = this.refs.oppdaterEtternavn.value;
+      oppTlf = this.refs.oppdaterTlf.value;
+      oppAdr = this.refs.oppdaterAdr.value;
+      if (erTom(oppFnavn) || erTom(oppEnavn) || erTom(oppTlf) || erTom(oppAdr)) {
+        this.refs.feilOppdatering.innerText = "Ingen felter kan være tomme";
+      } else {
+        bruker.eksistererBrukerTlfOppdater(medlemsNr, oppTlf, (result) => {
+          if (result == undefined) {
+            bruker.oppdaterBruker(medlemsNr, oppFnavn, oppEnavn, oppTlf, oppAdr, (result) => {
+              console.log("Oppdatering funker");
+              history.push("/bruker/${medlemsNr}");
+            });
+            console.log("Tlfsjekk funker");
+          }
+          else {
+            this.refs.feilOppdatering.innerText = "Telefonnummeret er allerede i bruk";
+          }
+        });
+      }
+    }
+
+
+    this.refs.kansellerOppdatering.onclick = () => {
+      history.push("/bruker/${medlemsNr}")
+    }
   }
 }
 
@@ -256,10 +322,7 @@ class Kalender extends React.Component {
   }
 
   componentDidMount() {
-    let j = 1;
-    for (var i = 0; i < 100; i++) {
-      j++;
-    }
+
   }
 }
 

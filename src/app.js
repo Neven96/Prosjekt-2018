@@ -60,7 +60,7 @@ class Nyheter extends React.Component {
     return(
       <div>
         <p>Nyheter om Røde Kors og andre ting tang</p>
-        <p>Breaking News!!!</p>
+        <h3>Breaking News!!!</h3>
         <p>Røde Kors får nytt vaktsystem</p>
       </div>
     );
@@ -92,7 +92,7 @@ class LoggInn extends React.Component {
         <button ref="loggInnKnapp" className="knapper">Logg inn</button>
         <p>Har du ikke bruker, registrer deg <span><Link to="/registrerBruker" className="linker">her</Link></span></p>
       </div>
-    )
+    );
   }
 
   componentDidMount() {
@@ -113,7 +113,7 @@ class LoggInn extends React.Component {
         }
         console.log(medlemsNr);
       });
-    }
+    };
   }
 }
 
@@ -129,25 +129,26 @@ class GlemtPassord extends React.Component {
 
 class RegistrerBruker extends React.Component {
   constructor() {
-    super()
+    super();
   }
 
   render() {
     return (
       <div>
-        Fornavn*: <input type="text" ref="registrerFnavnInput" size="20" />
-        Etternavn*: <input type="text" ref="registrerEnavnInput" size="20" />
+        <p>Fyll inn alle felter</p>
+        Fornavn: <input type="text" ref="registrerFnavnInput" size="20" />
+        Etternavn: <input type="text" ref="registrerEnavnInput" size="20" />
         <br></br>
-        Mobil*: <input type="number" ref="registrerTlfInput" />
+        Mobil: <input type="number" ref="registrerTlfInput" />
         <br></br>
-        Adresse*: <input type="text" ref="registrerAdrInput" />
+        Adresse: <input type="text" ref="registrerAdrInput" />
         <br></br>
-        Postnummer*: <input type="number" ref="registrerPostnrInput" maxLength="4" size="4" />
-        Poststed*: <input type="text" ref="registrerPoststedInput" size="20" />
+        Postnummer: <input type="number" ref="registrerPostnrInput" maxLength="4" size="4" />
+        <input type="text" ref="registrerPoststedInput" readOnly />
         <br></br>
-        Epost*: <input type="text" ref="registrerEpostInput" />
+        Epost: <input type="text" ref="registrerEpostInput" />
         <br></br>
-        Passord*: <input type="password" ref="registrerPassordInput" />
+        Passord: <input type="password" ref="registrerPassordInput" />
         <br></br>
         <p ref="feilRegistrering"></p>
         <button ref="registrerKnapp" className="knapper">Registrer</button>
@@ -158,49 +159,65 @@ class RegistrerBruker extends React.Component {
   componentDidMount() {
     let fnavn; let enavn; let tlf; let adr; let postnr; let poststed; let epost; let passord;
 
+    this.refs.registrerPostnrInput.onblur = () => {
+      postnr = this.refs.registrerPostnrInput.value;
+      bruker.eksistererStedPostnr(postnr, (result) => {
+        if (result != undefined) {
+          bruker.hentPoststed(postnr, (result) => {
+            this.refs.registrerPoststedInput.value = result.Poststed;
+          });
+        } else {
+          this.refs.registrerPoststedInput.value = "";
+        }
+      });
+    };
+
     this.refs.registrerKnapp.onclick = () => {
       fnavn = this.refs.registrerFnavnInput.value;
       enavn = this.refs.registrerEnavnInput.value;
       tlf = this.refs.registrerTlfInput.value;
       adr = this.refs.registrerAdrInput.value;
       postnr = this.refs.registrerPostnrInput.value;
-      poststed = this.refs.registrerPoststedInput.value;
       epost = this.refs.registrerEpostInput.value;
       passord = this.refs.registrerPassordInput.value;
 
-      if (erTom(fnavn) || erTom(enavn) || erTom(tlf) || erTom(adr) || erTom(epost) || erTom(passord)) {
+      if (erTom(fnavn) || erTom(enavn) || erTom(tlf) || erTom(adr) || erTom(postnr) || erTom(epost) || erTom(passord)) {
         this.refs.feilRegistrering.innerText = "Du må ha med alle feltene";
       } else {
-        bruker.eksistererBrukerEpost(epost, (result) => {
-          console.log("Epostregistrering fungerer");
-          if (result == undefined) {
-            bruker.eksistererBrukerTlf(tlf, (result) => {
-              console.log("Tlfregistrering fungerer");
+        bruker.eksistererStedPostnr(postnr, (result) => {
+          console.log("Postnummerregistrering fungerer");
+          if (result != undefined) {
+            bruker.eksistererBrukerEpost(epost, (result) => {
+              console.log("Epostregistrering fungerer");
               if (result == undefined) {
-                bruker.registrerBruker(fnavn, enavn, tlf, adr, postnr, poststed, epost, passord, (result) => {
-                  fnavn = "";
-                  enavn = "";
-                  tlf = "";
-                  adr = "";
-                  postnr = "";
-                  poststed = "";
-                  epost = "";
-                  passord = "";
-                  history.push("/logginn");
-                  console.log("Registrert");
+                bruker.eksistererBrukerTlf(tlf, (result) => {
+                  console.log("Tlfregistrering fungerer");
+                  if (result == undefined) {
+                    bruker.registrerBruker(fnavn, enavn, tlf, adr, postnr, epost, passord, (result) => {
+                      fnavn = "";
+                      enavn = "";
+                      tlf = "";
+                      adr = "";
+                      postnr = "";
+                      epost = "";
+                      passord = "";
+                      history.push("/logginn");
+                      console.log("Registrert");
+                    });
+                  } else {
+                    this.refs.feilRegistrering.innerText = "Brukeren er allerede registrert";
+                  }
                 });
-              }
-              else {
+              } else {
                 this.refs.feilRegistrering.innerText = "Brukeren er allerede registrert";
               }
             });
-          }
-          else {
-            this.refs.feilRegistrering.innerText = "Brukeren er allerede registrert";
+          } else {
+            this.refs.feilRegistrering.innerText = "Postnummeret eksisterer ikke";
           }
         });
       }
-    }
+    };
   }
 }
 
@@ -317,12 +334,11 @@ class RedigerProfil extends React.Component {
           }
         });
       }
-    }
-
+    };
 
     this.refs.kansellerOppdatering.onclick = () => {
-      history.push("/bruker/${medlemsNr}")
-    }
+      history.push("/bruker/${medlemsNr}");
+    };
   }
 }
 

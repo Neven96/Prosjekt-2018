@@ -52,11 +52,19 @@ class Bruker {
     });
   }
 
-  registrerBruker(fnavn, enavn, tlf, adresse, postnr, poststed, epost, passord, callback) {
-    connection.query("INSERT INTO Medlem (Fornavn, Etternavn, Telefon, Adresse, Epost, Passord) VALUES (?, ?, ?, ?, ?, ?)", [fnavn, enavn, tlf, adresse, epost, passord], (error, result) => {
+  hentPoststed(postnr, callback) {
+    connection.query("SELECT Poststed FROM Sted WHERE Postnr = ?", [postnr], (error, result) => {
       if (error) throw error;
 
-      callback(result);
+      callback(result[0]);
+    });
+  }
+
+  registrerBruker(fnavn, enavn, tlf, adresse, postnr, epost, passord, callback) {
+    connection.query("INSERT INTO Medlem (Fornavn, Etternavn, Telefon, Adresse, Postnr, Epost, Passord) VALUES (?, ?, ?, ?, ?, ?, ?)", [fnavn, enavn, tlf, adresse, postnr, epost, passord], (error, result) => {
+      if (error) throw error;
+
+      callback();
     });
   }
 

@@ -29,19 +29,37 @@ connect();
 
 class Bruker {
   loggInnBruker(epost, passord, callback) {
-    connection.query("SELECT Medlemsnr FROM Medlem WHERE Epost = ? AND Passord = ?", [epost, passord], (error, result) => {
+    connection.query("SELECT * FROM Medlem WHERE Epost = ? AND Passord = ?", [epost, passord], (error, result) => {
       if (error) throw error;
+
+      sessionStorage.setItem("innloggetBruker", JSON.stringify(result[0]));
 
       callback(result[0]);
     });
   }
 
-  hentBruker(medlemsnr, callback) {
+  hentOppdatertBruker(medlemsnr) {
     connection.query("SELECT * FROM Medlem WHERE Medlemsnr = ?", [medlemsnr], (error, result) => {
       if (error) throw error;
 
-      callback(result[0]);
+      sessionStorage.setItem("innloggetBruker", JSON.stringify(result[0]));
     });
+
+    let ting = sessionStorage.getItem("innloggetBruker");
+
+    if (!ting) return null;
+    return JSON.parse(ting);
+  }
+
+  hentBruker() {
+    let ting = sessionStorage.getItem("innloggetBruker");
+
+    if (!ting) return null;
+    return JSON.parse(ting);
+  }
+
+  loggUtBruker() {
+    sessionStorage.clear();
   }
 
   hentBrukerSted(medlemsnr, callback) {
@@ -100,6 +118,8 @@ class Bruker {
   oppdaterBruker(id, fnavn, enavn, tlf, adresse, postnr, callback) {
     connection.query("UPDATE Medlem SET Fornavn = ?, Etternavn = ?, Telefon = ?, Adresse = ?, Postnr = ? WHERE Medlemsnr = ?", [fnavn, enavn, tlf, adresse, postnr, id], (error, result) => {
       if (error) throw error;
+
+      console.log("ID: "+id+", Postnr: "+postnr);
 
       callback();
     });

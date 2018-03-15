@@ -6,11 +6,17 @@ import {bruker} from "./sql_server";
 
 export const history = createHashHistory();
 var medlemsNr;
-var erInnlogget = false;
 
 class Hjem extends React.Component {
+  constructor() {
+    super();
+
+    this.innloggetBruker;
+  }
+
   render() {
-    if (!erInnlogget) {
+    this.innloggetBruker = bruker.hentBruker();
+    if (!this.innloggetBruker) {
       return (
         <div>
           <h1 ref="overskrift" className="overskrift">Røde Kors +</h1>
@@ -27,7 +33,7 @@ class Hjem extends React.Component {
         </div>
       );
     }
-    if (erInnlogget) {
+    else if (this.innloggetBruker) {
       return (
         <div>
           <h1 ref="overskrift" className="overskrift">Røde Kors +</h1>
@@ -35,11 +41,11 @@ class Hjem extends React.Component {
             <hr />
             <span><Link to="/hjem" className="linker">Hjem</Link> </span>
             <span><Link to="/hjelp" className="linker">Hjelp</Link> </span>
-            <span><Link to="/bruker/${medlemsNr}" className="linker">Profil</Link> </span>
-            <span><button ref="loggUtKnapp" className="knapper" onClick={() => {erInnlogget = false,
+            <span><Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Profil</Link> </span>
+            <span><button ref="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
+              this.forceUpdate(),
               history.push("/hjem/"),
-              console.log("Logget ut"),
-              this.forceUpdate()}}>Logg ut</button></span>
+              console.log("Logget ut")}}>Logg ut</button></span>
             <hr />
           </div>
           <div>
@@ -50,7 +56,13 @@ class Hjem extends React.Component {
     }
   }
 
+  componentWillMount() {
+    this.innloggetBruker = bruker.hentBruker();
+    this.forceUpdate();
+  }
+
   componentDidMount() {
+    this.forceUpdate();
     history.push("/hjem/");
   }
 }
@@ -74,46 +86,6 @@ class Hjelp extends React.Component {
         <p>Hei, velkommen til hjelpsiden for Røde Kors, her får du hjelp</p>
       </div>
     );
-  }
-}
-
-class LoggInn extends React.Component {
-  constructor() {
-    super();
-  }
-
-  render() {
-    return (
-      <div>
-        <p ref="feilInnlogging"></p>
-        Epost: <input type="text" ref="brukernavnInput" autoFocus /><br />
-        Passord: <input type="password" ref="passordInput" />
-        <span><Link to="/glemtpassord" className="linker">Glemt passord</Link></span><br />
-        <button ref="loggInnKnapp" className="knapper">Logg inn</button>
-        <p>Har du ikke bruker, registrer deg <span><Link to="/registrerBruker" className="linker">her</Link></span></p>
-      </div>
-    );
-  }
-
-  componentDidMount() {
-    this.refs.loggInnKnapp.onclick = () => {
-      medlemsNr = "";
-      bruker.loggInnBruker(this.refs.brukernavnInput.value, this.refs.passordInput.value, (result) => {
-        this.refs.brukernavnInput.value = "";
-        this.refs.passordInput.value = "";
-        if(result != undefined) {
-          medlemsNr = result.Medlemsnr;
-          console.log("Logget inn");
-          history.push("/hjem/");
-          erInnlogget = true;
-        }
-        else {
-          console.log("Feil epost/passord");
-          this.refs.feilInnlogging.innerText = "Feil epost/passord";
-        }
-        console.log(medlemsNr);
-      });
-    };
   }
 }
 
@@ -221,37 +193,88 @@ class RegistrerBruker extends React.Component {
   }
 }
 
-class Profil extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.bruker = {};
-    this.brukerSted = {};
-
-    this.medlemsnr = props.match.params.medlemsnr;
+class LoggInn extends React.Component {
+  constructor() {
+    super();
   }
+
   render() {
     return (
       <div>
-        <p><Link to="/bruker/${medlemsNr}/redigerprofil" className="linker">Rediger profil</Link></p>
-        <ul>
-          <li>{this.bruker.Fornavn+" "+this.bruker.Etternavn}</li>
-          <li>{this.bruker.Adresse+" "+this.brukerSted.Postnr+" "+this.brukerSted.Poststed}</li>
-          <li>{this.bruker.Telefon}</li>
-          <li>{this.bruker.Epost}</li>
-          <li>{this.bruker.Medlemsnr}</li>
-        </ul>
-        <p><Link to="/bruker/${medlemsNr}/kalender" className="linker">Kommende arrangementer</Link></p>
+        <p ref="feilInnlogging"></p>
+        Epost: <input type="text" ref="brukernavnInput" autoFocus /><br />
+        Passord: <input type="password" ref="passordInput" />
+        <span><Link to="/glemtpassord" className="linker">Glemt passord</Link></span><br />
+        <button ref="loggInnKnapp" className="knapper">Logg inn</button>
+        <p>Har du ikke bruker, registrer deg <span><Link to="/registrerBruker" className="linker">her</Link></span></p>
       </div>
     );
   }
 
   componentDidMount() {
-    bruker.hentBruker(medlemsNr, (result) => {
-      this.bruker = result;
-      this.forceUpdate();
+    this.refs.loggInnKnapp.onclick = () => {
+      bruker.loggInnBruker(this.refs.brukernavnInput.value, this.refs.passordInput.value, (result) => {
+        this.refs.brukernavnInput.value = "";
+        this.refs.passordInput.value = "";
+        if(result != undefined) {
+          console.log("Logget inn");
+          history.push("/hjem/");
+        }
+        else {
+          console.log("Feil epost/passord");
+          this.refs.feilInnlogging.innerText = "Feil epost/passord";
+        }
+      });
+    };
+  }
+}
+
+/*
+IIIIII II     II II     II  II        IIII      IIIIII    IIIIII  IIIIIII IIIIIIII
+  II   IIII   II IIII   II  II      II    II   II        II       II         II
+  II   II  II II II  II II  II     II      II II   IIII II   IIII IIII       II
+  II   II   IIII II   IIII  II      II    II   II    II  II    II II         II
+IIIIII II    III II    III  IIIIIII   IIII      IIIIII    IIIIII  IIIIIII    II
+*/
+class Profil extends React.Component {
+  constructor() {
+    super();
+
+    this.bruker = {};
+    this.brukerSted = {};
+    this.innloggetBruker;
+  }
+  render() {
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+    return (
+      <div>
+        <p><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</Link></p>
+        <ul>
+          <li>{this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn}</li>
+          <li>{this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed}</li>
+          <li>{this.innloggetBruker.Telefon}</li>
+          <li>{this.innloggetBruker.Epost}</li>
+          <li>{this.innloggetBruker.Medlemsnr}</li>
+        </ul>
+        <p><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/kalender" className="linker">Kommende arrangementer</Link></p>
+      </div>
+    );
+  }
+
+  componentWillMount() {
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+    bruker.hentBrukerSted(this.innloggetBruker.Medlemsnr, (result) => {
+      this.brukerSted = result;
+      // this.forceUpdate();
     });
-    bruker.hentBrukerSted(medlemsNr, (result) => {
+  }
+
+  componentDidMount() {
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+    bruker.hentBrukerSted(this.innloggetBruker.Medlemsnr, (result) => {
       this.brukerSted = result;
       this.forceUpdate();
     });
@@ -259,27 +282,29 @@ class Profil extends React.Component {
 }
 
 class RedigerProfil extends React.Component {
-  constructor(props) {
-      super(props);
+  constructor() {
+      super();
 
       this.bruker = {};
       this.brukerSted = {};
-
-      this.medlemsnr = props.match.params.medlemsnr;
+      this.innloggetBruker;
   }
 
   render() {
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return(
       <div>
-        <input type="text" ref="oppdaterFornavn" />
+        <input type="text" ref="oppdaterFornavnInput" />
         <br />
-        <input type="text" ref="oppdaterEtternavn" />
+        <input type="text" ref="oppdaterEtternavnInput" />
         <br />
-        <input type="number" ref="oppdaterTlf" />
+        <input type="number" ref="oppdaterTlfInput" />
         <br />
-        <input type="text" ref="oppdaterAdr" />
+        <input type="text" ref="oppdaterAdrInput" />
         <br />
-        <input type="number" ref="oppdaterPostnr" placeholder="Postnummer" />
+        <input type="number" ref="oppdaterPostnrInput" />
+        <input type="text" ref="oppdaterPoststedInput" readOnly />
         <br />
         <p ref="feilOppdatering"></p>
         <button ref="oppdaterBruker">Oppdater</button>
@@ -290,26 +315,47 @@ class RedigerProfil extends React.Component {
 
   componentDidMount() {
     let oppFnavn; let oppEnavn; let oppTlf; let oppAdr; let oppPostnr;
-    bruker.hentBruker(medlemsNr, (result) => {
-      this.bruker = result;
-      this.forceUpdate();
-      this.refs.oppdaterFornavn.value = this.bruker.Fornavn;
-      this.refs.oppdaterEtternavn.value = this.bruker.Etternavn;
-      this.refs.oppdaterTlf.value = this.bruker.Telefon;
-      this.refs.oppdaterAdr.value = this.bruker.Adresse;
-    });
-    bruker.hentBrukerSted(medlemsNr, (result) => {
+    // bruker.hentBruker(medlemsNr, (result) => {
+    //   this.bruker = result;
+    //   this.forceUpdate();
+    //   this.refs.oppdaterFornavnInput.value = this.bruker.Fornavn;
+    //   this.refs.oppdaterEtternavnInput.value = this.bruker.Etternavn;
+    //   this.refs.oppdaterTlfInput.value = this.bruker.Telefon;
+    //   this.refs.oppdaterAdrInput.value = this.bruker.Adresse;
+    // });
+
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+    this.refs.oppdaterFornavnInput.value = this.innloggetBruker.Fornavn;
+    this.refs.oppdaterEtternavnInput.value = this.innloggetBruker.Etternavn;
+    this.refs.oppdaterTlfInput.value = this.innloggetBruker.Telefon;
+    this.refs.oppdaterAdrInput.value = this.innloggetBruker.Adresse;
+    this.refs.oppdaterPostnrInput.value = this.innloggetBruker.Postnr;
+
+    bruker.hentBrukerSted(this.innloggetBruker.Medlemsnr, (result) => {
       this.brukerSted = result;
-      this.forceUpdate();
-      this.refs.oppdaterPostnr.value = this.brukerSted.Postnr;
+      this.refs.oppdaterPoststedInput.value = this.brukerSted.Poststed;
     });
 
+    this.refs.oppdaterPostnrInput.onblur = () => {
+      oppPostnr = this.refs.oppdaterPostnrInput.value;
+      bruker.eksistererStedPostnr(oppPostnr, (result) => {
+        if (result != undefined) {
+          bruker.hentPoststed(oppPostnr, (result) => {
+            this.refs.oppdaterPoststedInput.value = result.Poststed;
+          });
+        } else {
+          this.refs.oppdaterPoststedInput.value = "";
+        }
+      });
+    };
+
     this.refs.oppdaterBruker.onclick = () => {
-      oppFnavn = this.refs.oppdaterFornavn.value;
-      oppEnavn = this.refs.oppdaterEtternavn.value;
-      oppTlf = this.refs.oppdaterTlf.value;
-      oppAdr = this.refs.oppdaterAdr.value;
-      oppPostnr = this.refs.oppdaterPostnr.value;
+      oppFnavn = this.refs.oppdaterFornavnInput.value;
+      oppEnavn = this.refs.oppdaterEtternavnInput.value;
+      oppTlf = this.refs.oppdaterTlfInput.value;
+      oppAdr = this.refs.oppdaterAdrInput.value;
+      oppPostnr = this.refs.oppdaterPostnrInput.value;
       if (erTom(oppFnavn) || erTom(oppEnavn) || erTom(oppTlf) || erTom(oppAdr) || erTom(oppPostnr)) {
         this.refs.feilOppdatering.innerText = "Ingen felter kan være tomme";
       } else {
@@ -317,10 +363,10 @@ class RedigerProfil extends React.Component {
           console.log(result);
           if (result != undefined) {
             console.log("Postnummeroppdater funker");
-            bruker.eksistererBrukerTlfOppdater(medlemsNr, oppTlf, (result) => {
+            bruker.eksistererBrukerTlfOppdater(this.innloggetBruker.Medlemsnr, oppTlf, (result) => {
               if (result == undefined) {
                 console.log("Tlfsjekkoppdater funker");
-                bruker.oppdaterBruker(medlemsNr, oppFnavn, oppEnavn, oppTlf, oppAdr, oppPostnr, (result) => {
+                bruker.oppdaterBruker(this.innloggetBruker.Medlemsnr, oppFnavn, oppEnavn, oppTlf, oppAdr, oppPostnr, (result) => {
                   console.log("Oppdatering funker");
                   history.push("/bruker/${medlemsNr}");
                 });
@@ -337,7 +383,7 @@ class RedigerProfil extends React.Component {
     };
 
     this.refs.kansellerOppdatering.onclick = () => {
-      history.push("/bruker/${medlemsNr}");
+      history.push("/bruker/${this.innloggetBruker.Medlemsnr}");
     };
   }
 }

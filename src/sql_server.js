@@ -126,6 +126,13 @@ class Bruker {
   }
 }
 
-let bruker = new Bruker();
+class Arrangement {
+  opprettArrangement(id, arrnavn, callback) {
 
-export {bruker};
+  }
+}
+
+let bruker = new Bruker();
+let arrangement = new Arrangement();
+
+export {bruker, arrangement};

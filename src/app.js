@@ -2,8 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {Link, HashRouter, Switch, Route, Redirect} from "react-router-dom";
 import {createHashHistory} from "history";
-import {bruker} from "./sql_server";
+import {bruker, arrangement} from "./sql_server";
+import BigCalendar from 'react-big-calendar';
+import moment from 'moment';
 
+BigCalendar.globalizeLocalizer(moment);
 export const history = createHashHistory();
 var medlemsNr;
 
@@ -389,12 +392,18 @@ class RedigerProfil extends React.Component {
 }
 
 class Kalender extends React.Component {
+  constructor() {
+    super();
+
+
+  }
+
   render() {
-    return (
+    return(
       <div>
-      Kalender kommer her!!!
+
       </div>
-    );
+    )
   }
 
   componentDidMount() {

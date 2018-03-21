@@ -127,8 +127,10 @@ class Bruker {
 }
 
 class Arrangement {
-  opprettArrangement(id, arrnavn, callback) {
-
+  opprettArrangement(arrnavn, callback) {
+    connection.query("INSERT INTO Arrangement (arrnavn) VALUES (?)", [arrnavn], (error, result) => {
+      
+    });
   }
 }
 

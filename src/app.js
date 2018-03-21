@@ -3,10 +3,7 @@ import ReactDOM from "react-dom";
 import {Link, HashRouter, Switch, Route, Redirect} from "react-router-dom";
 import {createHashHistory} from "history";
 import {bruker, arrangement} from "./sql_server";
-import BigCalendar from 'react-big-calendar';
-import moment from 'moment';
 
-BigCalendar.globalizeLocalizer(moment);
 export const history = createHashHistory();
 var medlemsNr;
 
@@ -25,9 +22,9 @@ class Hjem extends React.Component {
 
           <div>
             <hr />
-            <span class="navbar"><Link to="/hjem" className="linker">Hjem</Link> </span>
-            <span class="navbar"><Link to="/hjelp" className="linker">Hjelp</Link> </span>
-            <span class="navbar"><Link to="/logginn" className="linker">Logg inn</Link></span>
+            <span className="navbar"><Link to="/hjem" className="linker">Hjem</Link> </span>
+            <span className="navbar"><Link to="/hjelp" className="linker">Hjelp</Link> </span>
+            <span className="navbar"><Link to="/logginn" className="linker">Logg inn</Link></span>
             <hr />
           </div>
           <div>
@@ -42,10 +39,10 @@ class Hjem extends React.Component {
 
           <div>
             <hr />
-            <span class="navbar"><Link to="/hjem" className="linker">Hjem</Link> </span>
-            <span class="navbar"><Link to="/hjelp" className="linker">Hjelp</Link> </span>
-            <span class="navbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Profil</Link> </span>
-            <span class="navbar"><button ref="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
+            <span className="navbar"><Link to="/hjem" className="linker">Hjem</Link> </span>
+            <span className="navbar"><Link to="/hjelp" className="linker">Hjelp</Link> </span>
+            <span className="navbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Profil</Link> </span>
+            <span className="navbar"><button ref="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
               this.forceUpdate(),
               history.push("/hjem/"),
               console.log("Logget ut")}}>Logg ut</button></span>
@@ -250,19 +247,36 @@ class Profil extends React.Component {
   render() {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
-    return (
-      <div>
-        <p><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</Link></p>
-        <ul>
-          <li>{this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn}</li>
-          <li>{this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed}</li>
-          <li>{this.innloggetBruker.Telefon}</li>
-          <li>{this.innloggetBruker.Epost}</li>
-          <li>{this.innloggetBruker.Medlemsnr}</li>
-        </ul>
-        <p><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/kalender" className="linker">Kommende arrangementer</Link></p>
-      </div>
-    );
+    if (this.innloggetBruker.Medlemsnr <= 0) {
+      return (
+        <div>
+          <p><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</Link></p>
+          <ul>
+            <li>{this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn}</li>
+            <li>{this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed}</li>
+            <li>{this.innloggetBruker.Telefon}</li>
+            <li>{this.innloggetBruker.Epost}</li>
+            <li>{this.innloggetBruker.Medlemsnr}</li>
+          </ul>
+          <p><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/kalender" className="linker">Kommende arrangementer</Link></p>
+        </div>
+      );
+    } else if (this.innloggetBruker.Medlemsnr >= 1) {
+      return (
+        <div>
+          <p><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</Link></p>
+          <ul>
+            <li>{this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn}</li>
+            <li>{this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed}</li>
+            <li>{this.innloggetBruker.Telefon}</li>
+            <li>{this.innloggetBruker.Epost}</li>
+            <li>{this.innloggetBruker.Medlemsnr}</li>
+          </ul>
+          <p><span><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/kalender" className="linker">Kommende arrangementer</Link> </span>
+            <span> <Link to="/bruker/${this.innloggetBruker.Medlemsnr}/kalender" className="linker">Opprett arrangement</Link></span></p>
+        </div>
+      );
+    }
   }
 
   componentWillMount() {
@@ -409,6 +423,10 @@ class Kalender extends React.Component {
   componentDidMount() {
 
   }
+}
+
+class KalenderAdmin extends React.Component {
+
 }
 
 function erTom(str) {

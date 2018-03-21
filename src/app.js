@@ -22,12 +22,12 @@ class Hjem extends React.Component {
     if (!this.innloggetBruker) {
       return (
         <div>
-          <h1 ref="overskrift" className="overskrift">Røde Kors +</h1>
+
           <div>
             <hr />
-            <span><Link to="/hjem" className="linker">Hjem</Link> </span>
-            <span><Link to="/hjelp" className="linker">Hjelp</Link> </span>
-            <span><Link to="/logginn" className="linker">Logg inn</Link></span>
+            <span class="navbar"><Link to="/hjem" className="linker">Hjem</Link> </span>
+            <span class="navbar"><Link to="/hjelp" className="linker">Hjelp</Link> </span>
+            <span class="navbar"><Link to="/logginn" className="linker">Logg inn</Link></span>
             <hr />
           </div>
           <div>
@@ -39,13 +39,13 @@ class Hjem extends React.Component {
     else if (this.innloggetBruker) {
       return (
         <div>
-          <h1 ref="overskrift" className="overskrift">Røde Kors +</h1>
+
           <div>
             <hr />
-            <span><Link to="/hjem" className="linker">Hjem</Link> </span>
-            <span><Link to="/hjelp" className="linker">Hjelp</Link> </span>
-            <span><Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Profil</Link> </span>
-            <span><button ref="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
+            <span class="navbar"><Link to="/hjem" className="linker">Hjem</Link> </span>
+            <span class="navbar"><Link to="/hjelp" className="linker">Hjelp</Link> </span>
+            <span class="navbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Profil</Link> </span>
+            <span class="navbar"><button ref="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
               this.forceUpdate(),
               history.push("/hjem/"),
               console.log("Logget ut")}}>Logg ut</button></span>
@@ -73,7 +73,7 @@ class Hjem extends React.Component {
 class Nyheter extends React.Component {
   render() {
     return(
-      <div>
+      <div id="forsidetekst">
         <p>Nyheter om Røde Kors og andre ting tang</p>
         <h3>Breaking News!!!</h3>
         <p>Røde Kors får nytt vaktsystem</p>
@@ -109,7 +109,7 @@ class RegistrerBruker extends React.Component {
 
   render() {
     return (
-      <div>
+      <div id="registrerbox">
         <p>Fyll inn alle felter</p>
         Fornavn: <input type="text" ref="registrerFnavnInput" size="20" />
         Etternavn: <input type="text" ref="registrerEnavnInput" size="20" />
@@ -203,7 +203,7 @@ class LoggInn extends React.Component {
 
   render() {
     return (
-      <div>
+      <div id="loginbox">
         <p ref="feilInnlogging"></p>
         Epost: <input type="text" ref="brukernavnInput" autoFocus /><br />
         Passord: <input type="password" ref="passordInput" />

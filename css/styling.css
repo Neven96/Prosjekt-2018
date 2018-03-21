@@ -1,0 +1,34 @@
+html {
+  height: 100%;
+width: 100%;
+left:0;
+right: 0;
+top: 0;
+bottom: 0;
+position: absolute;
+}
+
+#logo {
+  position: relative;
+  width: 60%;
+  display: block;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.navbar {
+  position: relative;
+  left: 80%;
+  padding-right: 0.5em;
+  font-size: 1.25em;
+}
+
+
+
+#registrerbox, #loginbox, #forsidetekst {
+  position: relative;
+  zoom: 150%;
+}

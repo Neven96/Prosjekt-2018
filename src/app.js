@@ -82,7 +82,7 @@ class Nyheter extends React.Component {
 class Hjelp extends React.Component {
   render() {
     return(
-      <div>
+      <div id="hjelptekst">
         <p>Hei, velkommen til hjelpsiden for Røde Kors, her får du hjelp</p>
       </div>
     );

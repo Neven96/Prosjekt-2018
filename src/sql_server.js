@@ -119,17 +119,41 @@ class Bruker {
     connection.query("UPDATE Medlem SET Fornavn = ?, Etternavn = ?, Telefon = ?, Adresse = ?, Postnr = ? WHERE Medlemsnr = ?", [fnavn, enavn, tlf, adresse, postnr, id], (error, result) => {
       if (error) throw error;
 
-      console.log("ID: "+id+", Postnr: "+postnr);
-
       callback();
     });
   }
 }
 
 class Arrangement {
-  opprettArrangement(arrnavn, callback) {
-    connection.query("INSERT INTO Arrangement (arrnavn) VALUES (?)", [arrnavn], (error, result) => {
-      
+  hentArrangementer(callback) {
+    connection.query("SELECT * FROM Arrangement", (error, result) => {
+      if (error) throw error;
+
+      callback(result);
+    });
+  }
+
+  hentArrangement(id, callback) {
+    connection.query("SELECT * FROM Arrangement WHERE arrid = ?", [id], (error, result) => {
+      if (error) throw error;
+
+      callback(result[0]);
+    });
+  }
+
+  opprettArrangement(arrnavn, beskrivelse, callback) {
+    connection.query("INSERT INTO Arrangement (arrnavn, beskrivelse) VALUES (?, ?)", [arrnavn, beskrivelse], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  slettArrangement(id, callback) {
+    connection.query("DELETE FROM Arrangement WHERE arrid = ?", [id], (error, result) => {
+      if (error) throw error;
+
+      callback();
     });
   }
 }

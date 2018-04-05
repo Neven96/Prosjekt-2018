@@ -1,11 +1,11 @@
 html {
   height: 100%;
-width: 100%;
-left:0;
-right: 0;
-top: 0;
-bottom: 0;
-position: absolute;
+  width: 100%;
+  left:0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  position: absolute;
 }
 
 #logo {
@@ -21,7 +21,9 @@ position: absolute;
 
 .navbar {
   position: relative;
-  left: 80%;
+  left: auto;
+  right: auto;
+  text-align: right;
   padding-right: 0.5em;
   font-size: 1.25em;
 }
@@ -31,4 +33,9 @@ position: absolute;
 #registrerbox, #loginbox, #forsidetekst {
   position: relative;
   zoom: 150%;
+}
+
+.arrangementDiv {
+  border-style: outset;
+
 }

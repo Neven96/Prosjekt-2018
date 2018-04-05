@@ -5,7 +5,6 @@ import {createHashHistory} from "history";
 import {bruker, arrangement} from "./sql_server";
 
 export const history = createHashHistory();
-var medlemsNr;
 
 class Hjem extends React.Component {
   constructor() {
@@ -19,8 +18,7 @@ class Hjem extends React.Component {
     if (!this.innloggetBruker) {
       return (
         <div>
-
-          <div>
+          <div className="navbar">
             <hr />
             <span className="navbar"><Link to="/hjem" className="linker">Hjem</Link> </span>
             <span className="navbar"><Link to="/hjelp" className="linker">Hjelp</Link> </span>
@@ -36,15 +34,15 @@ class Hjem extends React.Component {
     else if (this.innloggetBruker) {
       return (
         <div>
-
-          <div>
+          <div className="navbar">
             <hr />
             <span className="navbar"><Link to="/hjem" className="linker">Hjem</Link> </span>
             <span className="navbar"><Link to="/hjelp" className="linker">Hjelp</Link> </span>
+            <span className="navbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Arrangementer</Link> </span>
             <span className="navbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Profil</Link> </span>
             <span className="navbar"><button ref="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
-              this.forceUpdate(),
               history.push("/hjem/"),
+              this.forceUpdate(),
               console.log("Logget ut")}}>Logg ut</button></span>
             <hr />
           </div>
@@ -247,36 +245,19 @@ class Profil extends React.Component {
   render() {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
-    if (this.innloggetBruker.Medlemsnr <= 0) {
-      return (
-        <div>
-          <p><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</Link></p>
-          <ul>
-            <li>{this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn}</li>
-            <li>{this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed}</li>
-            <li>{this.innloggetBruker.Telefon}</li>
-            <li>{this.innloggetBruker.Epost}</li>
-            <li>{this.innloggetBruker.Medlemsnr}</li>
-          </ul>
-          <p><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/kalender" className="linker">Kommende arrangementer</Link></p>
-        </div>
-      );
-    } else if (this.innloggetBruker.Medlemsnr >= 1) {
-      return (
-        <div>
-          <p><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</Link></p>
-          <ul>
-            <li>{this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn}</li>
-            <li>{this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed}</li>
-            <li>{this.innloggetBruker.Telefon}</li>
-            <li>{this.innloggetBruker.Epost}</li>
-            <li>{this.innloggetBruker.Medlemsnr}</li>
-          </ul>
-          <p><span><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/kalender" className="linker">Kommende arrangementer</Link> </span>
-            <span> <Link to="/bruker/${this.innloggetBruker.Medlemsnr}/kalender" className="linker">Opprett arrangement</Link></span></p>
-        </div>
-      );
-    }
+    return (
+      <div>
+        <p><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</Link></p>
+        <ul>
+          <li>{this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn}</li>
+          <li>{this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed}</li>
+          <li>{this.innloggetBruker.Telefon}</li>
+          <li>{this.innloggetBruker.Epost}</li>
+          <li>{this.innloggetBruker.Medlemsnr}</li>
+        </ul>
+        <p><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Kommende arrangementer</Link></p>
+      </div>
+    );
   }
 
   componentWillMount() {
@@ -302,7 +283,6 @@ class RedigerProfil extends React.Component {
   constructor() {
       super();
 
-      this.bruker = {};
       this.brukerSted = {};
       this.innloggetBruker;
   }
@@ -332,14 +312,6 @@ class RedigerProfil extends React.Component {
 
   componentDidMount() {
     let oppFnavn; let oppEnavn; let oppTlf; let oppAdr; let oppPostnr;
-    // bruker.hentBruker(medlemsNr, (result) => {
-    //   this.bruker = result;
-    //   this.forceUpdate();
-    //   this.refs.oppdaterFornavnInput.value = this.bruker.Fornavn;
-    //   this.refs.oppdaterEtternavnInput.value = this.bruker.Etternavn;
-    //   this.refs.oppdaterTlfInput.value = this.bruker.Telefon;
-    //   this.refs.oppdaterAdrInput.value = this.bruker.Adresse;
-    // });
 
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
@@ -385,7 +357,7 @@ class RedigerProfil extends React.Component {
                 console.log("Tlfsjekkoppdater funker");
                 bruker.oppdaterBruker(this.innloggetBruker.Medlemsnr, oppFnavn, oppEnavn, oppTlf, oppAdr, oppPostnr, (result) => {
                   console.log("Oppdatering funker");
-                  history.push("/bruker/${medlemsNr}");
+                  history.push("/bruker/${this.innloggetBruker.Medlemsnr}");
                 });
               }
               else {
@@ -405,28 +377,288 @@ class RedigerProfil extends React.Component {
   }
 }
 
+/*
+II  III     II     II      IIIIIII II     II IIIIII   IIIIIII IIIIII
+II III     IIII    II      II      IIII   II II  III  II      II   II
+IIII      II  II   II      IIII    II  II II II   III IIII    IIIIII
+II III   IIIIIIII  II      II      II   IIII II  III  II      II   II
+II  III II      II IIIIIII IIIIIII II    III IIIIII   IIIIIII II    II
+*/
+let arrid;
+
 class Kalender extends React.Component {
   constructor() {
     super();
 
+    this.innloggetBruker;
+  }
 
+  render() {
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+    if (this.innloggetBruker.Adminlvl <= 0) {
+      return(
+        <div>
+          <div ref="kommendeArrangementer">
+            <p>Kommende arrangementer</p>
+          </div>
+          <Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Tilbake</Link>
+        </div>
+      );
+    } else if (this.innloggetBruker.Adminlvl >= 1) {
+      return(
+        <div>
+          <Link to="/bruker/${this.innloggetBruker.Medlemsnr}/adminkalender" className="linker">Opprett arrangement</Link>
+          <div ref="kommendeArrangementer">
+            <p>Kommende arrangementer</p>
+          </div>
+          <Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Tilbake</Link>
+        </div>
+      );
+    }
+  }
+
+  componentDidMount() {
+    this.update();
+  }
+
+  update() {
+    this.refs.kommendeArrangementer.innerText = "";
+
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+
+    let str; let string; let array; let array2;
+    arrangement.hentArrangementer((result) => {
+      for (let arr of result) {
+        let arrDiv = document.createElement("div");
+        arrDiv.className = "arrangementDiv";
+
+        let arrTittel = document.createElement("p");
+        let arrNavn = document.createElement("span");
+        let arrBeskrivelse = document.createElement("span");
+        //Navn og beskrivelse av arrangement
+        arrNavn.innerText = arr.arrnavn+"\n";
+        arrBeskrivelse.innerText = arr.beskrivelse;
+        arrTittel.appendChild(arrNavn);
+        arrTittel.appendChild(arrBeskrivelse);
+
+        let arrDatoOppsett = document.createElement("p");
+        let arrOppmoteSted = document.createElement("span");
+        let arrDag = document.createElement("span");
+        let arrOppmoteTid = document.createElement("span");
+        let arrStart = document.createElement("span");
+        let arrVarighet = document.createElement("span");
+        //Dato og oppmøte og sted for arrangement
+        if (arr.oppmøtested != null) {
+          arrOppmoteSted.innerText = "Sted: "+arr.oppmøtested+"\n";
+        } else {
+          arrOppmoteSted.innerText = "Sted: Kommer senere \n";
+        }
+        //Drittgreie for å få dato
+        str = arr.startdato;
+        if (str != null) {
+          string = str.toString();
+          array = string.split(" ");
+          arrDag.innerText = "Oppmøte: "+array[2]+" "+array[1]+" "+array[3];
+        } else {
+          arrDag.innerText = "Oppmøte: Dato kommer senere";
+        }
+        //Oppmøtetid
+        array = " ";
+        str = arr.oppmøtetid;
+        if (str != null) {
+          string = str.toString();
+          array = string.split(":");
+          arrOppmoteTid.innerText = ", Kl: "+array[0]+":"+array[1]+"\n";
+        } else {
+          arrOppmoteTid.innerText = ", Tidspunkt kommer senere \n";
+        }
+        //Varighet
+        array = " ";
+        str = arr.tidstart;
+        if (str != null) {
+          string = str.toString();
+          array = string.split(":");
+          arrStart.innerText = "Oppstart: ca. kl "+array[0]+":"+array[1];
+          str = arr.tidslutt;
+          if (str != null) {
+            string = str.toString();
+            array2 = string.split(":");
+            let timer = array2[0]-array[0];
+            let min = array2[1]-array[1];
+            arrVarighet.innerText = ", Varighet: ca. "+timer+" timer "+min+" minutter";
+          }
+          else {
+            arrVarighet.innerText = ", Varighet: Ingen oppsatt slutt";
+          }
+        }
+
+        arrDatoOppsett.appendChild(arrOppmoteSted);
+        arrDatoOppsett.appendChild(arrDag);
+        arrDatoOppsett.appendChild(arrOppmoteTid);
+        arrDatoOppsett.appendChild(arrStart);
+        arrDatoOppsett.appendChild(arrVarighet);
+
+        arrDiv.appendChild(arrTittel);
+        arrDiv.appendChild(arrDatoOppsett);
+
+        if (this.innloggetBruker.Adminlvl >= 1) {
+          let redigerArrKnapp = document.createElement("button");
+          let slettArrKnapp = document.createElement("button");
+
+          redigerArrKnapp.onclick = () => {
+            history.push("/bruker/:medlemsnr/arrangement/:arrid")
+            arrid = arr.arrid;
+            return arrid;
+          }
+
+          slettArrKnapp.onclick = () => {
+            let slett = confirm("Er du sikker på du vil slette arrangement\n"+arr.arrnavn+"?")
+            if (slett) {
+              arrangement.slettArrangement(arr.arrid, (result) => {
+                console.log("Arrangement med navn: "+arr.arrnavn+", og id:"+arr.arrid+" slettet");
+                this.update();
+              });
+            }
+          }
+
+          redigerArrKnapp.innerText = "Rediger";
+          slettArrKnapp.innerText = "Slett";
+          arrDiv.appendChild(redigerArrKnapp);
+          arrDiv.appendChild(slettArrKnapp);
+        }
+
+        if (this.refs.kommendeArrangementer) {
+          this.refs.kommendeArrangementer.appendChild(arrDiv);
+        }
+      }
+    });
+  }
+}
+
+class KalenderAdmin extends React.Component {
+  constructor() {
+    super();
   }
 
   render() {
     return(
       <div>
-
+        <div ref="opprettArrangementDiv">
+          <input type="text" ref="arrNavn" placeholder="Arrangementnavn" /> <br />
+          <textarea rows="5" cols="40" ref="arrBeskrivelse" placeholder="Beskrivelse" /> <br />
+          <p ref="opprettArrangementAdvarsel"></p>
+          <button ref="opprettArrangement">Opprett arrangement</button>
+          <button ref="tilbakeArrangement">Lukk</button>
+        </div>
       </div>
-    )
+    );
   }
 
   componentDidMount() {
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
+    let arrNavn; let arrBeskrivelse;
+    this.refs.opprettArrangement.onclick = () => {
+      arrNavn = this.refs.arrNavn.value;
+      arrBeskrivelse = this.refs.arrBeskrivelse.value;
+
+      if (erTom(arrNavn) || erTom(arrBeskrivelse)) {
+        this.refs.opprettArrangementAdvarsel.innerText = "Fyll inn begge felter!";
+      } else {
+        arrangement.opprettArrangement(arrNavn, arrBeskrivelse, (result) => {
+          console.log("Arrangement opprettet");
+          history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer")
+        });
+      }
+    }
+
+    this.refs.tilbakeArrangement.onclick = () => {
+      history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer");
+    }
   }
 }
 
-class KalenderAdmin extends React.Component {
+class RedigerArrangment extends React.Component {
+  constructor() {
+    super();
 
+    this.arrangment = {};
+  }
+
+  render() {
+    return(
+      <div>
+        <div>
+          <input type="text" ref="oppdaterArrNavn" placeholder="Arrangementnavn" />
+          <br />
+          <textarea rows="5" cols="40" ref="oppdaterArrBeskrivelse" placeholder="Beskrivelse" />
+        </div>
+        <br />
+        <div>
+          <input type="date" ref="oppdaterDato" />
+          <input type="text" ref="oppdaterSted" placeholder="Oppmøtested" />
+          <input type="time" ref="oppdaterOppmote" />
+          <br />
+          <input type="time" ref="oppdaterStartTid" />
+          <input type="time" ref="oppdaterSluttTid" />
+        </div>
+        <br />
+        <div>
+          <textarea rows="5" cols="40" ref="oppdaterUtstyrsliste" placeholder="Utstyrsliste" />
+          <br />
+          <input type="number" ref="oppdaterVaktPoeng" placeholder="Vaktpoeng" min="1" />
+        </div>
+        <button ref="redigerArrangement">Rediger arrangement</button>
+        <button ref="tilbakeArrangement">Lukk</button>
+      </div>
+    );
+  }
+
+  componentDidMount() {
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+
+    let str; let string; let array; let dato; let month;
+    arrangement.hentArrangement(arrid, (result) => {
+      str = result.startdato;
+      if (str != null) {
+        string = str.toString();
+        array = string.split(" ");
+        switch(array[1]) {
+          case "Jan":month = "01";break;
+          case "Feb":month = "02";break;
+          case "Mar":month = "03";break;
+          case "Apr":month = "04";break;
+          case "May":month = "05";break;
+          case "Jun":month = "06";break;
+          case "Jul":month = "07";break;
+          case "Aug":month = "08";break;
+          case "Sep":month = "09";break;
+          case "Oct":month = "10";break;
+          case "Nov":month = "11";break;
+          case "Des":month = "12";break;
+        }
+        dato = array[3]+"-"+month+"-"+array[2];
+      }
+
+      this.refs.oppdaterArrNavn.value = result.arrnavn;
+      this.refs.oppdaterArrBeskrivelse.value = result.beskrivelse;
+      this.refs.oppdaterDato.value = dato;
+      this.refs.oppdaterSted.value = result.oppmøtested;
+      this.refs.oppdaterOppmote.value = result.oppmøtetid;
+      this.refs.oppdaterStartTid.value = result.tidstart;
+      this.refs.oppdaterSluttTid.value = result.tidslutt;
+      this.refs.oppdaterUtstyrsliste.value = result.utstyrsliste;
+      this.refs.oppdaterVaktPoeng.value = result.vaktpoeng;
+    });
+
+    this.refs.tilbakeArrangement.onclick = () => {
+      history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer");
+    }
+  }
 }
 
 function erTom(str) {
@@ -445,7 +677,9 @@ ReactDOM.render((
         <Route exact path="/registrerBruker" component={RegistrerBruker} />
         <Route exact path="/bruker/:medlemsnr" component={Profil} />
         <Route exact path="/bruker/:medlemsnr/redigerprofil" component={RedigerProfil} />
-        <Route exact path="/bruker/:medlemsnr/kalender" component={Kalender} />
+        <Route exact path="/bruker/:medlemsnr/arrangementer" component={Kalender} />
+        <Route exact path="/bruker/:medlemsnr/adminkalender" component={KalenderAdmin} />
+        <Route exact path="/bruker/:medlemsnr/arrangement/:arrid" component={RedigerArrangment} />
       </Switch>
     </div>
   </HashRouter>

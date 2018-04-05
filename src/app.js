@@ -20,9 +20,9 @@ class Hjem extends React.Component {
         <div>
           <div className="navbar">
             <hr />
-            <span className="navbar"><Link to="/hjem" className="linker">Hjem</Link> </span>
-            <span className="navbar"><Link to="/hjelp" className="linker">Hjelp</Link> </span>
-            <span className="navbar"><Link to="/logginn" className="linker">Logg inn</Link></span>
+            <span className="spanbar"><Link to="/hjem" className="linker">Hjem</Link> </span>
+            <span className="spanbar"><Link to="/hjelp" className="linker">Hjelp</Link> </span>
+            <span className="spanbar"><Link to="/logginn" className="linker">Logg inn</Link></span>
             <hr />
           </div>
           <div>
@@ -36,11 +36,11 @@ class Hjem extends React.Component {
         <div>
           <div className="navbar">
             <hr />
-            <span className="navbar"><Link to="/hjem" className="linker">Hjem</Link> </span>
-            <span className="navbar"><Link to="/hjelp" className="linker">Hjelp</Link> </span>
-            <span className="navbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Arrangementer</Link> </span>
-            <span className="navbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Profil</Link> </span>
-            <span className="navbar"><button ref="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
+            <span className="spanbar"><Link to="/hjem" className="linker">Hjem</Link> </span>
+            <span className="spanbar"><Link to="/hjelp" className="linker">Hjelp</Link> </span>
+            <span className="spanbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Arrangementer</Link> </span>
+            <span className="spanbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Profil</Link> </span>
+            <span className="spanbar"><button ref="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
               history.push("/hjem/"),
               this.forceUpdate(),
               console.log("Logget ut")}}>Logg ut</button></span>
@@ -200,11 +200,11 @@ class LoggInn extends React.Component {
     return (
       <div id="loginbox">
         <p ref="feilInnlogging"></p>
-        Epost: <input type="text" ref="brukernavnInput" autoFocus /><br />
-        Passord: <input type="password" ref="passordInput" />
-        <span><Link to="/glemtpassord" className="linker">Glemt passord</Link></span><br />
-        <button ref="loggInnKnapp" className="knapper">Logg inn</button>
-        <p>Har du ikke bruker, registrer deg <span><Link to="/registrerBruker" className="linker">her</Link></span></p>
+        Epost: <input type="text" ref="brukernavnInput" className="logginninput" autoFocus /><br />
+        Passord: <input type="password" ref="passordInput" className="logginninput" /><br />
+        <span><button ref="loggInnKnapp" className="logginnknapp">Logg inn</button>
+        <Link to="/glemtpassord" className="glemtpassordknapp">Glemt passord</Link></span>
+        <p>Har du ikke bruker, registrer deg <span><Link to="/registrerBruker" className="knapper">her</Link></span></p>
       </div>
     );
   }
@@ -246,16 +246,16 @@ class Profil extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return (
-      <div>
-        <p><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</Link></p>
-        <ul>
-          <li>{this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn}</li>
-          <li>{this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed}</li>
-          <li>{this.innloggetBruker.Telefon}</li>
-          <li>{this.innloggetBruker.Epost}</li>
-          <li>{this.innloggetBruker.Medlemsnr}</li>
+      <div id="profil">
+        <p id="redigerprofil"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="redigerprofil">Rediger profil</Link></p>
+        <ul id="profilinfo">
+          <li>Navn: {this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn}</li>
+          <li>Adresse: {this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed}</li>
+          <li>Telefonnummer: {this.innloggetBruker.Telefon}</li>
+          <li>Epost: {this.innloggetBruker.Epost}</li>
+          <li>Medlemsnummer: {this.innloggetBruker.Medlemsnr}</li>
         </ul>
-        <p><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Kommende arrangementer</Link></p>
+        <p id="kommendearr"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="kommendearr">Kommende arrangementer</Link></p>
       </div>
     );
   }
@@ -291,7 +291,7 @@ class RedigerProfil extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return(
-      <div>
+      <div id="redigerprofil">
         <input type="text" ref="oppdaterFornavnInput" />
         <br />
         <input type="text" ref="oppdaterEtternavnInput" />

@@ -1,41 +1,89 @@
 html {
   height: 100%;
-  width: 100%;
-  left:0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  position: absolute;
+width: 100%;
+left:0;
+right: 0;
+top: 0;
+bottom: 0;
+position: absolute;
 }
 
 #logo {
   position: relative;
-  width: 60%;
+  width: 40%;
   display: block;
   -webkit-box-sizing: content-box;
-  -moz-box-sizing: content-box;
   box-sizing: content-box;
   margin-left: auto;
   margin-right: auto;
 }
 
 .navbar {
+  background-color: #f8f8f9;
   position: relative;
   left: auto;
   right: auto;
+  margin-left: auto;
+  margin-right: auto;
   text-align: right;
-  padding-right: 0.5em;
-  font-size: 1.25em;
+}
+
+.linker {
+  position: sticky;
+  color: #000000;
+  font-size: 150%;
+  margin-right: 0.5em;
+  text-decoration: none;
+}
+
+.linker:hover {
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.linker::before {
+  color: #000000;
+}
+
+.linker::after {
+  color: #ff0000;
 }
 
 
-
-#registrerbox, #loginbox, #forsidetekst {
+#registrerbox, #loginbox, #forsidetekst, #hjelptekst, #profilinfo {
   position: relative;
   zoom: 150%;
+  text-align: center;
+  margin-top: 1.5em;
 }
+
+#profilinfo {
+  list-style-type: none;
+  border: 0.1em solid black;
+}
+
+#kommendearr {
+  text-align: center;
+}
+
+#redigerprofil {
+  text-align: center;
+}
+
 
 .arrangementDiv {
   border-style: outset;
+}
 
+.knapper {
+  text-decoration: none;
+}
+
+.glemtpassordknapp {
+  margin-left: 1em;
+  font-size: 65%;
+}
+
+.logginninput {
+  margin-bottom: 1em;
 }

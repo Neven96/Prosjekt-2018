@@ -106,20 +106,23 @@ class RegistrerBruker extends React.Component {
     return (
       <div id="registrerbox">
         <p>Fyll inn alle felter</p>
-        Fornavn: <input type="text" ref="registrerFnavnInput" size="20" />
-        Etternavn: <input type="text" ref="registrerEnavnInput" size="20" />
+        <ul>
+        <li id="FornavnReg">Fornavn: <input id="registrerFnavnInput" type="text" ref="registrerFnavnInput" size="20" /></li>
         <br></br>
-        Mobil: <input type="number" ref="registrerTlfInput" />
+        <li id="EtternavnReg">Etternavn: <input id="registrerEnavnInput" type="text" ref="registrerEnavnInput" size="20" /></li>
         <br></br>
-        Adresse: <input type="text" ref="registrerAdrInput" />
+        <li id="TelefonReg"> Mobil: <input id="registrerTlfInput" type="number" ref="registrerTlfInput" /></li>
         <br></br>
-        Postnummer: <input type="number" ref="registrerPostnrInput" maxLength="4" size="4" />
-        <input type="text" ref="registrerPoststedInput" readOnly />
+        <li id="AdresseReg"> Adresse:  <input id="registrerAdrInput" type="text" ref="registrerAdrInput" /></li>
         <br></br>
-        Epost: <input type="text" ref="registrerEpostInput" />
+        <li id="PostnrReg"> Postnummer: <input id="registrerPostnrInput" type="number" ref="registrerPostnrInput" maxLength="4" size="4" />
+        <input id="registrerPoststedInput" type="text" ref="registrerPoststedInput" readOnly /></li>
         <br></br>
-        Passord: <input type="password" ref="registrerPassordInput" />
+        <li id="EpostReg"> Epost: <input id="registrerEpostInput" type="text" ref="registrerEpostInput" /></li>
         <br></br>
+        <li id="PassordReg"> Passord: <input id="registrerPassordInput" type="password" ref="registrerPassordInput" /></li>
+        <br></br>
+        </ul>
         <p ref="feilRegistrering"></p>
         <button ref="registrerKnapp" className="knapper">Registrer</button>
       </div>
@@ -204,7 +207,7 @@ class LoggInn extends React.Component {
         Passord: <input type="password" ref="passordInput" className="logginninput" /><br />
         <span><button ref="loggInnKnapp" className="logginnknapp">Logg inn</button>
         <Link to="/glemtpassord" className="glemtpassordknapp">Glemt passord</Link></span>
-        <p>Har du ikke bruker, registrer deg <span><Link to="/registrerBruker" className="knapper">her</Link></span></p>
+        <p>Har du ikke bruker, registrer deg <span><Link to="/registrerBruker" className="registrerherknapp">her</Link></span></p>
       </div>
     );
   }
@@ -247,7 +250,7 @@ class Profil extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return (
       <div id="profil">
-        <p id="redigerprofil"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="redigerprofil">Rediger profil</Link></p>
+        <p id="redigerprofilknapp"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="redigerprofil">Rediger profil</Link></p>
         <ul id="profilinfo">
           <li>Navn: {this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn}</li>
           <li>Adresse: {this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed}</li>
@@ -399,10 +402,10 @@ class Kalender extends React.Component {
     if (this.innloggetBruker.Adminlvl <= 0) {
       return(
         <div>
+          <Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Tilbake</Link>
           <div ref="kommendeArrangementer">
             <p>Kommende arrangementer</p>
           </div>
-          <Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Tilbake</Link>
         </div>
       );
     } else if (this.innloggetBruker.Adminlvl >= 1) {

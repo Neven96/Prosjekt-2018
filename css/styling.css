@@ -9,6 +9,7 @@ position: absolute;
 }
 
 #logo {
+
   position: relative;
   width: 40%;
   display: block;
@@ -59,15 +60,25 @@ position: absolute;
 
 #profilinfo {
   list-style-type: none;
-  border: 0.1em solid black;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  background-color: #f8f8f9;
+  border-style: outset;
 }
 
-#kommendearr {
+#kommendearr, #redigerprofilknapp {
   text-align: center;
+  text-decoration: none;
 }
 
 #redigerprofil {
   text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  background-color: #f8f8f9;
+  border-style: outset;
 }
 
 
@@ -86,4 +97,33 @@ position: absolute;
 
 .logginninput {
   margin-bottom: 1em;
+}
+
+#registrerbox {
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  background-color: #f8f8f9;
+  border-style: outset;
+}
+
+#registrerFnavnInput, #registrerEnavnInput, #registrerTlfInput, #registrerAdrInput, #registrerPoststedInput, #registrerEpostInput, #registrerPassordInput {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  width: 40%;
+}
+
+#registrerPostnrInput {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  width: 12.5%;
+}
+
+#FornavnReg, #EtternavnReg, #TelefonReg, #AdresseReg, #PostnrReg, #EpostReg, #PassordReg {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  list-style-type: none;
 }

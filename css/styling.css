@@ -1,15 +1,14 @@
 html {
-  height: 100%;
-width: 100%;
-left:0;
-right: 0;
-top: 0;
-bottom: 0;
-position: absolute;
+    height: 100%;
+  width: 100%;
+  left:0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  position: absolute;
 }
 
 #logo {
-
   position: relative;
   width: 40%;
   display: block;
@@ -41,15 +40,6 @@ position: absolute;
   font-weight: bold;
   text-decoration: none;
 }
-
-.linker::before {
-  color: #000000;
-}
-
-.linker::after {
-  color: #ff0000;
-}
-
 
 #registrerbox, #loginbox, #forsidetekst, #hjelptekst, #profilinfo {
   position: relative;
@@ -107,23 +97,30 @@ position: absolute;
   border-style: outset;
 }
 
-#registrerFnavnInput, #registrerEnavnInput, #registrerTlfInput, #registrerAdrInput, #registrerPoststedInput, #registrerEpostInput, #registrerPassordInput {
-  position: relative;
-  margin-left: auto;
-  margin-right: auto;
-  width: 40%;
+.rad:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.registrer {
+  float: left;
+  width: 75%;
+  margin-top: 6px;
 }
 
 #registrerPostnrInput {
-  position: relative;
-  margin-left: auto;
-  margin-right: auto;
-  width: 12.5%;
+  width: 11%;
+  margin-top: 6px;
+}
+
+#registrerPoststedInput {
+  width: 24.5%;
+  margin-top: 6px;
 }
 
 #FornavnReg, #EtternavnReg, #TelefonReg, #AdresseReg, #PostnrReg, #EpostReg, #PassordReg {
-  position: relative;
-  margin-left: auto;
-  margin-right: auto;
-  list-style-type: none;
+  float: left;
+  width: 25%;
+  margin-top: 6px;
 }

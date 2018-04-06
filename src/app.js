@@ -106,23 +106,66 @@ class RegistrerBruker extends React.Component {
     return (
       <div id="registrerbox">
         <p>Fyll inn alle felter</p>
-        <ul>
-        <li id="FornavnReg">Fornavn: <input id="registrerFnavnInput" type="text" ref="registrerFnavnInput" size="20" /></li>
-        <br></br>
-        <li id="EtternavnReg">Etternavn: <input id="registrerEnavnInput" type="text" ref="registrerEnavnInput" size="20" /></li>
-        <br></br>
-        <li id="TelefonReg"> Mobil: <input id="registrerTlfInput" type="number" ref="registrerTlfInput" /></li>
-        <br></br>
-        <li id="AdresseReg"> Adresse:  <input id="registrerAdrInput" type="text" ref="registrerAdrInput" /></li>
-        <br></br>
-        <li id="PostnrReg"> Postnummer: <input id="registrerPostnrInput" type="number" ref="registrerPostnrInput" maxLength="4" size="4" />
-        <input id="registrerPoststedInput" type="text" ref="registrerPoststedInput" readOnly /></li>
-        <br></br>
-        <li id="EpostReg"> Epost: <input id="registrerEpostInput" type="text" ref="registrerEpostInput" /></li>
-        <br></br>
-        <li id="PassordReg"> Passord: <input id="registrerPassordInput" type="password" ref="registrerPassordInput" /></li>
-        <br></br>
-        </ul>
+
+        <div className="rad">
+          <div>
+          <label id="FornavnReg">Fornavn: </label>
+          </div>
+          <div id="registrerFnavnInput">
+          <input type="text" ref="registrerFnavnInput" size="20" />
+          </div>
+        </div>
+
+        <div className="rad">
+          <div>
+          <label id="EtternavnReg">Etternavn: </label>
+          </div>
+          <div className="registrer" id="registrerEnavnInput">
+          <input type="text" ref="registrerEnavnInput" size="20" />
+          </div>
+        </div>
+        <div className="rad">
+          <div>
+          <label id="TelefonReg">Telefonnummer: </label>
+          </div>
+          <div className="registrer" id="registrerTlfInput">
+          <input type="number" ref="registrerTlfInput" size="20" />
+          </div>
+        </div>
+        <div className="rad">
+          <div>
+          <label id="AdresseReg">Adresse: </label>
+          </div>
+          <div className="registrer" id="registrerAdrInput">
+          <input type="text" ref="registrerAdrInput" size="20" />
+          </div>
+        </div>
+        <div className="rad">
+          <div>
+          <label id="PostnrReg">Postnr: </label>
+          </div>
+          <div>
+          <input id="registrerPostnrInput" type="number" ref="registrerPostnrInput" maxlength="4" size="4" />
+          <input id="registrerPoststedInput" type="text" ref="registrerPoststedInput" readOnly />
+          </div>
+        </div>
+        <div className="rad">
+          <div>
+          <label id="EpostReg">Epost: </label>
+          </div>
+          <div className="registrer" id="registrerEpostInput">
+          <input type="text" ref="registrerEpostInput" size="20" />
+          </div>
+        </div>
+        <div className="rad">
+          <div>
+          <label id="PassordReg">Passord: </label>
+          </div>
+          <div className="registrer" id="registrerPassordInput">
+          <input type="password" ref="registrerPassordInput" size="20" />
+          </div>
+        </div>
+
         <p ref="feilRegistrering"></p>
         <button ref="registrerKnapp" className="knapper">Registrer</button>
       </div>

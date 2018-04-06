@@ -122,6 +122,14 @@ class Bruker {
       callback();
     });
   }
+
+  sokBruker(inn, callback) {
+  connection.query("SELECT * FROM Medlem WHERE Fornavn LIKE ? OR Etternavn LIKE ? ORDER BY Fornavn ASC", [inn + "%", inn + "%"], (error, result) => {
+    if(error) throw error;
+
+    callback(result);
+  });
+}
 }
 
 class Arrangement {

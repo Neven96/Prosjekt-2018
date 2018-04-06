@@ -40,6 +40,7 @@ class Hjem extends React.Component {
             <span className="spanbar"><Link to="/hjelp" className="linker">Hjelp</Link> </span>
             <span className="spanbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Arrangementer</Link> </span>
             <span className="spanbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Profil</Link> </span>
+            <span className="navbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/sok" className="linker">Søk</Link> </span>
             <span className="spanbar"><button ref="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
               history.push("/hjem/"),
               this.forceUpdate(),
@@ -423,6 +424,62 @@ class RedigerProfil extends React.Component {
   }
 }
 
+class BrukerSok extends React.Component {
+  constructor() {
+    super();
+    this.innloggetBruker;
+  }
+
+  render() {
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+    return(
+      <div id="soktest">
+        <input ref="inn" type = "text" /> <button ref ="sokKnapp">Søk</button>
+        <div ref="sokeResultat">
+        </div>
+      </div>
+    )
+  }
+
+  componentDidMount() {
+    this.refs.sokKnapp.onclick = () => {
+      //this.refs.sokeResultat.value = "";
+      let input = this.refs.inn.value;
+      if (erTom(input)) {
+        this.refs.sokeResultat.innerText = "Du må ha søkeord!! Tulling"
+      } else {
+        bruker.sokBruker(input, (result) => {
+          console.log(result);
+          let ul = document.createElement("ul");
+          while(ul.firstChild){
+            ul.removeChild(ul.firstChild);
+          }
+          for(let medlem of result){
+            let button = document.createElement("button");
+            let navn = document.createElement("li");
+
+            navn.innerText = medlem.Fornavn + ', ' + medlem.Etternavn + " ";
+            button.textContent = "X ";
+
+            ul.appendChild(navn);
+            ul.appendChild(button);
+          }
+          this.refs.sokeResultat.appendChild(ul);
+
+        })
+      }
+    }
+  }
+  update(){
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+    if (this.innloggetBruker.Adminlvl <= 0){
+      sokBruker();
+    }
+  }
+}
+
 /*
 II  III     II     II      IIIIIII II     II IIIIII   IIIIIII IIIIII
 II III     IIII    II      II      IIII   II II  III  II      II   II
@@ -724,6 +781,7 @@ ReactDOM.render((
         <Route exact path="/bruker/:medlemsnr" component={Profil} />
         <Route exact path="/bruker/:medlemsnr/redigerprofil" component={RedigerProfil} />
         <Route exact path="/bruker/:medlemsnr/arrangementer" component={Kalender} />
+        <Route exact path="/bruker/:medlemsnr/sok" component={BrukerSok} />
         <Route exact path="/bruker/:medlemsnr/adminkalender" component={KalenderAdmin} />
         <Route exact path="/bruker/:medlemsnr/arrangement/:arrid" component={RedigerArrangment} />
       </Switch>

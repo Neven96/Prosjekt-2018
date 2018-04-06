@@ -31,7 +31,7 @@ class Hjem extends React.Component {
         </div>
       );
     }
-    else if (this.innloggetBruker) {
+    else if (this.innloggetBruker && this.innloggetBruker.Aktivert == 1) {
       return (
         <div>
           <div className="navbar">
@@ -42,14 +42,23 @@ class Hjem extends React.Component {
             <span className="spanbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Profil</Link> </span>
             <span className="navbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/sok" className="linker">Søk</Link> </span>
             <span className="spanbar"><button ref="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
-              history.push("/hjem/"),
               this.forceUpdate(),
+              history.push("/"),
               console.log("Logget ut")}}>Logg ut</button></span>
             <hr />
           </div>
           <div>
             <p></p>
           </div>
+        </div>
+      );
+    } else if (this.innloggetBruker.Aktivert == 0) {
+      return (
+        <div>
+          <button ref="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
+            this.forceUpdate(),
+            history.push("/hjem/"),
+            console.log("Logget ut")}}>Logg ut</button>
         </div>
       );
     }
@@ -61,20 +70,51 @@ class Hjem extends React.Component {
   }
 
   componentDidMount() {
-    this.forceUpdate();
+    this.innloggetBruker = bruker.hentBruker();
     history.push("/hjem/");
+    this.forceUpdate();
   }
 }
 
 class Nyheter extends React.Component {
+  constructor() {
+    super();
+
+    this.innloggetBruker;
+  }
+
   render() {
-    return(
-      <div id="forsidetekst">
-        <p>Nyheter om Røde Kors og andre ting tang</p>
-        <h3>Breaking News!!!</h3>
-        <p>Røde Kors får nytt vaktsystem</p>
-      </div>
-    );
+    this.innloggetBruker = bruker.hentBruker();
+    if (!this.innloggetBruker) {
+      return(
+        <div id="forsidetekst">
+          <p>Nyheter om Røde Kors og andre ting tang</p>
+          <h3>Breaking News!!!</h3>
+          <p>Røde Kors får nytt vaktsystem</p>
+        </div>
+      );
+    } else if (this.innloggetBruker) {
+      if (this.innloggetBruker.Aktivert == 1) {
+        return(
+          <div id="forsidetekst">
+            <p>Nyheter om Røde Kors og andre ting tang</p>
+            <h3>Breaking News!!!</h3>
+            <p>Røde Kors får nytt vaktsystem</p>
+          </div>
+        );
+      } else if (this.innloggetBruker.Aktivert == 0) {
+        return(
+          <div id="forsidetekst">
+            <p>Brukeren er ikke aktivert</p>
+          </div>
+        );
+      }
+    }
+  }
+
+  componentDidMount() {
+    this.innloggetBruker = bruker.hentBruker();
+    this.forceUpdate();
   }
 }
 
@@ -107,66 +147,63 @@ class RegistrerBruker extends React.Component {
     return (
       <div id="registrerbox">
         <p>Fyll inn alle felter</p>
-
         <div className="rad">
           <div>
-          <label id="FornavnReg">Fornavn: </label>
+            <label id="FornavnReg">Fornavn: </label>
           </div>
           <div id="registrerFnavnInput">
-          <input type="text" ref="registrerFnavnInput" size="20" />
+            <input type="text" ref="registrerFnavnInput" size="20" />
           </div>
         </div>
-
         <div className="rad">
           <div>
-          <label id="EtternavnReg">Etternavn: </label>
+            <label id="EtternavnReg">Etternavn: </label>
           </div>
           <div className="registrer" id="registrerEnavnInput">
-          <input type="text" ref="registrerEnavnInput" size="20" />
+            <input type="text" ref="registrerEnavnInput" size="20" />
           </div>
         </div>
         <div className="rad">
           <div>
-          <label id="TelefonReg">Telefonnummer: </label>
+            <label id="TelefonReg">Telefonnummer: </label>
           </div>
           <div className="registrer" id="registrerTlfInput">
-          <input type="number" ref="registrerTlfInput" size="20" />
+            <input type="number" ref="registrerTlfInput" size="20" />
           </div>
         </div>
         <div className="rad">
           <div>
-          <label id="AdresseReg">Adresse: </label>
+            <label id="AdresseReg">Adresse: </label>
           </div>
           <div className="registrer" id="registrerAdrInput">
-          <input type="text" ref="registrerAdrInput" size="20" />
+            <input type="text" ref="registrerAdrInput" size="20" />
           </div>
         </div>
         <div className="rad">
           <div>
-          <label id="PostnrReg">Postnr: </label>
+            <label id="PostnrReg">Postnr: </label>
           </div>
           <div>
-          <input id="registrerPostnrInput" type="number" ref="registrerPostnrInput" maxlength="4" size="4" />
-          <input id="registrerPoststedInput" type="text" ref="registrerPoststedInput" readOnly />
+            <input id="registrerPostnrInput" type="number" ref="registrerPostnrInput" maxLength="4" size="4" />
+            <input id="registrerPoststedInput" type="text" ref="registrerPoststedInput" readOnly />
           </div>
         </div>
         <div className="rad">
           <div>
-          <label id="EpostReg">Epost: </label>
+            <label id="EpostReg">Epost: </label>
           </div>
           <div className="registrer" id="registrerEpostInput">
-          <input type="text" ref="registrerEpostInput" size="20" />
+            <input type="text" ref="registrerEpostInput" size="20" />
           </div>
         </div>
         <div className="rad">
           <div>
-          <label id="PassordReg">Passord: </label>
+            <label id="PassordReg">Passord: </label>
           </div>
           <div className="registrer" id="registrerPassordInput">
-          <input type="password" ref="registrerPassordInput" size="20" />
+            <input type="password" ref="registrerPassordInput" size="20" />
           </div>
         </div>
-
         <p ref="feilRegistrering"></p>
         <button ref="registrerKnapp" className="knapper">Registrer</button>
       </div>
@@ -502,7 +539,6 @@ class Kalender extends React.Component {
     if (this.innloggetBruker.Adminlvl <= 0) {
       return(
         <div>
-          <Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Tilbake</Link>
           <div ref="kommendeArrangementer">
             <p>Kommende arrangementer</p>
           </div>
@@ -515,7 +551,6 @@ class Kalender extends React.Component {
           <div ref="kommendeArrangementer">
             <p>Kommende arrangementer</p>
           </div>
-          <Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Tilbake</Link>
         </div>
       );
     }
@@ -540,101 +575,170 @@ class Kalender extends React.Component {
         let arrTittel = document.createElement("p");
         let arrNavn = document.createElement("span");
         let arrBeskrivelse = document.createElement("span");
+        let arrInfo = document.createElement("button");
         //Navn og beskrivelse av arrangement
         arrNavn.innerText = arr.arrnavn+"\n";
         arrBeskrivelse.innerText = arr.beskrivelse;
+
+        arrInfo.innerText = "Info";
+        arrInfo.onclick = () => {
+          history.push("/bruker/:medlemsnr/arrangement/"+arr.arrid);
+          arrid = arr.arrid;
+          return arrid;
+        }
+
         arrTittel.appendChild(arrNavn);
         arrTittel.appendChild(arrBeskrivelse);
-
-        let arrDatoOppsett = document.createElement("p");
-        let arrOppmoteSted = document.createElement("span");
-        let arrDag = document.createElement("span");
-        let arrOppmoteTid = document.createElement("span");
-        let arrStart = document.createElement("span");
-        let arrVarighet = document.createElement("span");
-        //Dato og oppmøte og sted for arrangement
-        if (arr.oppmøtested != null) {
-          arrOppmoteSted.innerText = "Sted: "+arr.oppmøtested+"\n";
-        } else {
-          arrOppmoteSted.innerText = "Sted: Kommer senere \n";
-        }
-        //Drittgreie for å få dato
-        str = arr.startdato;
-        if (str != null) {
-          string = str.toString();
-          array = string.split(" ");
-          arrDag.innerText = "Oppmøte: "+array[2]+" "+array[1]+" "+array[3];
-        } else {
-          arrDag.innerText = "Oppmøte: Dato kommer senere";
-        }
-        //Oppmøtetid
-        array = " ";
-        str = arr.oppmøtetid;
-        if (str != null) {
-          string = str.toString();
-          array = string.split(":");
-          arrOppmoteTid.innerText = ", Kl: "+array[0]+":"+array[1]+"\n";
-        } else {
-          arrOppmoteTid.innerText = ", Tidspunkt kommer senere \n";
-        }
-        //Varighet
-        array = " ";
-        str = arr.tidstart;
-        if (str != null) {
-          string = str.toString();
-          array = string.split(":");
-          arrStart.innerText = "Oppstart: ca. kl "+array[0]+":"+array[1];
-          str = arr.tidslutt;
-          if (str != null) {
-            string = str.toString();
-            array2 = string.split(":");
-            let timer = array2[0]-array[0];
-            let min = array2[1]-array[1];
-            arrVarighet.innerText = ", Varighet: ca. "+timer+" timer "+min+" minutter";
-          }
-          else {
-            arrVarighet.innerText = ", Varighet: Ingen oppsatt slutt";
-          }
-        }
-
-        arrDatoOppsett.appendChild(arrOppmoteSted);
-        arrDatoOppsett.appendChild(arrDag);
-        arrDatoOppsett.appendChild(arrOppmoteTid);
-        arrDatoOppsett.appendChild(arrStart);
-        arrDatoOppsett.appendChild(arrVarighet);
+        arrTittel.appendChild(arrInfo);
 
         arrDiv.appendChild(arrTittel);
-        arrDiv.appendChild(arrDatoOppsett);
-
-        if (this.innloggetBruker.Adminlvl >= 1) {
-          let redigerArrKnapp = document.createElement("button");
-          let slettArrKnapp = document.createElement("button");
-
-          redigerArrKnapp.onclick = () => {
-            history.push("/bruker/:medlemsnr/arrangement/:arrid")
-            arrid = arr.arrid;
-            return arrid;
-          }
-
-          slettArrKnapp.onclick = () => {
-            let slett = confirm("Er du sikker på du vil slette arrangement\n"+arr.arrnavn+"?")
-            if (slett) {
-              arrangement.slettArrangement(arr.arrid, (result) => {
-                console.log("Arrangement med navn: "+arr.arrnavn+", og id:"+arr.arrid+" slettet");
-                this.update();
-              });
-            }
-          }
-
-          redigerArrKnapp.innerText = "Rediger";
-          slettArrKnapp.innerText = "Slett";
-          arrDiv.appendChild(redigerArrKnapp);
-          arrDiv.appendChild(slettArrKnapp);
-        }
 
         if (this.refs.kommendeArrangementer) {
           this.refs.kommendeArrangementer.appendChild(arrDiv);
         }
+      }
+    });
+  }
+}
+
+class KalenderDetaljer extends React.Component {
+  constructor() {
+    super();
+
+    this.innloggetBruker;
+  }
+
+  render() {
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+    return(
+      <div>
+        <div ref="arrangementDiv"></div>
+        <Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Tilbake</Link>
+      </div>
+    );
+  }
+
+  componentDidMount() {
+    this.update();
+  }
+
+  update() {
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+
+    console.log("Arrid: "+arrid);
+    let str; let string; let array; let array2;
+    arrangement.hentArrangement(arrid, (result) => {
+      console.log(result);
+      let arrDiv = document.createElement("div");
+      arrDiv.className = "arrangementDiv";
+
+      let arrTittel = document.createElement("p");
+      let arrNavn = document.createElement("span");
+      let arrBeskrivelse = document.createElement("span");
+      //Navn og beskrivelse av arrangement
+      arrNavn.innerText = result.arrnavn+"\n";
+      arrBeskrivelse.innerText = result.beskrivelse;
+      arrTittel.appendChild(arrNavn);
+      arrTittel.appendChild(arrBeskrivelse);
+
+      let arrDatoOppsett = document.createElement("p");
+      let arrOppmoteSted = document.createElement("span");
+      let arrDag = document.createElement("span");
+      let arrOppmoteTid = document.createElement("span");
+      let arrStart = document.createElement("span");
+      let arrVarighet = document.createElement("span");
+      //Dato og oppmøte og sted for arrangement
+      if (result.oppmøtested != null) {
+        arrOppmoteSted.innerText = "Sted: "+result.oppmøtested+"\n";
+      } else {
+        arrOppmoteSted.innerText = "Sted: Kommer senere \n";
+      }
+      //Drittgreie for å få dato
+      str = result.startdato;
+      if (str != null) {
+        string = str.toString();
+        array = string.split(" ");
+        arrDag.innerText = "Oppmøte: "+array[2]+" "+array[1]+" "+array[3];
+      } else {
+        arrDag.innerText = "Oppmøte: Dato kommer senere";
+      }
+      //Oppmøtetid
+      array = " ";
+      str = result.oppmøtetid;
+      if (str != null) {
+        string = str.toString();
+        array = string.split(":");
+        arrOppmoteTid.innerText = ", Kl: "+array[0]+":"+array[1]+"\n";
+      } else {
+        arrOppmoteTid.innerText = ", Tidspunkt kommer senere \n";
+      }
+      //Varighet
+      array = " ";
+      str = result.tidstart;
+      if (str != null) {
+        string = str.toString();
+        array = string.split(":");
+        arrStart.innerText = "Oppstart: ca. kl "+array[0]+":"+array[1];
+        str = result.tidslutt;
+        if (str != null) {
+          string = str.toString();
+          array2 = string.split(":");
+          let timer = array2[0]-array[0];
+          if (timer < 0) {
+            timer += 24;
+          }
+          let min = array2[1]-array[1];
+          if (min < 0) {
+            timer -= 1;
+            min += 60;
+          }
+          arrVarighet.innerText = ", Varighet: ca. "+timer+" timer "+min+" minutter";
+        }
+        else {
+          arrVarighet.innerText = ", Varighet: Ingen oppsatt slutt";
+        }
+      }
+
+      arrDatoOppsett.appendChild(arrOppmoteSted);
+      arrDatoOppsett.appendChild(arrDag);
+      arrDatoOppsett.appendChild(arrOppmoteTid);
+      arrDatoOppsett.appendChild(arrStart);
+      arrDatoOppsett.appendChild(arrVarighet);
+
+      arrDiv.appendChild(arrTittel);
+      arrDiv.appendChild(arrDatoOppsett);
+
+      if (this.innloggetBruker.Adminlvl >= 1) {
+        let redigerArrKnapp = document.createElement("button");
+        let slettArrKnapp = document.createElement("button");
+
+        redigerArrKnapp.onclick = () => {
+          history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangement/{arrid}/rediger")
+          arrid = result.arrid;
+          return arrid;
+        }
+
+        slettArrKnapp.onclick = () => {
+          let slett = confirm("Er du sikker på du vil slette arrangement\n"+result.arrnavn+"?")
+          if (slett) {
+            arrangement.slettArrangement(result.arrid, (result) => {
+              //console.log("Arrangement med navn: "+result.arrnavn+", og id:"+result.arrid+" slettet");
+              history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangementer");
+              this.forceUpdate();
+            });
+          }
+        }
+
+        redigerArrKnapp.innerText = "Rediger";
+        slettArrKnapp.innerText = "Slett";
+        arrDiv.appendChild(redigerArrKnapp);
+        arrDiv.appendChild(slettArrKnapp);
+      }
+
+      if (this.refs.arrangementDiv) {
+        this.refs.arrangementDiv.appendChild(arrDiv);
       }
     });
   }
@@ -673,13 +777,14 @@ class KalenderAdmin extends React.Component {
       } else {
         arrangement.opprettArrangement(arrNavn, arrBeskrivelse, (result) => {
           console.log("Arrangement opprettet");
-          history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer")
+          history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer/");
+          this.forceUpdate();
         });
       }
     }
 
     this.refs.tilbakeArrangement.onclick = () => {
-      history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer");
+      history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer/");
     }
   }
 }
@@ -759,7 +864,8 @@ class RedigerArrangment extends React.Component {
     });
 
     this.refs.tilbakeArrangement.onclick = () => {
-      history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer");
+      history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer/");
+      this.forceUpdate();
     }
   }
 }
@@ -779,11 +885,12 @@ ReactDOM.render((
         <Route exact path="/glemtpassord" component={GlemtPassord} />
         <Route exact path="/registrerBruker" component={RegistrerBruker} />
         <Route exact path="/bruker/:medlemsnr" component={Profil} />
+        <Route exact path="/bruker/:medlemsnr/sok" component={BrukerSok} />
         <Route exact path="/bruker/:medlemsnr/redigerprofil" component={RedigerProfil} />
         <Route exact path="/bruker/:medlemsnr/arrangementer" component={Kalender} />
-        <Route exact path="/bruker/:medlemsnr/sok" component={BrukerSok} />
         <Route exact path="/bruker/:medlemsnr/adminkalender" component={KalenderAdmin} />
-        <Route exact path="/bruker/:medlemsnr/arrangement/:arrid" component={RedigerArrangment} />
+        <Route exact path="/bruker/:medlemsnr/arrangement/:arrid" component={KalenderDetaljer} />
+        <Route exact path="/bruker/:medlemsnr/arrangement/:arrid/rediger" component={RedigerArrangment} />
       </Switch>
     </div>
   </HashRouter>

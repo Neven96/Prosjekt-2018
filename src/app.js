@@ -494,9 +494,11 @@ class BrukerSok extends React.Component {
 
           for(let medlem of result){
             let navn = document.createElement("li");
-            let link = document.createElement("a")
-
-            navn.innerText = medlem.Fornavn + ', ' + medlem.Etternavn + " ";
+            navn.className="sokenavn"
+            navn.innerText = medlem.Fornavn + ' ' + medlem.Etternavn + " ";
+            navn.onclick = () => {
+              history.push("/bruker/{this.innloggetBruker.Medlemsnr}/sok/{medlem.Medlemsnr}");
+            }
 
             ul.appendChild(navn);
           }
@@ -892,6 +894,7 @@ ReactDOM.render((
         <Route exact path="/registrerBruker" component={RegistrerBruker} />
         <Route exact path="/bruker/:medlemsnr" component={Profil} />
         <Route exact path="/bruker/:medlemsnr/sok" component={BrukerSok} />
+        <Route exact path="/bruker/:medlemsnr/sok/:medlem" component={BrukerDetaljer} />
         <Route exact path="/bruker/:medlemsnr/redigerprofil" component={RedigerProfil} />
         <Route exact path="/bruker/:medlemsnr/arrangementer" component={Kalender} />
         <Route exact path="/bruker/:medlemsnr/adminkalender" component={KalenderAdmin} />

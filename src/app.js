@@ -480,8 +480,9 @@ class BrukerSok extends React.Component {
   }
 
   componentDidMount() {
-    this.refs.sokKnapp.onclick = () => {
-      //this.refs.sokeResultat.value = "";
+    // this.refs.sokKnapp.onclick = () => {
+    this.refs.inn.oninput = () => {
+      this.refs.sokeResultat.innerText = "";
       let input = this.refs.inn.value;
       if (erTom(input)) {
         this.refs.sokeResultat.innerText = "Du må ha søkeord!! Tulling"
@@ -489,31 +490,36 @@ class BrukerSok extends React.Component {
         bruker.sokBruker(input, (result) => {
           console.log(result);
           let ul = document.createElement("ul");
-          while(ul.firstChild){
-            ul.removeChild(ul.firstChild);
-          }
+          ul.id="sokeliste"
+
           for(let medlem of result){
-            let button = document.createElement("button");
             let navn = document.createElement("li");
+            let link = document.createElement("a")
 
             navn.innerText = medlem.Fornavn + ', ' + medlem.Etternavn + " ";
-            button.textContent = "X ";
 
             ul.appendChild(navn);
-            ul.appendChild(button);
           }
           this.refs.sokeResultat.appendChild(ul);
+
+          if (result.length == 0) {
+            this.refs.sokeResultat.innerText = "Ingen treff";
+          }
 
         })
       }
     }
   }
-  update(){
-    this.innloggetBruker = bruker.hentBruker();
-    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
-    if (this.innloggetBruker.Adminlvl <= 0){
-      sokBruker();
-    }
+}
+
+class BrukerDetaljer extends React.Component {
+  constructor() {
+    super();
+    this.innloggetBruker;
+  }
+
+  render() {
+
   }
 }
 

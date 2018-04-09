@@ -80,14 +80,25 @@ html {
 }
 
 .sokenavn {
-
+  color: black;
 }
 
 .sokenavn:hover {
-  
+  color: #5aa8fb;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .arrangementDiv {
+  border-style: inset;
+}
+
+.arrangementDiv:hover {
+  border-style: outset;
+  cursor: pointer;
+}
+
+.arrangementDetaljerDiv {
   border-style: outset;
 }
 

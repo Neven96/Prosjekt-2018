@@ -124,12 +124,36 @@ class Bruker {
   }
 
   sokBruker(inn, callback) {
-  connection.query("SELECT * FROM Medlem WHERE Fornavn LIKE ? OR Etternavn LIKE ? ORDER BY Fornavn ASC", [inn + "%", inn + "%"], (error, result) => {
-    if(error) throw error;
+    connection.query("SELECT * FROM Medlem WHERE Fornavn LIKE ? OR Etternavn LIKE ? ORDER BY Fornavn ASC", [inn + "%", inn + "%"], (error, result) => {
+      if(error) throw error;
 
-    callback(result);
-  });
-}
+      callback(result);
+    });
+  }
+
+  hentSokBruker(id, callback) {
+    connection.query("SELECT * FROM Medlem WHERE Medlemsnr = ?", [id], (error, result) => {
+      if (error) throw error;
+
+      callback(result[0]);
+    });
+  }
+
+  aktiverBruker(id, callback) {
+    connection.query("UPDATE Medlem SET Aktivert = ? WHERE Medlemsnr = ?", [1, id], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  deaktiverBruker(id, callback) {
+    connection.query("UPDATE Medlem SET Aktivert = ? WHERE Medlemsnr = ?", [2, id], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
 }
 
 class Arrangement {

@@ -96,10 +96,23 @@ class Nyheter extends React.Component {
     } else if (this.innloggetBruker) {
       if (this.innloggetBruker.Aktivert == 1) {
         return(
+          <div>
           <div id="forsidetekst">
             <p>Nyheter om Røde Kors og andre ting tang</p>
             <h3>Breaking News!!!</h3>
             <p>Røde Kors får nytt vaktsystem</p>
+            </div>
+
+            <div id="nyheter">
+              <ul id="nyhetercol1">
+              <li className="underline"><strong>Ca. 340 000</strong>mennesker fikk matrasjoner i Sør-Sudan i første halvdel av 2017</li>
+              <li className="underline"><strong>4,7 millioner</strong>mennesker i Syria får hjelp av Røde Kors hver måned</li>
+              <li className="underline"><strong>3400</strong>var med på Ferie for alle i 2016</li>
+              <li className="underline"><strong>Ca. 15 000</strong>i Norge får besøk av en Røde Kors besøksvenn</li>
+              <li className="underline"><strong>Ca. 2 000</strong>flyktninger fikk en flyktningguide i 2016</li>
+              <li className="underline"><strong>Ca. 11 000</strong>vitner får vitnestøtte i løpet av et år</li>
+              </ul>
+            </div>
           </div>
         );
       } else if (this.innloggetBruker.Aktivert == 0) {
@@ -211,7 +224,7 @@ class RegistrerBruker extends React.Component {
           </div>
         </div>
         <p ref="feilRegistrering"></p>
-        <button ref="registrerKnapp" className="knapper">Registrer</button>
+        <button id="registrerknapp" ref="registrerKnapp" className="knapper">Registrer</button>
       </div>
     );
   }
@@ -337,7 +350,7 @@ class Profil extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return (
       <div id="profil">
-        <p id="redigerprofilknapp"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="redigerprofil">Rediger profil</Link></p>
+        <button id="redigerprofilknapp" ref="redigerprofilknapp">Rediger</button>
         <ul id="profilinfo">
           <li>Navn: {this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn}</li>
           <li>Adresse: {this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed}</li>
@@ -345,7 +358,7 @@ class Profil extends React.Component {
           <li>Epost: {this.innloggetBruker.Epost}</li>
           <li>Medlemsnummer: {this.innloggetBruker.Medlemsnr}</li>
         </ul>
-        <p id="kommendearr"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="kommendearr">Kommende arrangementer</Link></p>
+        <button id="kommendearr" ref="kommendearr">Kommende arrangementer</button>
       </div>
     );
   }
@@ -366,6 +379,14 @@ class Profil extends React.Component {
       this.brukerSted = result;
       this.forceUpdate();
     });
+    this.refs.redigerprofilknapp.onclick = () => {
+      history.push("/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil");
+      this.forceUpdate();
+    }
+    this.refs.kommendearr.onclick = () => {
+      history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer");
+      this.forceUpdate();
+    }
   }
 }
 
@@ -382,19 +403,19 @@ class RedigerProfil extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return(
       <div id="redigerprofil">
-        <input type="text" ref="oppdaterFornavnInput" />
+        Fornavn: <input id="oppdaterFornavnInput" type="text" ref="oppdaterFornavnInput" />
         <br />
-        <input type="text" ref="oppdaterEtternavnInput" />
+        Etternavn: <input id="oppdaterEtternavnInput" type="text" ref="oppdaterEtternavnInput" />
         <br />
-        <input type="number" ref="oppdaterTlfInput" />
+        Telefonnummer: <input id="oppdaterTlfInput" type="number" ref="oppdaterTlfInput" />
         <br />
-        <input type="text" ref="oppdaterAdrInput" />
+        Adresse: <input id="oppdaterAdrInput" type="text" ref="oppdaterAdrInput" />
         <br />
-        <input type="number" ref="oppdaterPostnrInput" />
-        <input type="text" ref="oppdaterPoststedInput" readOnly />
+        Postnr: <input id="oppdaterPostnrInput" type="number" ref="oppdaterPostnrInput" />
+        <input id="oppdaterPoststedInput" type="text" ref="oppdaterPoststedInput" readOnly />
         <br />
         <p ref="feilOppdatering"></p>
-        <button ref="oppdaterBruker">Oppdater</button>
+        <button id="oppdaterProfilKnapp" ref="oppdaterBruker">Oppdater</button>
         <button ref="kansellerOppdatering">Lukk</button>
       </div>
     );

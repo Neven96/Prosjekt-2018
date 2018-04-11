@@ -3,5 +3,6 @@ build
 package-lock.json
 .jshintrc
 .DS_Store
+src/adminrediger.js
 src/innlogget.js
 src/kalender.js

@@ -864,7 +864,7 @@ class KalenderDetaljer extends React.Component {
 
     console.log("Arrid: "+arrid);
     let str; let string; let array; let array2;
-<<<<<<< HEAD
+
     if (arrid) {
       arrangement.hentArrangement(arrid, (result) => {
         if (this.refs.arrangementDiv) {
@@ -874,12 +874,7 @@ class KalenderDetaljer extends React.Component {
 
           //Dato og oppmøte og sted for arrangement
           if (result.oppmøtested != null) {
-            if (result.postnr != null) {
-              this.refs.arrOppmoteSted.innerText = "Sted: "+result.oppmøtested;
-              this.refs.arrOppmotePostnr.innerText = ", "+result.postnr;
-            } else {
-              this.refs.arrOppmoteSted.innerText = "Sted: "+result.oppmøtested+"\n";
-            }
+            this.refs.arrOppmoteSted.innerText = "Sted: "+result.oppmøtested+"\n";
           } else {
             this.refs.arrOppmoteSted.innerText = "Sted: Kommer senere \n";
           }
@@ -905,106 +900,64 @@ class KalenderDetaljer extends React.Component {
           //Varighet
           array = " ";
           str = result.tidstart;
-=======
-    arrangement.hentArrangement(arrid, (result) => {
-      if (this.refs.arrangementDiv) {
-        //Navn og beskrivelse av arrangement
-        this.refs.arrNavn.innerText = result.arrnavn+"\n";
-        this.refs.arrBeskrivelse.innerText = result.beskrivelse;
-
-        //Dato og oppmøte og sted for arrangement
-        if (result.oppmøtested != null) {
-          this.refs.arrOppmoteSted.innerText = "Sted: "+result.oppmøtested+"\n";
-        } else {
-          this.refs.arrOppmoteSted.innerText = "Sted: Kommer senere \n";
-        }
-        //Drittgreie for å få dato
-        str = result.startdato;
-        if (str != null) {
-          string = str.toString();
-          array = string.split(" ");
-          this.refs.arrDag.innerText = "Oppmøte: "+array[2]+" "+array[1]+" "+array[3];
-        } else {
-          this.refs.arrDag.innerText = "Oppmøte: Dato kommer senere";
-        }
-        //Oppmøtetid
-        array = " ";
-        str = result.oppmøtetid;
-        if (str != null) {
-          string = str.toString();
-          array = string.split(":");
-          this.refs.arrOppmoteTid.innerText = ", Kl: "+array[0]+":"+array[1]+"\n";
-        } else {
-          this.refs.arrOppmoteTid.innerText = ", Tidspunkt kommer senere \n";
-        }
-        //Varighet
-        array = " ";
-        str = result.tidstart;
-        if (str != null) {
-          string = str.toString();
-          array = string.split(":");
-          this.refs.arrStart.innerText = "Oppstart: ca. kl "+array[0]+":"+array[1];
-          str = result.tidslutt;
->>>>>>> origin/master
           if (str != null) {
             string = str.toString();
-            array2 = string.split(":");
-            let timer = array2[0]-array[0];
-            if (timer < 0) {
-              timer += 24;
+            array = string.split(":");
+            this.refs.arrStart.innerText = "Oppstart: ca. kl "+array[0]+":"+array[1];
+            str = result.tidslutt;
+            if (str != null) {
+              string = str.toString();
+              array2 = string.split(":");
+              let timer = array2[0]-array[0];
+              if (timer < 0) {
+                timer += 24;
+              }
+              let min = array2[1]-array[1];
+              if (min < 0) {
+                timer -= 1;
+                min += 60;
+              }
+              this.refs.arrVarighet.innerText = ", Varighet: ca. "+timer+" timer "+min+" minutter";
             }
-            let min = array2[1]-array[1];
-            if (min < 0) {
-              timer -= 1;
-              min += 60;
+            else {
+              this.refs.arrVarighet.innerText = ", Varighet: Ingen oppsatt slutt";
             }
-            this.refs.arrVarighet.innerText = ", Varighet: ca. "+timer+" timer "+min+" minutter";
           }
-          else {
-            this.refs.arrVarighet.innerText = ", Varighet: Ingen oppsatt slutt";
+
+          if (this.innloggetBruker.Adminlvl >= 1) {
+            let redigerArrKnapp = document.createElement("button");
+            let slettArrKnapp = document.createElement("button");
+
+            redigerArrKnapp.onclick = () => {
+              history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangement/{arrid}/rediger")
+              arrid = result.arrid;
+              return arrid;
+            }
+
+            slettArrKnapp.onclick = () => {
+              let slett = confirm("Er du sikker på du vil slette arrangement\n"+result.arrnavn+"?")
+              if (slett) {
+                arrangement.slettArrangement(result.arrid, (result) => {
+                  //console.log("Arrangement med navn: "+result.arrnavn+", og id:"+result.arrid+" slettet");
+                  history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangementer");
+                  this.forceUpdate();
+                });
+              }
+            }
+
+            redigerArrKnapp.innerText = "Rediger";
+            slettArrKnapp.innerText = "Slett";
+            this.refs.arrangementDiv.appendChild(redigerArrKnapp);
+            this.refs.arrangementDiv.appendChild(slettArrKnapp);
           }
+
+          arrangement.hentArrangementKontakt(result.Kontakt_id, (result) => {
+            if (this.refs.arrangementKontaktDiv) {
+            }
+          });
         }
-
-        if (this.innloggetBruker.Adminlvl >= 1) {
-          let redigerArrKnapp = document.createElement("button");
-          let slettArrKnapp = document.createElement("button");
-
-          redigerArrKnapp.onclick = () => {
-            history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangement/{arrid}/rediger")
-            arrid = result.arrid;
-            return arrid;
-          }
-
-          slettArrKnapp.onclick = () => {
-            let slett = confirm("Er du sikker på du vil slette arrangement\n"+result.arrnavn+"?")
-            if (slett) {
-              arrangement.slettArrangement(result.arrid, (result) => {
-                //console.log("Arrangement med navn: "+result.arrnavn+", og id:"+result.arrid+" slettet");
-                history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangementer");
-                this.forceUpdate();
-              });
-            }
-          }
-
-          redigerArrKnapp.innerText = "Rediger";
-          slettArrKnapp.innerText = "Slett";
-          this.refs.arrangementDiv.appendChild(redigerArrKnapp);
-          this.refs.arrangementDiv.appendChild(slettArrKnapp);
-        }
-<<<<<<< HEAD
-
-        arrangement.hentArrangementKontakt(result.Kontakt_id, (result) => {
-          if (this.refs.arrangementKontaktDiv) {
-
-
-          }
-        });
       });
     }
-=======
-      }
-    });
->>>>>>> origin/master
   }
 }
 
@@ -1026,7 +979,6 @@ class KalenderAdmin extends React.Component {
           <h2>Arrangement</h2>
           <input type="text" ref="arrNavn" placeholder="Arrangementnavn" /> <br />
           <textarea rows="5" cols="40" ref="arrBeskrivelse" placeholder="Beskrivelse" /> <br />
-<<<<<<< HEAD
           <input type="date" ref="arrDato"/> <br />
           <input type="text" ref="arrSted" placeholder="Lokasjon" /> <br />
         </div>
@@ -1036,8 +988,6 @@ class KalenderAdmin extends React.Component {
           <input type="text" ref="kontaktEtternavn" placeholder="Etternavn" /> <br />
           <input type="number" ref="kontaktTlf" /> <br />
           <input type="text" ref="kontaktEpost" placeholder="Epost" /> <br />
-=======
->>>>>>> origin/master
           <p ref="opprettArrangementAdvarsel"></p>
           <button ref="opprettArrangement">Opprett arrangement</button>
           <button ref="tilbakeArrangement">Lukk</button>
@@ -1050,7 +1000,7 @@ class KalenderAdmin extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
-<<<<<<< HEAD
+
     let arrNavn; let arrBeskrivelse; let arrDato; let arrSted; let kontaktFornavn; let kontaktEtternavn; let kontaktTlf; let kontaktEpost; let eksistererKontakt = false; let eksistererArr = false;
     this.refs.opprettArrangement.onclick = () => {
       arrNavn = this.refs.arrNavn.value;
@@ -1064,15 +1014,6 @@ class KalenderAdmin extends React.Component {
 
       if (erTom(arrNavn) || erTom(arrBeskrivelse) || erTom(arrDato) || erTom(arrSted) || erTom(kontaktFornavn) || erTom(kontaktEtternavn) || erTom(kontaktTlf) || erTom(kontaktEpost)) {
         this.refs.opprettArrangementAdvarsel.innerText = "Fyll inn alle felter!";
-=======
-    let arrNavn; let arrBeskrivelse;
-    this.refs.opprettArrangement.onclick = () => {
-      arrNavn = this.refs.arrNavn.value;
-      arrBeskrivelse = this.refs.arrBeskrivelse.value;
-
-      if (erTom(arrNavn) || erTom(arrBeskrivelse)) {
-        this.refs.opprettArrangementAdvarsel.innerText = "Fyll inn begge felter!";
->>>>>>> origin/master
       } else {
         arrangement.opprettArrangement(arrNavn, arrBeskrivelse, (result) => {
           console.log("Arrangement opprettet");

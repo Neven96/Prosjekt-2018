@@ -8,6 +8,11 @@ html {
   position: absolute;
 }
 
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
 #logo {
   position: relative;
   width: 40%;
@@ -80,7 +85,28 @@ html {
 }
 
 .sokenavn {
-  color: black;
+  padding: 0;
+}
+
+.aktiver {
+  color: red;
+  padding: 0;
+}
+
+.aktiver:hover{
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.deaktiver {
+  color: gray;
+  padding: 0;
+}
+
+.deaktiver:hover {
+  color: gray;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .sokenavn:hover {

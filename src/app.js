@@ -480,7 +480,7 @@ class BrukerSok extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return(
       <div id="soktest">
-        <input ref="inn" type = "text" /> <button ref ="sokKnapp">Søk</button>
+        <input ref="inn" type="text" autoFocus /> <button ref ="sokKnapp">Søk</button>
         <div ref="sokeResultat">
         </div>
       </div>
@@ -493,7 +493,7 @@ class BrukerSok extends React.Component {
       let input = this.refs.inn.value;
 
       if (erTom(input)) {
-        this.refs.sokeResultat.innerText = "Du må ha søkeord!! Tulling"
+        this.refs.sokeResultat.innerText = "Du må et søkeord"
       } else {
         bruker.sokBruker(input, (result) => {
           let sokeliste = document.createElement("ul");
@@ -504,6 +504,12 @@ class BrukerSok extends React.Component {
             navn.className="sokenavn"
 
             //Legg farge på brukere her
+            if (medlem.Aktivert == 0) {
+              navn.className="aktiver"
+            }
+            if (medlem.Aktivert == 2){
+              navn.className="deaktiver";
+            }
 
             navn.innerText = medlem.Fornavn + ' ' + medlem.Etternavn + " ";
             navn.onclick = () => {
@@ -559,6 +565,7 @@ class BrukerSokDetaljer extends React.Component {
             <li>Postnummer og sted: {this.sokBruker.Postnr} {this.sokBrukerPoststed.Poststed}</li>
           </ul>
           <button ref="aktiveringsKnapp" id="aktiveringsKnapp" className="knapper"></button> <br />
+          <button ref="redigerSokBruker" id="aktiveringsKnapp" className="knapper">Rediger</button> <br />
           <Link to="/bruker/{this.innloggetBruker.Medlemsnr}/sok">Tilbake</Link>
         </div>
       );
@@ -600,7 +607,113 @@ class BrukerSokDetaljer extends React.Component {
           }
         }
       }
+      this.refs.redigerSokBruker.onclick = () => {
+        history.push("/bruker/{this.innloggetBruker.Medlemsnr}/sok/{result.Medlemsnr}/rediger");
+        sokMedlemsnr = result.Medlemsnr;
+        return sokMedlemsnr;
+      }
     });
+  }
+}
+
+class BrukerSokRediger extends React.Component {
+  constructor() {
+      super();
+
+      this.brukerSted = {};
+      this.innloggetBruker;
+  }
+
+  render() {
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+    return(
+      <div id="redigerprofil">
+        <input type="text" ref="oppdaterFornavnInput" />
+        <br />
+        <input type="text" ref="oppdaterEtternavnInput" />
+        <br />
+        <input type="number" ref="oppdaterTlfInput" />
+        <br />
+        <input type="text" ref="oppdaterAdrInput" />
+        <br />
+        <input type="number" ref="oppdaterPostnrInput" />
+        <input type="text" ref="oppdaterPoststedInput" readOnly />
+        <br />
+        <p ref="feilOppdatering"></p>
+        <button ref="oppdaterBruker">Oppdater</button>
+        <button ref="kansellerOppdatering">Lukk</button>
+      </div>
+    );
+  }
+
+  componentDidMount() {
+    let oppFnavn; let oppEnavn; let oppTlf; let oppAdr; let oppPostnr; let midMedlemsnr;
+
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+
+    bruker.hentSokBruker(sokMedlemsnr, (result) => {
+      midMedlemsnr = result.Medlemsnr
+      this.refs.oppdaterFornavnInput.value = result.Fornavn;
+      this.refs.oppdaterEtternavnInput.value = result.Etternavn;
+      this.refs.oppdaterTlfInput.value = result.Telefon;
+      this.refs.oppdaterAdrInput.value = result.Adresse;
+      this.refs.oppdaterPostnrInput.value = result.Postnr;
+
+      bruker.hentBrukerSted(result.Medlemsnr, (result) => {
+        this.refs.oppdaterPoststedInput.value = result.Poststed;
+      });
+
+      this.refs.oppdaterPostnrInput.onblur = () => {
+        oppPostnr = this.refs.oppdaterPostnrInput.value;
+        bruker.eksistererStedPostnr(oppPostnr, (result) => {
+          if (result != undefined) {
+            bruker.hentPoststed(oppPostnr, (result) => {
+              this.refs.oppdaterPoststedInput.value = result.Poststed;
+            });
+          } else {
+            this.refs.oppdaterPoststedInput.value = "";
+          }
+        });
+      };
+
+      this.refs.oppdaterBruker.onclick = () => {
+        oppFnavn = this.refs.oppdaterFornavnInput.value;
+        oppEnavn = this.refs.oppdaterEtternavnInput.value;
+        oppTlf = this.refs.oppdaterTlfInput.value;
+        oppAdr = this.refs.oppdaterAdrInput.value;
+        oppPostnr = this.refs.oppdaterPostnrInput.value;
+        if (erTom(oppFnavn) || erTom(oppEnavn) || erTom(oppTlf) || erTom(oppAdr) || erTom(oppPostnr)) {
+          this.refs.feilOppdatering.innerText = "Ingen felter kan være tomme";
+        } else {
+          bruker.eksistererStedPostnr(oppPostnr, (result) => {
+            console.log(result);
+            if (result != undefined) {
+              console.log("Postnummeroppdater funker");
+              bruker.eksistererBrukerTlfOppdater(midMedlemsnr, oppTlf, (result) => {
+                if (result == undefined) {
+                  console.log("Tlfsjekkoppdater funker");
+                  bruker.oppdaterBruker(midMedlemsnr, oppFnavn, oppEnavn, oppTlf, oppAdr, oppPostnr, (result) => {
+                    console.log("Oppdatering funker");
+                    history.push("/bruker/${this.innloggetBruker.Medlemsnr}/sok");
+                  });
+                }
+                else {
+                  this.refs.feilOppdatering.innerText = "Telefonnummeret er allerede i bruk";
+                }
+              });
+            } else {
+              this.refs.feilOppdatering.innerText = "Postnummeret eksisterer ikke";
+            }
+          });
+        }
+      };
+
+      this.refs.kansellerOppdatering.onclick = () => {
+        history.push("/bruker/${this.innloggetBruker.Medlemsnr}/sok");
+      };
+    })
   }
 }
 
@@ -962,6 +1075,7 @@ ReactDOM.render((
         <Route exact path="/bruker/:medlemsnr" component={Profil} />
         <Route exact path="/bruker/:medlemsnr/sok" component={BrukerSok} />
         <Route exact path="/bruker/:medlemsnr/sok/:medlem" component={BrukerSokDetaljer} />
+        <Route exact path="/bruker/:medlemsnr/sok/:medlem/rediger" component={BrukerSokRediger} />
         <Route exact path="/bruker/:medlemsnr/redigerprofil" component={RedigerProfil} />
         <Route exact path="/bruker/:medlemsnr/arrangementer" component={Kalender} />
         <Route exact path="/bruker/:medlemsnr/adminkalender" component={KalenderAdmin} />

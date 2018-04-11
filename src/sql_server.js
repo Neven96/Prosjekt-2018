@@ -173,12 +173,90 @@ class Arrangement {
     });
   }
 
-  opprettArrangement(arrnavn, beskrivelse, callback) {
-    connection.query("INSERT INTO Arrangement (arrnavn, beskrivelse) VALUES (?, ?)", [arrnavn, beskrivelse], (error, result) => {
+  hentArrangementPoststed(postnr, callback) {
+    connection.query("SELECT Poststed FROM Sted WHERE Postnr = ?", [postnr], (error, result) => {
+      if (error) throw error;
+
+      callback(result[0]);
+    });
+  }
+
+  opprettArrangement(arrnavn, beskrivelse, dato, sted, callback) {
+    connection.query("INSERT INTO Arrangement (arrnavn, beskrivelse, startdato, oppmøtested) VALUES (?, ?, ?, ?)", [arrnavn, beskrivelse, dato, sted], (error, result) => {
       if (error) throw error;
 
       callback();
     });
+  }
+
+  redigerArrangement(id, arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, utstyr, vaktpoeng, callback) {
+    //Hvis sluttid er tom
+    if (erTom(sluttid)) {
+      //Hvis sluttid og utstyr er tom
+      if (erTom(utstyr)) {
+        //Hvis sluttid, utstyr og vaktpoeng er tomme
+        if (erTom(vaktpoeng)) {
+          connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, id], (error, result) => {
+            if (error) throw error;
+
+            callback();
+          });
+        } else {
+          connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, vaktpoeng = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, vaktpoeng, id], (error, result) => {
+            if (error) throw error;
+
+            callback();
+          });
+        }
+      }
+      //Hvis sluttid og vaktpoeng er tom
+      else if (erTom(vaktpoeng)) {
+        connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, utstyrsliste = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, utstyr, id], (error, result) => {
+          if (error) throw error;
+
+          callback();
+        });
+      } else {
+        connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, utstyrsliste = ?, vaktpoeng = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, utstyr, vaktpoeng, id], (error, result) => {
+          if (error) throw error;
+
+          callback();
+        });
+      }
+    }
+    //Hvis utstyr er tom
+    else if (erTom(utstyr)) {
+      //Hvis utstyr og vaktpoeng er tom
+      if (erTom(vaktpoeng)) {
+        connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, tidslutt = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, id], (error, result) => {
+          if (error) throw error;
+
+          callback();
+        });
+      } else {
+        connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, tidslutt = ?, vaktpoeng = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, vaktpoeng, id], (error, result) => {
+          if (error) throw error;
+
+          callback();
+        });
+      }
+    }
+    //Hvis vaktpoeng er tom
+    else if(erTom(vaktpoeng)) {
+      connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, tidslutt = ?, utstyrsliste = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, utstyr, id], (error, result) => {
+        if (error) throw error;
+
+        callback();
+      });
+    }
+    //Hvis ingen er tomme
+    else {
+      connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, tidslutt = ?, utstyrsliste = ?, vaktpoeng = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, utstyr, vaktpoeng, id], (error, result) => {
+        if (error) throw error;
+
+        callback();
+      });
+    }
   }
 
   slettArrangement(id, callback) {
@@ -188,6 +266,10 @@ class Arrangement {
       callback();
     });
   }
+}
+
+function erTom(str) {
+  return (!str || 0 === str.length);
 }
 
 let bruker = new Bruker();

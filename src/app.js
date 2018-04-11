@@ -717,6 +717,7 @@ class BrukerSokRediger extends React.Component {
   }
 }
 
+
 /*
 II  III     II     II      IIIIIII II     II IIIIII   IIIIIII IIIIII
 II III     IIII    II      II      IIII   II II  III  II      II   II

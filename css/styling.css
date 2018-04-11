@@ -23,6 +23,50 @@ ul {
   margin-right: auto;
 }
 
+#nyheter {
+  /* position: relative; */
+  color: white;
+  font-size: 1.125em;
+  margin-top: 15%;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  width: 100%;
+  length: 50%;
+  background-color: #d42b1e;
+  /* text-align: center; */
+  zoom: 150%;
+}
+
+#nyhetercol1 {
+  list-style-type: none;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  margin-left: 0;
+  margin-right: 36px;
+  display: list-item;
+  text-align: -webkit-match-parent;
+}
+
+strong {
+  min-width: 180px;
+  margin-right: 72px;
+}
+
+/* #nyhetercol2 {
+  margin-top: 6px;
+  margin-right: 5%;
+} */
+
+.underline {
+  border-bottom: 0.25px white solid;
+  position: relative;
+  /* left: auto;
+  right: auto;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center; */
+}
+
 .navbar {
   background-color: #f8f8f9;
   position: relative;
@@ -62,9 +106,8 @@ ul {
   border-style: outset;
 }
 
-#kommendearr, #redigerprofilknapp {
+#profil {
   text-align: center;
-  text-decoration: none;
 }
 
 #redigerprofil {
@@ -74,6 +117,20 @@ ul {
   width: 50%;
   background-color: #f8f8f9;
   border-style: outset;
+  font-size: 1.25em;
+}
+
+#oppdaterFornavnInput, #oppdaterEtternavnInput, #oppdaterTlfInput, #oppdaterAdrInput, #oppdaterPostnrInput {
+  margin-top: 6px;
+}
+
+#oppdaterPostnrInput {
+  width: 7.5%;
+}
+
+#oppdaterProfilKnapp {
+  margin-bottom: 6px;
+  margin-right: 6px;
 }
 
 #soktest {
@@ -175,4 +232,8 @@ ul {
   float: left;
   width: 25%;
   margin-top: 6px;
+}
+
+#registrerknapp {
+  margin-bottom: 6px;
 }

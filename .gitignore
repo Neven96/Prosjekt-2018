@@ -3,5 +3,4 @@ build
 package-lock.json
 .jshintrc
 .DS_Store
-src/innlogget.js
-src/kalender.js
+

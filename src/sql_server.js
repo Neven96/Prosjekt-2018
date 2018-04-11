@@ -189,6 +189,46 @@ class Arrangement {
     });
   }
 
+  opprettArrangementKontakt(fornavn, etternavn, tlf, epost, callback) {
+    connection.query("INSERT INTO Kontaktperson (Fornavn, Etternavn, Telefon, Epost) VALUES (?, ?, ?, ?)", [fornavn, etternavn, tlf, epost], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  eksistererArrangementKontakt(tlf, epost, callback) {
+    connection.query("SELECT 1 FROM Kontaktperson WHERE Telefon = ? OR Epost = ?", [tlf, epost], (error, result) => {
+      if (error) throw error;
+
+      callback(result[0]);
+    });
+  }
+
+  velgArrangementKontakt(kontakttlf, kontaktepost, callback) {
+    connection.query("SELECT Kontakt_id FROM Kontaktperson WHERE Telefon = ? OR Epost = ?", [kontakttlf, kontaktepost], (error, result) => {
+      if (error) throw error;
+
+      callback(result[0]);
+    });
+  }
+
+  oppdaterArrangementKontakt(kontaktid, arrnavn, arrdato, arrsted, callback) {
+    connection.query("UPDATE Arrangement SET Kontakt_id = ? WHERE arrnavn = ? AND startdato = ? AND oppmøtested = ?", [kontaktid, arrnavn, arrdato, arrsted], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  hentArrangementKontakt(kontaktid, callback) {
+    connection.query("SELECT * FROM Kontaktperson WHERE Kontakt_id = ?", [kontaktid], (error, result) => {
+      if (error) throw error;
+
+      callback(result[0]);
+    });
+  }
+
   redigerArrangement(id, arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, utstyr, vaktpoeng, callback) {
     //Hvis sluttid er tom
     if (erTom(sluttid)) {

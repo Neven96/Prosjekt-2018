@@ -480,6 +480,12 @@ class RedigerProfil extends React.Component {
   }
 }
 
+/*
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+|||||||||||||Brukersøk og detaljer|||||||||||||||||||||||||||||||
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+*/
+
 let sokMedlemsnr;
 
 class BrukerSok extends React.Component {
@@ -649,7 +655,8 @@ class Kalender extends React.Component {
       return(
         <div>
           <div ref="kommendeArrangementer">
-            <p>Kommende arrangementer</p>
+          </div>
+          <div>
           </div>
         </div>
       );
@@ -658,7 +665,8 @@ class Kalender extends React.Component {
         <div>
           <Link to="/bruker/${this.innloggetBruker.Medlemsnr}/adminkalender" className="linker">Opprett arrangement</Link>
           <div ref="kommendeArrangementer">
-            <p>Kommende arrangementer</p>
+          </div>
+          <div>
           </div>
         </div>
       );
@@ -733,6 +741,18 @@ class KalenderDetaljer extends React.Component {
             <span ref="arrStart"></span>
             <span ref="arrVarighet"></span>
           </p>
+          <p ref="arrDiverse">
+            <span ref="arrUtstyrsliste"></span>
+            <span ref="arrVaktpoeng"></span>
+          </p>
+        </div>
+        <div ref="arrangementKontaktDiv" className="arrangementDetaljerDiv">
+          <p ref="arrangementKontaktDetaljer">
+            <span ref="kontaktFornavn"></span>
+            <span ref="kontaktEtternavn"></span>
+            <span ref="kontaktTlf"></span>
+            <span ref="kontaktEpost"></span>
+          </p>
         </div>
         <Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Tilbake</Link>
       </div>
@@ -749,7 +769,7 @@ class KalenderDetaljer extends React.Component {
 
     console.log("Arrid: "+arrid);
     let str; let string; let array; let array2;
-    if (this.refs.arrangementDiv) {
+    if (arrid) {
       arrangement.hentArrangement(arrid, (result) => {
         if (this.refs.arrangementDiv) {
           //Navn og beskrivelse av arrangement
@@ -758,8 +778,12 @@ class KalenderDetaljer extends React.Component {
 
           //Dato og oppmøte og sted for arrangement
           if (result.oppmøtested != null) {
-            this.refs.arrOppmoteSted.innerText = "Sted: "+result.oppmøtested;
-            this.refs.arrOppmotePostnr.innerText = ", "+result.postnr;
+            if (result.postnr != null) {
+              this.refs.arrOppmoteSted.innerText = "Sted: "+result.oppmøtested;
+              this.refs.arrOppmotePostnr.innerText = ", "+result.postnr;
+            } else {
+              this.refs.arrOppmoteSted.innerText = "Sted: "+result.oppmøtested+"\n";
+            }
           } else {
             this.refs.arrOppmoteSted.innerText = "Sted: Kommer senere \n";
           }
@@ -841,10 +865,22 @@ class KalenderDetaljer extends React.Component {
             });
           }
         }
+
+        arrangement.hentArrangementKontakt(result.Kontakt_id, (result) => {
+          if (this.refs.arrangementKontaktDiv) {
+            
+          }
+        });
       });
     }
   }
 }
+
+/*
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+||||||||||||OPPRETT OG REDIGER ARRANGEMENT||||||||||||||
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+*/
 
 class KalenderAdmin extends React.Component {
   constructor() {
@@ -854,11 +890,19 @@ class KalenderAdmin extends React.Component {
   render() {
     return(
       <div>
-        <div ref="opprettArrangementDiv">
+        <div id="opprettArrangementDiv" ref="opprettArrangementDiv">
+          <h2>Arrangement</h2>
           <input type="text" ref="arrNavn" placeholder="Arrangementnavn" /> <br />
           <textarea rows="5" cols="40" ref="arrBeskrivelse" placeholder="Beskrivelse" /> <br />
           <input type="date" ref="arrDato"/> <br />
           <input type="text" ref="arrSted" placeholder="Lokasjon" /> <br />
+        </div>
+        <div id="opprettArrangementKontakt" ref="opprettArrangementKontakt">
+          <h2>Kontaktperson</h2>
+          <input type="text" ref="kontaktFornavn" placeholder="Fornavn" />
+          <input type="text" ref="kontaktEtternavn" placeholder="Etternavn" /> <br />
+          <input type="number" ref="kontaktTlf" /> <br />
+          <input type="text" ref="kontaktEpost" placeholder="Epost" /> <br />
           <p ref="opprettArrangementAdvarsel"></p>
           <button ref="opprettArrangement">Opprett arrangement</button>
           <button ref="tilbakeArrangement">Lukk</button>
@@ -871,21 +915,47 @@ class KalenderAdmin extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
-    let arrNavn; let arrBeskrivelse; let arrDato; let arrSted;
+    let arrNavn; let arrBeskrivelse; let arrDato; let arrSted; let kontaktFornavn; let kontaktEtternavn; let kontaktTlf; let kontaktEpost; let eksistererKontakt = false; let eksistererArr = false;
     this.refs.opprettArrangement.onclick = () => {
       arrNavn = this.refs.arrNavn.value;
       arrBeskrivelse = this.refs.arrBeskrivelse.value;
       arrDato = this.refs.arrDato.value;
       arrSted = this.refs.arrSted.value;
+      kontaktFornavn = this.refs.kontaktFornavn.value;
+      kontaktEtternavn = this.refs.kontaktEtternavn.value;
+      kontaktTlf = this.refs.kontaktTlf.value;
+      kontaktEpost = this.refs.kontaktEpost.value;
 
-      if (erTom(arrNavn) || erTom(arrBeskrivelse) || erTom(arrDato) || erTom(arrSted)) {
+      if (erTom(arrNavn) || erTom(arrBeskrivelse) || erTom(arrDato) || erTom(arrSted) || erTom(kontaktFornavn) || erTom(kontaktEtternavn) || erTom(kontaktTlf) || erTom(kontaktEpost)) {
         this.refs.opprettArrangementAdvarsel.innerText = "Fyll inn alle felter!";
       } else {
 
         arrangement.opprettArrangement(arrNavn, arrBeskrivelse, arrDato, arrSted, (result) => {
           console.log("Arrangement opprettet");
-          history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer/");
-          this.forceUpdate();
+          eksistererArr = true;
+        });
+
+        arrangement.eksistererArrangementKontakt(kontaktTlf, kontaktEpost, (result) => {
+          if (result == undefined) {
+            arrangement.opprettArrangementKontakt(kontaktFornavn, kontaktEtternavn, kontaktTlf, kontaktEpost, (result) => {
+              console.log("Arrangementkontakt opprettet")
+              eksistererKontakt = true;
+            });
+          } else if (result != undefined) {
+            console.log("Arrangementkontakt eksisterer allerede");
+            eksistererKontakt = true;
+          }
+          if (eksistererKontakt && eksistererArr) {
+            console.log("Eksisterer nå");
+            arrangement.velgArrangementKontakt(kontaktTlf, kontaktEpost, (result) => {
+              console.log(result);
+              arrangement.oppdaterArrangementKontakt(result.Kontakt_id, arrNavn, arrDato, arrSted, (result) => {
+                console.log("Kontakt lagt til i arrangement");
+                history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer/");
+                this.forceUpdate();
+              });
+            });
+          }
         });
       }
     }

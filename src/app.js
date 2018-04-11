@@ -491,9 +491,11 @@ class RedigerProfil extends React.Component {
 }
 
 /*
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-|||||||||||||Brukersøk og detaljer|||||||||||||||||||||||||||||||
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+  IIIIII      IIII II  II  III
+ III    II  II   III   II III
+    III    II  II  II  IIII
+II     III  III   II   II III
+  IIIIII   II IIII     II  III
 */
 
 let sokMedlemsnr;
@@ -1133,6 +1135,8 @@ class RedigerArrangment extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
     let str; let string; let array; let dato; let month;
+    let arrnavn; let beskrivelse; let arrDato; let oppmotetid; let sted; let postnr; let starttid; let sluttid; let utstyrsliste; let vaktpoeng;
+
     if (arrid) {
       arrangement.hentArrangement(arrid, (result) => {
         str = result.startdato;
@@ -1174,7 +1178,19 @@ class RedigerArrangment extends React.Component {
           }
         });
 
-      let arrnavn; let beskrivelse; let arrDato; let oppmotetid; let sted; let postnr; let starttid; let sluttid; let utstyrsliste; let vaktpoeng
+        this.refs.oppdaterPostnr.onblur = () => {
+          postnr = this.refs.oppdaterPostnr.value;
+          bruker.eksistererStedPostnr(postnr, (result) => {
+            if (result != undefined) {
+              arrangement.hentArrangementPoststed(postnr, (result) => {
+                this.refs.oppdaterPoststed.value = result.Poststed;
+              });
+            } else {
+              this.refs.oppdaterPoststed.value = "";
+            }
+          });
+        };
+
       this.refs.redigerArrangement.onclick = () => {
         arrnavn = this.refs.oppdaterArrNavn.value
         beskrivelse = this.refs.oppdaterArrBeskrivelse.value

@@ -38,6 +38,13 @@ class Bruker {
     });
   }
 
+  hentBruker() {
+    let ting = sessionStorage.getItem("innloggetBruker");
+
+    if (!ting) return null;
+    return JSON.parse(ting);
+  }
+
   hentOppdatertBruker(medlemsnr) {
     connection.query("SELECT * FROM Medlem WHERE Medlemsnr = ?", [medlemsnr], (error, result) => {
       if (error) throw error;
@@ -51,15 +58,16 @@ class Bruker {
     return JSON.parse(ting);
   }
 
-  hentBruker() {
-    let ting = sessionStorage.getItem("innloggetBruker");
-
-    if (!ting) return null;
-    return JSON.parse(ting);
-  }
-
   loggUtBruker() {
     sessionStorage.clear();
+  }
+
+  hentBrukerPassord(fornavn, etternavn, epost, callback) {
+    connection.query("SELECT Passord FROM Medlem WHERE Fornavn = ? AND Etternavn = ? AND Epost = ?", [fornavn, etternavn, epost], (error, result) => {
+      if (error) throw error;
+
+      callback(result[0]);
+    });
   }
 
   hentBrukerSted(medlemsnr, callback) {
@@ -155,6 +163,12 @@ class Bruker {
     });
   }
 }
+
+/*
+|||||||||||||||||||||||||||||||||||||||||||
+|||||||||||||||ARRANGEMENT|||||||||||||||||
+|||||||||||||||||||||||||||||||||||||||||||
+*/
 
 class Arrangement {
   hentArrangementer(callback) {

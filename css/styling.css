@@ -97,6 +97,10 @@ strong {
   margin-top: 1.5em;
 }
 
+#feilInnlogging {
+  color: red;
+}
+
 #profilinfo {
   list-style-type: none;
   margin-left: auto;

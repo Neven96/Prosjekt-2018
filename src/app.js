@@ -604,13 +604,16 @@ class BrukerSokDetaljer extends React.Component {
             }
           } else if (this.sokBruker.Aktivert == 2) {
             this.refs.brukerSokDetaljer.removeChild(this.refs.aktiveringsKnapp);
+            this.refs.brukerSokDetaljer.removeChild(this.refs.redigerSokBruker);
           }
         }
       }
-      this.refs.redigerSokBruker.onclick = () => {
-        history.push("/bruker/{this.innloggetBruker.Medlemsnr}/sok/{result.Medlemsnr}/rediger");
-        sokMedlemsnr = result.Medlemsnr;
-        return sokMedlemsnr;
+      if (this.refs.redigerSokBruker) {
+        this.refs.redigerSokBruker.onclick = () => {
+          history.push("/bruker/{this.innloggetBruker.Medlemsnr}/sok/{result.Medlemsnr}/rediger");
+          sokMedlemsnr = result.Medlemsnr;
+          return sokMedlemsnr;
+        }
       }
     });
   }
@@ -717,106 +720,7 @@ class BrukerSokRediger extends React.Component {
   }
 }
 
-class BrukerSokRediger extends React.Component {
-  constructor() {
-      super();
 
-      this.brukerSted = {};
-      this.innloggetBruker;
-  }
-
-  render() {
-    this.innloggetBruker = bruker.hentBruker();
-    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
-    return(
-      <div id="redigerprofil">
-        <input type="text" ref="oppdaterFornavnInput" />
-        <br />
-        <input type="text" ref="oppdaterEtternavnInput" />
-        <br />
-        <input type="number" ref="oppdaterTlfInput" />
-        <br />
-        <input type="text" ref="oppdaterAdrInput" />
-        <br />
-        <input type="number" ref="oppdaterPostnrInput" />
-        <input type="text" ref="oppdaterPoststedInput" readOnly />
-        <br />
-        <p ref="feilOppdatering"></p>
-        <button ref="oppdaterBruker">Oppdater</button>
-        <button ref="kansellerOppdatering">Lukk</button>
-      </div>
-    );
-  }
-
-  componentDidMount() {
-    let oppFnavn; let oppEnavn; let oppTlf; let oppAdr; let oppPostnr; let midMedlemsnr;
-
-    this.innloggetBruker = bruker.hentBruker();
-    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
-
-    bruker.hentSokBruker(sokMedlemsnr, (result) => {
-      midMedlemsnr = result.Medlemsnr
-      this.refs.oppdaterFornavnInput.value = result.Fornavn;
-      this.refs.oppdaterEtternavnInput.value = result.Etternavn;
-      this.refs.oppdaterTlfInput.value = result.Telefon;
-      this.refs.oppdaterAdrInput.value = result.Adresse;
-      this.refs.oppdaterPostnrInput.value = result.Postnr;
-
-      bruker.hentBrukerSted(result.Medlemsnr, (result) => {
-        this.refs.oppdaterPoststedInput.value = result.Poststed;
-      });
-
-      this.refs.oppdaterPostnrInput.onblur = () => {
-        oppPostnr = this.refs.oppdaterPostnrInput.value;
-        bruker.eksistererStedPostnr(oppPostnr, (result) => {
-          if (result != undefined) {
-            bruker.hentPoststed(oppPostnr, (result) => {
-              this.refs.oppdaterPoststedInput.value = result.Poststed;
-            });
-          } else {
-            this.refs.oppdaterPoststedInput.value = "";
-          }
-        });
-      };
-
-      this.refs.oppdaterBruker.onclick = () => {
-        oppFnavn = this.refs.oppdaterFornavnInput.value;
-        oppEnavn = this.refs.oppdaterEtternavnInput.value;
-        oppTlf = this.refs.oppdaterTlfInput.value;
-        oppAdr = this.refs.oppdaterAdrInput.value;
-        oppPostnr = this.refs.oppdaterPostnrInput.value;
-        if (erTom(oppFnavn) || erTom(oppEnavn) || erTom(oppTlf) || erTom(oppAdr) || erTom(oppPostnr)) {
-          this.refs.feilOppdatering.innerText = "Ingen felter kan være tomme";
-        } else {
-          bruker.eksistererStedPostnr(oppPostnr, (result) => {
-            console.log(result);
-            if (result != undefined) {
-              console.log("Postnummeroppdater funker");
-              bruker.eksistererBrukerTlfOppdater(midMedlemsnr, oppTlf, (result) => {
-                if (result == undefined) {
-                  console.log("Tlfsjekkoppdater funker");
-                  bruker.oppdaterBruker(midMedlemsnr, oppFnavn, oppEnavn, oppTlf, oppAdr, oppPostnr, (result) => {
-                    console.log("Oppdatering funker");
-                    history.push("/bruker/${this.innloggetBruker.Medlemsnr}/sok");
-                  });
-                }
-                else {
-                  this.refs.feilOppdatering.innerText = "Telefonnummeret er allerede i bruk";
-                }
-              });
-            } else {
-              this.refs.feilOppdatering.innerText = "Postnummeret eksisterer ikke";
-            }
-          });
-        }
-      };
-
-      this.refs.kansellerOppdatering.onclick = () => {
-        history.push("/bruker/${this.innloggetBruker.Medlemsnr}/sok");
-      };
-    })
-  }
-}
 
 
 /*

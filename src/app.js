@@ -499,7 +499,7 @@ class BrukerSok extends React.Component {
       let input = this.refs.inn.value;
 
       if (erTom(input)) {
-        this.refs.sokeResultat.innerText = "Du må ha søkeord!! Tulling"
+        this.refs.sokeResultat.innerText = "Du må ha et søkeord"
       } else {
         bruker.sokBruker(input, (result) => {
           let sokeliste = document.createElement("ul");
@@ -570,6 +570,7 @@ class BrukerSokDetaljer extends React.Component {
             <li>Adresse: {this.sokBruker.Adresse}</li>
             <li>Postnummer og sted: {this.sokBruker.Postnr} {this.sokBrukerPoststed.Poststed}</li>
           </ul>
+          <button ref="aktiveringsKnapp" id="aktiveringsKnapp" className="knapper"></button>
           <button ref="aktiveringsKnapp" id="aktiveringsKnapp" className="knapper"></button> <br />
           <button ref="redigerSokBruker" id="aktiveringsKnapp" className="knapper">Rediger</button> <br />
           <Link to="/bruker/{this.innloggetBruker.Medlemsnr}/sok">Tilbake</Link>

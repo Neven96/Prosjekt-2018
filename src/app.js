@@ -596,8 +596,8 @@ class BrukerSokDetaljer extends React.Component {
             <li>Postnummer og sted: {this.sokBruker.Postnr} {this.sokBrukerPoststed.Poststed}</li>
           </ul>
           <button ref="aktiveringsKnapp" id="aktiveringsKnapp" className="knapper"></button>
-          <button ref="aktiveringsKnapp" id="aktiveringsKnapp" className="knapper"></button> <br />
-          <button ref="redigerSokBruker" id="aktiveringsKnapp" className="knapper">Rediger</button> <br />
+          <button ref="adminKnapp" id="adminKnapp" className="knapper"></button> <br />
+          <button ref="redigerSokBrukerKnapp" id="redigerSokBrukerKnapp" className="knapper">Rediger</button> <br />
           <Link to="/bruker/{this.innloggetBruker.Medlemsnr}/sok">Tilbake</Link>
         </div>
       );
@@ -636,12 +636,13 @@ class BrukerSokDetaljer extends React.Component {
             }
           } else if (this.sokBruker.Aktivert == 2 || this.sokBruker.Medlemsnr == this.innloggetBruker.Medlemsnr || this.sokBruker.Adminlvl > this.innloggetBruker.Adminlvl) {
             this.refs.brukerSokDetaljer.removeChild(this.refs.aktiveringsKnapp);
-            this.refs.brukerSokDetaljer.removeChild(this.refs.redigerSokBruker);
+            this.refs.brukerSokDetaljer.removeChild(this.refs.adminKnapp);
+            this.refs.brukerSokDetaljer.removeChild(this.refs.redigerSokBrukerKnapp);
           }
         }
       }
-      if (this.refs.redigerSokBruker) {
-        this.refs.redigerSokBruker.onclick = () => {
+      if (this.refs.redigerSokBrukerKnapp) {
+        this.refs.redigerSokBrukerKnapp.onclick = () => {
           history.push("/bruker/{this.innloggetBruker.Medlemsnr}/sok/{result.Medlemsnr}/rediger");
           sokMedlemsnr = result.Medlemsnr;
           return sokMedlemsnr;

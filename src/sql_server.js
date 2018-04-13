@@ -272,16 +272,18 @@ class Arrangement {
   redigerArrangement(id, arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, utstyr, vaktpoeng, callback) {
     //Hvis sluttid er tom
     if (erTom(sluttid)) {
-      //Hvis sluttid og utstyr er tom
+
       if (erTom(utstyr)) {
-        //Hvis sluttid, utstyr og vaktpoeng er tomme
+
         if (erTom(vaktpoeng)) {
+          //Hvis sluttid, utstyr og vaktpoeng er tomme
           connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, id], (error, result) => {
             if (error) throw error;
 
             callback();
           });
         } else {
+          //Hvis sluttid og utstyr er tom
           connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, vaktpoeng = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, vaktpoeng, id], (error, result) => {
             if (error) throw error;
 
@@ -289,8 +291,9 @@ class Arrangement {
           });
         }
       }
-      //Hvis sluttid og vaktpoeng er tom
+
       else if (erTom(vaktpoeng)) {
+        //Hvis sluttid og vaktpoeng er tom
         connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, utstyrsliste = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, utstyr, id], (error, result) => {
           if (error) throw error;
 

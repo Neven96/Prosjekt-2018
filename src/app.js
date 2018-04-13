@@ -253,7 +253,7 @@ class RegistrerBruker extends React.Component {
             <input type="password" ref="registrerPassordInput" size="20" />
           </div>
         </div>
-        <p ref="feilRegistrering"></p>
+        <p id="feilRegistrering" ref="feilRegistrering"></p>
         <button ref="registrerKnapp" className="knapper">Registrer</button>
       </div>
     );
@@ -353,20 +353,36 @@ class LoggInn extends React.Component {
 
   componentDidMount() {
     //Logger inn brukeren hvis den har riktig epost og passord
+    let brukernavn; let passord;
     this.refs.loggInnKnapp.onclick = () => {
-      bruker.loggInnBruker(this.refs.brukernavnInput.value, this.refs.passordInput.value, (result) => {
-        this.refs.brukernavnInput.value = "";
-        this.refs.passordInput.value = "";
-        if(result != undefined) {
-          console.log("Logget inn");
-          history.push("/hjem/");
-        }
-        else {
-          console.log("Feil epost/passord");
-          this.refs.feilInnlogging.innerText = "Feil epost/passord";
-        }
-      });
+      brukernavn = this.refs.brukernavnInput.value;
+      passord = this.refs.passordInput.value;
+
+      if(erTom(brukernavn) || erTom(passord)) {
+        this.refs.feilInnlogging.innerText = "Feil epost/passord";
+      }
+      else {
+        bruker.loggInnBruker(this.refs.brukernavnInput.value, this.refs.passordInput.value, (result) => {
+          this.refs.brukernavnInput.value = "";
+          this.refs.passordInput.value = "";
+          if(result != undefined) {
+            console.log("Logget inn");
+            history.push("/hjem/");
+          }
+          else {
+            console.log("Feil epost/passord");
+            this.refs.feilInnlogging.innerText = "Feil epost/passord";
+          }
+        });
+      }
     };
+
+    this.refs.passordInput.onkeyup = (event) => {
+      event.preventDefault();
+      if (event.keyCode === 13) {
+        this.refs.loggInnKnapp.click();
+      }
+    }
   }
 }
 
@@ -420,8 +436,8 @@ class Profil extends React.Component {
     //Kaller på hentbruker to ganger fordi hvorfor ikke :P
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
-    //Henter kommunen til brukeren utifra postnummeret
 
+    //Henter kommunen til brukeren utifra postnummeret
     bruker.hentPoststed(this.innloggetBruker.Postnr, (result) => {
       this.brukerSted = result;
       this.forceUpdate();
@@ -474,11 +490,13 @@ class RedigerProfil extends React.Component {
     this.refs.oppdaterAdrInput.value = this.innloggetBruker.Adresse;
     this.refs.oppdaterPostnrInput.value = this.innloggetBruker.Postnr;
 
+    //Henter kommunen til brukeren ut ifra postnummer
     bruker.hentPoststed(this.innloggetBruker.Postnr, (result) => {
       this.brukerSted = result;
       this.refs.oppdaterPoststedInput.value = this.brukerSted.Poststed;
     });
 
+    //Setter automatisk riktig kommune til postnummer ved å gå ut av tekstboks
     this.refs.oppdaterPostnrInput.onblur = () => {
       oppPostnr = this.refs.oppdaterPostnrInput.value;
       bruker.eksistererStedPostnr(oppPostnr, (result) => {
@@ -676,7 +694,7 @@ class BrukerSokDetaljer extends React.Component {
             this.refs.aktiveringsKnapp.onclick = () => {
               bruker.aktiverBruker(this.sokBruker.Medlemsnr, (result) => {
                 console.log("Bruker ble aktivert");
-                tomSelect();
+                this.tomSelect();
                 this.update();
               });
             }
@@ -685,7 +703,7 @@ class BrukerSokDetaljer extends React.Component {
             this.refs.aktiveringsKnapp.onclick = () => {
               bruker.deaktiverBruker(this.sokBruker.Medlemsnr, (result) => {
                 console.log("Bruker ble deaktivert");
-                tomSelect();
+                this.tomSelect();
                 this.update();
               });
             }

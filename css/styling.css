@@ -97,7 +97,7 @@ strong {
   margin-top: 1.5em;
 }
 
-#feilInnlogging {
+#feilInnlogging, #feilRegistrering {
   color: red;
 }
 
@@ -223,12 +223,12 @@ strong {
 }
 
 #registrerPostnrInput {
-  width: 11%;
+  width: 15%;
   margin-top: 6px;
 }
 
 #registrerPoststedInput {
-  width: 24.5%;
+  width: 27%;
   margin-top: 6px;
 }
 

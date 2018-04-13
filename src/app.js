@@ -426,16 +426,6 @@ class Profil extends React.Component {
     );
   }
 
-  componentWillMount() {
-    //Kaller på hentbruker to ganger fordi hvorfor ikke :P
-    this.innloggetBruker = bruker.hentBruker();
-    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
-
-    bruker.hentPoststed(this.innloggetBruker.Postnr, (result) => {
-      this.brukerSted = result;
-    });
-  }
-
   componentDidMount() {
     //Kaller på hentbruker to ganger fordi hvorfor ikke :P
     this.innloggetBruker = bruker.hentBruker();
@@ -855,9 +845,6 @@ class BrukerSokRediger extends React.Component {
     })
   }
 }
-
-
-
 
 /*
 II  III     II     II      IIIIIII II     II IIIIII   IIIIIII IIIIII

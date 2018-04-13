@@ -171,17 +171,21 @@ class GlemtPassord extends React.Component {
     //Henter passordet og viser det i en alert hvis du har riktig navn og epost
     //"Kjempesikkert..." - Steve Jobs
     //"Det er sånn vi gjør det" - Equifax CEO
-    this.refs.glemtPassordKnapp.onclick = () => {
-      fornavn = this.refs.glemtPassordFornavn.value;
-      etternavn = this.refs.glemtPassordEtternavn.value;
-      epost = this.refs.glemtPassordEpost.value;
-      bruker.hentBrukerPassord(fornavn, etternavn, epost, (result) => {
-        if (result != undefined) {
-          alert("Passordet ditt er: "+result.Passord);
-        } else if (result == undefined) {
-          alert("Du skrev inn feil informasjon");
-        }
-      });
+    if (erTom(fornavn), erTom(etternavn), erTom(epost)) {
+      alert("Du skrev inn feil informasjon");
+    } else {
+      this.refs.glemtPassordKnapp.onclick = () => {
+        fornavn = this.refs.glemtPassordFornavn.value;
+        etternavn = this.refs.glemtPassordEtternavn.value;
+        epost = this.refs.glemtPassordEpost.value;
+        bruker.hentBrukerPassord(fornavn, etternavn, epost, (result) => {
+          if (result != undefined) {
+            alert("Passordet ditt er: "+result.Passord);
+          } else if (result == undefined) {
+            alert("Du skrev inn feil informasjon");
+          }
+        });
+      }
     }
   }
 }
@@ -253,7 +257,7 @@ class RegistrerBruker extends React.Component {
             <input type="password" ref="registrerPassordInput" size="20" />
           </div>
         </div>
-        <p id="feilRegistrering" ref="feilRegistrering"></p>
+        <p id="feilRegistrering" ref="feilRegistrering" className="feilMelding"></p>
         <button ref="registrerKnapp" className="knapper">Registrer</button>
       </div>
     );
@@ -341,7 +345,7 @@ class LoggInn extends React.Component {
   render() {
     return (
       <div id="loginbox">
-        <p ref="feilInnlogging" id="feilInnlogging"></p>
+        <p ref="feilInnlogging" id="feilInnlogging" className="feilMelding"></p>
         Epost: <input type="text" ref="brukernavnInput" className="logginninput" autoFocus /><br />
         Passord: <input type="password" ref="passordInput" className="logginninput" /><br />
         <span><button ref="loggInnKnapp" className="logginnknapp">Logg inn</button>
@@ -463,14 +467,14 @@ class RedigerProfil extends React.Component {
         <br />
         <input type="text" ref="oppdaterEtternavnInput" />
         <br />
-        <input type="number" ref="oppdaterTlfInput" />
+        <input type="number" ref="oppdaterTlfInput" maxLength="8" />
         <br />
         <input type="text" ref="oppdaterAdrInput" />
         <br />
         <input type="number" ref="oppdaterPostnrInput" />
         <input type="text" ref="oppdaterPoststedInput" readOnly />
         <br />
-        <p ref="feilOppdatering"></p>
+        <p ref="feilOppdatering" className="feilMelding"></p>
         <button ref="oppdaterBruker">Oppdater</button>
         <button ref="kansellerOppdatering">Lukk</button>
       </div>
@@ -493,7 +497,9 @@ class RedigerProfil extends React.Component {
     //Henter kommunen til brukeren ut ifra postnummer
     bruker.hentPoststed(this.innloggetBruker.Postnr, (result) => {
       this.brukerSted = result;
-      this.refs.oppdaterPoststedInput.value = this.brukerSted.Poststed;
+      if (this.refs.oppdaterPoststedInput) {
+        this.refs.oppdaterPoststedInput.value = this.brukerSted.Poststed;
+      }
     });
 
     //Setter automatisk riktig kommune til postnummer ved å gå ut av tekstboks
@@ -516,8 +522,11 @@ class RedigerProfil extends React.Component {
       oppTlf = this.refs.oppdaterTlfInput.value;
       oppAdr = this.refs.oppdaterAdrInput.value;
       oppPostnr = this.refs.oppdaterPostnrInput.value;
-      if (erTom(oppFnavn) || erTom(oppEnavn) || erTom(oppTlf) || erTom(oppAdr) || erTom(oppPostnr)) {
+      if (erTom(oppFnavn) || erTom(oppEnavn) || erTom(oppTlf) || erTom(oppAdr) || erTom(oppPostnr) || oppTlf.length > 8 || oppPostnr.length > 4 || oppTlf.length < 8) {
         this.refs.feilOppdatering.innerText = "Ingen felter kan være tomme";
+        if (oppTlf.length > 8 || oppPostnr.length > 4 || oppTlf.length < 8) {
+          this.refs.feilOppdatering.innerText = "Telefon eller postnummer er feil lengde";
+        }
       } else {
         bruker.eksistererStedPostnr(oppPostnr, (result) => {
           console.log(result);
@@ -570,7 +579,7 @@ class BrukerSok extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return(
       <div id="soktest">
-        <input ref="inn" type = "text" autoFocus/> <button ref ="sokKnapp">Søk</button>
+        <input ref="inn" type="text" autoFocus/> <button ref="sokKnapp">Søk</button>
         <div ref="sokeResultat">
         </div>
       </div>
@@ -586,7 +595,6 @@ class BrukerSok extends React.Component {
         this.refs.sokeResultat.innerText = "Du må ha et søkeord"
       } else {
         bruker.sokBruker(input, (result) => {
-          console.log(result);
           let sokeliste = document.createElement("ul");
           sokeliste.id="sokeliste"
 
@@ -874,9 +882,11 @@ class Kalender extends React.Component {
     if (this.innloggetBruker.Adminlvl <= 0) {
       return(
         <div>
+          <h2>Kommende arrangementer</h2>
           <div ref="kommendeArrangementer">
           </div>
-          <div>
+          <h2>Tidligere arrangementer</h2>
+          <div ref="tidligereArrangementer">
           </div>
         </div>
       );
@@ -884,9 +894,11 @@ class Kalender extends React.Component {
       return(
         <div>
           <Link to="/bruker/${this.innloggetBruker.Medlemsnr}/adminkalender" className="linker">Opprett arrangement</Link>
+          <h2>Kommende arrangementer</h2>
           <div ref="kommendeArrangementer">
           </div>
-          <div>
+          <h2>Tidligere arrangementer</h2>
+          <div ref="tidligereArrangementer">
           </div>
         </div>
       );
@@ -904,7 +916,6 @@ class Kalender extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
-    let str; let string; let array; let array2;
     arrangement.hentArrangementer((result) => {
       for (let arr of result) {
         let arrDiv = document.createElement("div");
@@ -928,8 +939,10 @@ class Kalender extends React.Component {
 
         arrDiv.appendChild(arrTittel);
 
-        if (this.refs.kommendeArrangementer) {
+        if (this.refs.kommendeArrangementer && arr.ferdig == 0) {
           this.refs.kommendeArrangementer.appendChild(arrDiv);
+        } else if (this.refs.tidligereArrangementer && arr.ferdig >= 1) {
+          this.refs.tidligereArrangementer.appendChild(arrDiv);
         }
       }
     });
@@ -941,6 +954,7 @@ class KalenderDetaljer extends React.Component {
     super();
 
     this.innloggetBruker;
+    this.arrangement = {};
   }
 
   render() {
@@ -949,6 +963,7 @@ class KalenderDetaljer extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return(
       <div ref="arrangementDetaljer">
+        <Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Tilbake</Link>
         <div ref="arrangementDiv" className="arrangementDetaljerDiv">
           <h2>Arrangement</h2>
           <p ref="arrTittel">
@@ -969,6 +984,13 @@ class KalenderDetaljer extends React.Component {
             <span ref="arrUtstyrsliste"></span>
           </p>
         </div>
+        <div ref="arrangementMannskapDiv" className="arrangementDetaljerDiv">
+          <h2>Mannskap og roller</h2>
+          <p>
+            <span ref="arrMannskapPlasser"></span>
+            <span ref="arrMannskapRoller"></span>
+          </p>
+        </div>
         <div ref="arrangementKontaktDiv" className="arrangementDetaljerDiv">
           <h2>Kontaktperson</h2>
           <p ref="arrangementKontaktDetaljer">
@@ -978,7 +1000,6 @@ class KalenderDetaljer extends React.Component {
             <span ref="kontaktEpost"></span>
           </p>
         </div>
-        <Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Tilbake</Link>
       </div>
     );
   }
@@ -992,22 +1013,25 @@ class KalenderDetaljer extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
-    let str; let string; let array; let array2;
+    let str; let string; let array; let array2; let detaljerArrid; let detaljerArrnavn;
+    let mannskapPlasser;
     if (arrid) {
       arrangement.hentArrangement(arrid, (result) => {
         if (this.refs.arrangementDiv) {
+          this.arrangement = result;
+
           //Navn og beskrivelse av arrangement
-          this.refs.arrNavn.innerText = result.arrnavn+"\n";
-          this.refs.arrBeskrivelse.innerText = result.beskrivelse;
+          this.refs.arrNavn.innerText = this.arrangement.arrnavn+"\n";
+          this.refs.arrBeskrivelse.innerText = this.arrangement.beskrivelse;
 
           //Dato og oppmøte og sted for arrangement
-          if (result.oppmøtested != null) {
-            this.refs.arrOppmoteSted.innerText = "Sted: "+result.oppmøtested+"\n";
+          if (this.arrangement.oppmøtested != null) {
+            this.refs.arrOppmoteSted.innerText = "Sted: "+this.arrangement.oppmøtested+"\n";
           } else {
             this.refs.arrOppmoteSted.innerText = "Sted: Kommer senere \n";
           }
           //Drittgreie for å få dato
-          str = result.startdato;
+          str = this.arrangement.startdato;
           if (str != null) {
             string = str.toString();
             array = string.split(" ");
@@ -1017,7 +1041,7 @@ class KalenderDetaljer extends React.Component {
           }
           //Oppmøtetid
           array = " ";
-          str = result.oppmøtetid;
+          str = this.arrangement.oppmøtetid;
           if (str != null) {
             string = str.toString();
             array = string.split(":");
@@ -1027,12 +1051,12 @@ class KalenderDetaljer extends React.Component {
           }
           //Varighet
           array = " ";
-          str = result.tidstart;
+          str = this.arrangement.tidstart;
           if (str != null) {
             string = str.toString();
             array = string.split(":");
             this.refs.arrStart.innerText = "Oppstart: ca. kl "+array[0]+":"+array[1];
-            str = result.tidslutt;
+            str = this.arrangement.tidslutt;
             if (str != null) {
               string = str.toString();
               array2 = string.split(":");
@@ -1052,16 +1076,28 @@ class KalenderDetaljer extends React.Component {
             }
           }
 
-          if (result.vaktpoeng <= 0) {
+          if (this.arrangement.vaktpoeng <= 0) {
             this.refs.arrVaktpoeng.innerText = "Ingen poeng for arrangementet";
-          } else if (result.vaktpoeng >= 1) {
-            this.refs.arrVaktpoeng.innerText = "Vaktpoeng: "+result.vaktpoeng;
+          } else if (this.arrangement.vaktpoeng >= 1) {
+            this.refs.arrVaktpoeng.innerText = "Vaktpoeng: "+this.arrangement.vaktpoeng;
           }
-          if (result.utstyrsliste == null) {
+          if (this.arrangement.utstyrsliste == null) {
             this.refs.arrUtstyrsliste.innerText = "Ingen utstyr for arrangementet"
-          } else if (result.utstyrsliste != null) {
-            this.refs.arrUtstyrsliste.innerText = "Utstyr for arrangementet: "+result.utstyrsliste;
+          } else if (this.arrangement.utstyrsliste != null) {
+            this.refs.arrUtstyrsliste.innerText = "Utstyr for arrangementet: "+this.arrangement.utstyrsliste;
           }
+
+          arrangement.hentMannskapsliste(this.arrangement.arrid, (result) => {
+            mannskapPlasser = result.antall_pers;
+            arrangement.hentMannskapsVakter(result.listeid, (result) => {
+              this.refs.arrMannskapPlasser.innerText = "Plasser: "+result["COUNT(Medlemsnr)"]+"/"+mannskapPlasser+"\n";
+            });
+            if (result.roller == null) {
+              this.refs.arrMannskapRoller.innerText = "Ingen roller er satt opp enda";
+            } else if (result.roller != null) {
+              this.refs.arrMannskapRoller.innerText = "Roller: "+result.roller;
+            }
+          });
 
 
           if (this.innloggetBruker.Adminlvl >= 1) {
@@ -1070,27 +1106,32 @@ class KalenderDetaljer extends React.Component {
 
             redigerArrKnapp.onclick = () => {
               history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangement/{arrid}/rediger/")
-              arrid = result.arrid;
+              arrid = this.arrangement.arrid;
               return arrid;
             }
 
             slettArrKnapp.onclick = () => {
-              let slett = confirm("Er du sikker på du vil slette arrangement\n"+result.arrnavn+"?")
+              let slett = confirm("Er du sikker på du vil slette arrangement\n"+this.arrangement.arrnavn+"?")
               if (slett) {
-                arrangement.slettArrangement(result.arrid, (result) => {
-                  //console.log("Arrangement med navn: "+result.arrnavn+", og id:"+result.arrid+" slettet");
-                  history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangementer/");
-                  this.forceUpdate();
+                arrangement.slettMannskapsliste(this.arrangement.arrid, (result) => {
+                  console.log("Mannskapsliste til arrangement: "+this.arrangement.arrid);
+                  arrangement.slettArrangement(this.arrangement.arrid, (result) => {
+                    console.log("Arrangement med navn: "+this.arrangement.arrnavn+", og id:"+this.arrangement.arrid+" slettet");
+                    history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangementer/");
+                    this.forceUpdate();
+                  });
                 });
               }
             }
 
-            redigerArrKnapp.innerText = "Rediger";
-            slettArrKnapp.innerText = "Slett";
-            this.refs.arrangementDiv.appendChild(redigerArrKnapp);
-            this.refs.arrangementDiv.appendChild(slettArrKnapp);
+            if (this.arrangement.ferdig == 0) {
+              redigerArrKnapp.innerText = "Rediger";
+              slettArrKnapp.innerText = "Slett";
+              this.refs.arrangementDiv.appendChild(redigerArrKnapp);
+              this.refs.arrangementDiv.appendChild(slettArrKnapp);
+            }
 
-            arrangement.hentArrangementKontakt(result.Kontakt_id, (result) => {
+            arrangement.hentArrangementKontakt(this.arrangement.Kontakt_id, (result) => {
               if (this.refs.arrangementKontaktDiv) {
                 this.refs.kontaktFornavn.innerText = "Navn: "+result.Fornavn+" ";
                 this.refs.kontaktEtternavn.innerText = result.Etternavn+"\n";
@@ -1106,8 +1147,6 @@ class KalenderDetaljer extends React.Component {
     }
   }
 }
-
-var kalenderDetaljer = new KalenderDetaljer();
 
 /*
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -1165,13 +1204,18 @@ class KalenderAdmin extends React.Component {
       } else {
         arrangement.opprettArrangement(arrNavn, arrBeskrivelse, arrDato, arrSted, (result) => {
           console.log("Arrangement opprettet");
+          arrangement.hentArrangementId(arrNavn, arrDato, arrSted, (result) => {
+            console.log("Hentet arrid: "+result.arrid);
+            arrangement.opprettMannskapsliste(result.arrid, (result) => {
+              console.log("Mannskapsliste opprettet");
+            });
+          });
         });
 
         arrangement.eksistererArrangementKontakt(kontaktTlf, kontaktEpost, (result) => {
           if (result == undefined) {
             arrangement.opprettArrangementKontakt(kontaktFornavn, kontaktEtternavn, kontaktTlf, kontaktEpost, (result) => {
               console.log("Arrangementkontakt opprettet")
-
               arrangement.velgArrangementKontakt(kontaktTlf, kontaktEpost, (result) => {
                 arrangement.oppdaterArrangementKontakt(result.Kontakt_id, arrNavn, arrDato, arrSted, (result) => {
                   console.log("Kontakt lagt til i arrangement");
@@ -1226,7 +1270,7 @@ class RedigerArrangment extends React.Component {
           <br />
           Sted*: <input type="text" ref="oppdaterSted" placeholder="Oppmøtested" />
           <br />
-          Postnummer/sted: <input type="number" ref="oppdaterPostnr"/>
+          Postnummer*/sted: <input type="number" ref="oppdaterPostnr"/>
           <input type="text" ref="oppdaterPoststed" readOnly/>
           <br />
           Arrangementstart*/slutt: <input type="time" ref="oppdaterStartTid" />
@@ -1250,47 +1294,47 @@ class RedigerArrangment extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
-    let redigerArrid
-    let str; let string; let array; let dato; let month;
     let arrnavn; let beskrivelse; let arrDato; let oppmotetid; let sted; let postnr; let starttid; let sluttid; let utstyrsliste; let vaktpoeng;
 
     if (arrid) {
       arrangement.hentArrangement(arrid, (result) => {
-        redigerArrid = result.arrid;
-        str = result.startdato;
-        if (str != null) {
-          string = str.toString();
-          array = string.split(" ");
-          switch(array[1]) {
-            case "Jan":month = "01";break;
-            case "Feb":month = "02";break;
-            case "Mar":month = "03";break;
-            case "Apr":month = "04";break;
-            case "May":month = "05";break;
-            case "Jun":month = "06";break;
-            case "Jul":month = "07";break;
-            case "Aug":month = "08";break;
-            case "Sep":month = "09";break;
-            case "Oct":month = "10";break;
-            case "Nov":month = "11";break;
-            case "Des":month = "12";break;
-          }
-          dato = array[3]+"-"+month+"-"+array[2];
-        }
+        this.arrangement = result;
 
-        this.refs.oppdaterArrNavn.value = result.arrnavn;
-        this.refs.oppdaterArrBeskrivelse.value = result.beskrivelse;
-        this.refs.oppdaterDato.value = dato;
-        this.refs.oppdaterOppmote.value = result.oppmøtetid;
-        this.refs.oppdaterSted.value = result.oppmøtested;
-        this.refs.oppdaterPostnr.value = result.postnr;
-        this.refs.oppdaterStartTid.value = result.tidstart;
-        this.refs.oppdaterSluttTid.value = result.tidslutt;
-        this.refs.oppdaterUtstyrsliste.value = result.utstyrsliste;
-        this.refs.oppdaterVaktPoeng.value = result.vaktpoeng;
+        // str = result.startdato;
+        // if (str != null) {
+        //   string = str.toString();
+        //   array = string.split(" ");
+        //   switch(array[1]) {
+        //     case "Jan":month = "01";break;
+        //     case "Feb":month = "02";break;
+        //     case "Mar":month = "03";break;
+        //     case "Apr":month = "04";break;
+        //     case "May":month = "05";break;
+        //     case "Jun":month = "06";break;
+        //     case "Jul":month = "07";break;
+        //     case "Aug":month = "08";break;
+        //     case "Sep":month = "09";break;
+        //     case "Oct":month = "10";break;
+        //     case "Nov":month = "11";break;
+        //     case "Des":month = "12";break;
+        //   }
+        //   dato = array[3]+"-"+month+"-"+array[2];
+        // }
+        //Dette er det samme som valueAsNumber!!!!!!!!!!!
 
-        if (result.postnr) {
-          arrangement.hentArrangementPoststed(result.postnr, (result) => {
+        this.refs.oppdaterArrNavn.value = this.arrangement.arrnavn;
+        this.refs.oppdaterArrBeskrivelse.value = this.arrangement.beskrivelse;
+        this.refs.oppdaterDato.valueAsNumber = this.arrangement.startdato;
+        this.refs.oppdaterOppmote.value = this.arrangement.oppmøtetid;
+        this.refs.oppdaterSted.value = this.arrangement.oppmøtested;
+        this.refs.oppdaterPostnr.value = this.arrangement.postnr;
+        this.refs.oppdaterStartTid.value = this.arrangement.tidstart;
+        this.refs.oppdaterSluttTid.value = this.arrangement.tidslutt;
+        this.refs.oppdaterUtstyrsliste.value = this.arrangement.utstyrsliste;
+        this.refs.oppdaterVaktPoeng.value = this.arrangement.vaktpoeng;
+
+        if (this.arrangement.postnr) {
+          arrangement.hentArrangementPoststed(this.arrangement.postnr, (result) => {
             this.refs.oppdaterPoststed.value = result.Poststed;
           });
         }

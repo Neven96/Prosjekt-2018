@@ -214,9 +214,41 @@ class Arrangement {
     });
   }
 
+  hentArrangementId(arrnavn, dato, sted, callback) {
+    connection.query("SELECT arrid FROM Arrangement WHERE arrnavn = ? AND startdato = ? AND oppmøtested = ?", [arrnavn, dato, sted], (error, result) => {
+      if (error) throw error;
+
+      callback(result[0]);
+    });
+  }
+
+  hentMannskapsliste(arrid, callback) {
+    connection.query("SELECT * FROM Mannskapsliste WHERE arrid = ?", [arrid], (error, result) => {
+      if (error) throw error;
+
+      callback(result[0]);
+    });
+  }
+
+  hentMannskapsVakter(listeid, callback) {
+    connection.query("SELECT COUNT(Medlemsnr) FROM Vakt WHERE listeid = ?", [listeid], (error, result) => {
+      if (error) throw error;
+
+      callback(result[0]);
+    });
+  }
+
   //Oppretter et arrangement med noen få detaljer
   opprettArrangement(arrnavn, beskrivelse, dato, sted, callback) {
     connection.query("INSERT INTO Arrangement (arrnavn, beskrivelse, startdato, oppmøtested) VALUES (?, ?, ?, ?)", [arrnavn, beskrivelse, dato, sted], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  opprettMannskapsliste(arrid, callback) {
+    connection.query("INSERT INTO Mannskapsliste (arrid) VALUES (?)", [arrid], (error, result) => {
       if (error) throw error;
 
       callback();
@@ -345,6 +377,14 @@ class Arrangement {
   //Jeg lurer på hva denne gjør
   slettArrangement(id, callback) {
     connection.query("DELETE FROM Arrangement WHERE arrid = ?", [id], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  slettMannskapsliste(id, callback) {
+    connection.query("DELETE FROM Mannskapsliste WHERE arrid = ?", [id], (error, result) => {
       if (error) throw error;
 
       callback();

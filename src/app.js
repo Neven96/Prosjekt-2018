@@ -3,7 +3,23 @@ import ReactDOM from "react-dom";
 import {Link, HashRouter, Switch, Route, Redirect} from "react-router-dom";
 import {createHashHistory} from "history";
 import {bruker, arrangement} from "./sql_server";
+import BigCalendar from 'react-big-calendar';
+import moment from 'moment';
 
+// Setup the localizer by providing the moment (or globalize) Object
+// to the correct localizer.
+BigCalendar.momentLocalizer(moment); // or globalizeLocalizer
+const allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k]);
+
+const MyCalendar = props => (
+  <div>
+    <BigCalendar
+      events={myEventsList}
+      startAccessor='startDate'
+      endAccessor='endDate'
+    />
+  </div>
+);
 //Lager en history-bit for kunne bruke history.push
 export const history = createHashHistory();
 
@@ -401,6 +417,7 @@ class Profil extends React.Component {
   constructor() {
     super();
 
+    this.state = {width: 500}
     this.brukerSted = {};
     this.innloggetBruker;
   }
@@ -422,6 +439,10 @@ class Profil extends React.Component {
           <li>Vaktpoeng: {this.innloggetBruker.Vaktpoeng}</li>
         </ul>
         <p id="kommendearr"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="kommendearr">Kommende arrangementer</Link></p>
+        <BigCalendar
+          style={{ height: 500, width: this.state.width }}
+          events={[]}
+        />
       </div>
     );
   }
@@ -654,6 +675,7 @@ class BrukerSokDetaljer extends React.Component {
             <li>Epost: {this.sokBruker.Epost}</li>
             <li>Adresse: {this.sokBruker.Adresse}</li>
             <li>Postnummer og sted: {this.sokBruker.Postnr} {this.sokBrukerPoststed.Poststed}</li>
+            <li>Medlemsnr: {this.sokBruker.Medlemsnr}</li>
           </ul>
           <button ref="aktiveringsKnapp" id="aktiveringsKnapp" className="knapper"></button> <br />
           <select ref="adminLevelSelect"></select>

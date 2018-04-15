@@ -6,6 +6,7 @@ import {bruker, arrangement} from "./sql_server";
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 
+//Gjør klar BigCalendar biten for en fin liten kalender
 // Setup the localizer by providing the moment (or globalize) Object
 // to the correct localizer.
 BigCalendar.momentLocalizer(moment); // or globalizeLocalizer
@@ -621,7 +622,10 @@ class BrukerSok extends React.Component {
               navn.className="deaktiver";
             }
 
-            navn.innerText = medlem.Fornavn + ' ' + medlem.Etternavn + " ";
+            navn.innerText = medlem.Fornavn + ' ' + medlem.Etternavn;
+            if (medlem.Adminlvl >= 1) {
+              navn.innerText += ", (Administrator)"
+            }
             navn.onclick = () => {
               history.push("/bruker/{this.innloggetBruker.Medlemsnr}/sok/{medlem.Medlemsnr}");
               sokMedlemsnr = medlem.Medlemsnr;
@@ -1112,6 +1116,7 @@ class KalenderDetaljer extends React.Component {
             }
           }
 
+          //Oppsett av vaktpoeng og utstyr for arrangmenetet
           if (this.arrangement.vaktpoeng <= 0) {
             this.refs.arrVaktpoeng.innerText = "Ingen poeng for arrangementet";
           } else if (this.arrangement.vaktpoeng >= 1) {
@@ -1123,13 +1128,16 @@ class KalenderDetaljer extends React.Component {
             this.refs.arrUtstyrsliste.innerText = "Utstyr for arrangementet: "+this.arrangement.utstyrsliste;
           }
 
+          //Henter ut mannskapslista til arrangementet
           arrangement.hentMannskapsliste(this.arrangement.arrid, (result) => {
             mannskapPlasser = result.antall_pers;
             listeid = result.listeid;
 
+            //Henter ut alle som er satt opp til vakt på arrangementet
             arrangement.hentMannskapsVakter(result.listeid, (result) => {
               bruktePlasser = result.length;
 
+              //Setter opp en liste over alle som er satt opp på vakter for arrangementet
               this.refs.arrMannskapPlasser.innerText = "Plasser: "+bruktePlasser+"/"+mannskapPlasser+"\n";
               if (result.length >= 1) {
                 this.refs.arrMannskapPlasserListe.innerText = "Vakter:"
@@ -1141,6 +1149,7 @@ class KalenderDetaljer extends React.Component {
                         let vaktMedlemP = document.createElement("p");
                         vaktMedlemP.innerText += result.Fornavn+" "+result.Etternavn+", Rolle: ";
 
+                        //Lager knapp for å at admin eller du skal kunne melde deg av vakt
                         if (this.arrangement.startdato >= iDag && this.innloggetBruker.Medlemsnr == result.Medlemsnr || this.innloggetBruker.Adminlvl >= 1) {
                           let vaktKnappSpan = document.createElement("span");
                           let vaktKnapp = document.createElement("button");
@@ -1176,6 +1185,7 @@ class KalenderDetaljer extends React.Component {
                           let interesseMedlemP = document.createElement("p");
                           interesseMedlemP.innerText += result.Fornavn+" "+result.Etternavn+", Vaktpoeng: "+result.Vaktpoeng+", Rolle: ";
 
+                          //Lager en knapp for at en admin skal kunne melde opp personer til vakt
                           if (mannskapPlasser - bruktePlasser >= 1 && this.arrangement.startdato >= iDag) {
                             let vaktKnappSpan = document.createElement("span");
                             let vaktKnapp = document.createElement("button");
@@ -1204,6 +1214,7 @@ class KalenderDetaljer extends React.Component {
             }
           });
 
+          //Lager knapp for å melde seg interessert eller ikke interessert i et arrangement
           arrangement.sjekkInteresse(this.innloggetBruker.Medlemsnr, this.arrangement.arrid, (result) => {
             if (result == undefined) {
               let meldInteresseKnapp = document.createElement("button");

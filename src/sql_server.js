@@ -110,8 +110,8 @@ class Bruker {
       callback(result[0]);
     });
   }
-  eksistererBrukerTlfOppdater(id, tlf, callback) {
-    connection.query("SELECT 1 FROM Medlem WHERE Telefon = ? AND Medlemsnr <> ?", [tlf, id], (error, result) => {
+  eksistererBrukerTlfOppdater(medlemsnr, tlf, callback) {
+    connection.query("SELECT 1 FROM Medlem WHERE Telefon = ? AND Medlemsnr <> ?", [tlf, medlemsnr], (error, result) => {
       if (error) throw error;
 
       callback(result[0]);
@@ -126,8 +126,8 @@ class Bruker {
   }
 
   //Oppdaterer en allerede eksisterende bruker
-  oppdaterBruker(id, fnavn, enavn, tlf, adresse, postnr, callback) {
-    connection.query("UPDATE Medlem SET Fornavn = ?, Etternavn = ?, Telefon = ?, Adresse = ?, Postnr = ? WHERE Medlemsnr = ?", [fnavn, enavn, tlf, adresse, postnr, id], (error, result) => {
+  oppdaterBruker(medlemsnr, fnavn, enavn, tlf, adresse, postnr, callback) {
+    connection.query("UPDATE Medlem SET Fornavn = ?, Etternavn = ?, Telefon = ?, Adresse = ?, Postnr = ? WHERE Medlemsnr = ?", [fnavn, enavn, tlf, adresse, postnr, medlemsnr], (error, result) => {
       if (error) throw error;
 
       callback();
@@ -144,8 +144,8 @@ class Bruker {
   }
 
   //Henter ut informasjonen til brukeren som ble søkt opp
-  hentSokBruker(id, callback) {
-    connection.query("SELECT * FROM Medlem WHERE Medlemsnr = ?", [id], (error, result) => {
+  hentSokBruker(medlemsnr, callback) {
+    connection.query("SELECT * FROM Medlem WHERE Medlemsnr = ?", [medlemsnr], (error, result) => {
       if (error) throw error;
 
       callback(result[0]);
@@ -153,8 +153,8 @@ class Bruker {
   }
 
   //Aktiverer en ikke aktivert bruker
-  aktiverBruker(id, callback) {
-    connection.query("UPDATE Medlem SET Aktivert = ? WHERE Medlemsnr = ?", [1, id], (error, result) => {
+  aktiverBruker(medlemsnr, callback) {
+    connection.query("UPDATE Medlem SET Aktivert = ? WHERE Medlemsnr = ?", [1, medlemsnr], (error, result) => {
       if (error) throw error;
 
       callback();
@@ -162,8 +162,8 @@ class Bruker {
   }
 
   //Deaktiverer en bruker som har sluttet
-  deaktiverBruker(id, callback) {
-    connection.query("UPDATE Medlem SET Aktivert = ? WHERE Medlemsnr = ?", [2, id], (error, result) => {
+  deaktiverBruker(medlemsnr, callback) {
+    connection.query("UPDATE Medlem SET Aktivert = ? WHERE Medlemsnr = ?", [2, medlemsnr], (error, result) => {
       if (error) throw error;
 
       callback();
@@ -171,8 +171,8 @@ class Bruker {
   }
 
   //Gjør en bruker til admin
-  adminBruker(id, adminlvl, callback) {
-    connection.query("UPDATE Medlem SET Adminlvl = ? WHERE Medlemsnr = ?", [adminlvl, id], (error, result) => {
+  adminBruker(medlemsnr, adminlvl, callback) {
+    connection.query("UPDATE Medlem SET Adminlvl = ? WHERE Medlemsnr = ?", [adminlvl, medlemsnr], (error, result) => {
       if (error) throw error;
 
       callback();
@@ -189,7 +189,7 @@ class Bruker {
 class Arrangement {
   //Henter alle arrangementene
   hentArrangementer(callback) {
-    connection.query("SELECT * FROM Arrangement", (error, result) => {
+    connection.query("SELECT * FROM Arrangement ORDER BY startdato ASC", (error, result) => {
       if (error) throw error;
 
       callback(result);
@@ -197,8 +197,8 @@ class Arrangement {
   }
 
   //Henter ut et spesifikt arrangement
-  hentArrangement(id, callback) {
-    connection.query("SELECT * FROM Arrangement WHERE arrid = ?", [id], (error, result) => {
+  hentArrangement(arrid, callback) {
+    connection.query("SELECT * FROM Arrangement WHERE arrid = ?", [arrid], (error, result) => {
       if (error) throw error;
 
       callback(result[0]);
@@ -230,11 +230,38 @@ class Arrangement {
     });
   }
 
+  //Henter informasjon til de som er satt opp til vakt
   hentMannskapsVakter(listeid, callback) {
-    connection.query("SELECT COUNT(Medlemsnr) FROM Vakt WHERE listeid = ?", [listeid], (error, result) => {
+    connection.query("SELECT * FROM Vakt WHERE listeid = ?", [listeid], (error, result) => {
+      if (error) throw error;
+
+      callback(result);
+    });
+  }
+
+  //Sjekker om bruker er meldt opp til vakt
+  eksistererArrangementVakt(medlemsnr, listeid, callback) {
+    connection.query("SELECT 1 FROM Vakt WHERE Medlemsnr = ? AND listeid = ?", [medlemsnr, listeid], (error, result) => {
       if (error) throw error;
 
       callback(result[0]);
+    });
+  }
+
+  //Henter informasjonen om kontaktpersonen
+  hentArrangementKontakt(kontaktid, callback) {
+    connection.query("SELECT * FROM Kontaktperson WHERE Kontakt_id = ?", [kontaktid], (error, result) => {
+      if (error) throw error;
+
+      callback(result[0]);
+    });
+  }
+
+  hentInteresserte(arrid, callback) {
+    connection.query("SELECT * FROM Interesse WHERE Arrid = ?", [arrid], (error, result) => {
+      if (error) throw error;
+
+      callback(result);
     });
   }
 
@@ -291,17 +318,53 @@ class Arrangement {
     });
   }
 
-  //Henter informasjonen om kontaktpersonen
-  hentArrangementKontakt(kontaktid, callback) {
-    connection.query("SELECT * FROM Kontaktperson WHERE Kontakt_id = ?", [kontaktid], (error, result) => {
+  //Sjekker om brukeren allerde har meldt seg interessert for et arrangement
+  sjekkInteresse(medlemsnr, arrid, callback) {
+    connection.query("SELECT 1 FROM Interesse WHERE Medlemsnr = ? AND Arrid = ?", [medlemsnr, arrid], (error, result) => {
       if (error) throw error;
 
       callback(result[0]);
     });
   }
 
+  //Melde seg interessert for arrangement
+  meldInteressert(medlemsnr, arrid, callback) {
+    connection.query("INSERT INTO Interesse (Medlemsnr, Arrid) VALUES (?, ?)", [medlemsnr, arrid], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  //Avmelde interesse for arrangement
+  avmeldInteresse(medlemsnr, arrid, callback) {
+    connection.query("DELETE FROM Interesse WHERE Medlemsnr = ? AND Arrid = ?", [medlemsnr, arrid], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  //Sette opp person til vakt
+  lagVakt(medlemsnr, listeid, callback) {
+    connection.query("INSERT INTO Vakt (Medlemsnr, listeid) VALUES (?, ?)", [medlemsnr, listeid], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  //Melde person av vakt
+  slettVakt(medlemsnr, listeid, callback) {
+    connection.query("DELETE FROM Vakt WHERE Medlemsnr = ? AND listeid = ?", [medlemsnr, listeid], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
   //Redigerer arrangementet og her trengs ikke alt
-  redigerArrangement(id, arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, utstyr, vaktpoeng, callback) {
+  redigerArrangement(arrid, arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, utstyr, vaktpoeng, callback) {
     //Hvis sluttid er tom
     if (erTom(sluttid)) {
 
@@ -309,14 +372,14 @@ class Arrangement {
 
         if (erTom(vaktpoeng)) {
           //Hvis sluttid, utstyr og vaktpoeng er tomme
-          connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, id], (error, result) => {
+          connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, arrid], (error, result) => {
             if (error) throw error;
 
             callback();
           });
         } else {
           //Hvis sluttid og utstyr er tom
-          connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, vaktpoeng = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, vaktpoeng, id], (error, result) => {
+          connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, vaktpoeng = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, vaktpoeng, arrid], (error, result) => {
             if (error) throw error;
 
             callback();
@@ -326,13 +389,13 @@ class Arrangement {
 
       else if (erTom(vaktpoeng)) {
         //Hvis sluttid og vaktpoeng er tom
-        connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, utstyrsliste = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, utstyr, id], (error, result) => {
+        connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, utstyrsliste = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, utstyr, arrid], (error, result) => {
           if (error) throw error;
 
           callback();
         });
       } else {
-        connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, utstyrsliste = ?, vaktpoeng = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, utstyr, vaktpoeng, id], (error, result) => {
+        connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, utstyrsliste = ?, vaktpoeng = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, utstyr, vaktpoeng, arrid], (error, result) => {
           if (error) throw error;
 
           callback();
@@ -343,13 +406,13 @@ class Arrangement {
     else if (erTom(utstyr)) {
       //Hvis utstyr og vaktpoeng er tom
       if (erTom(vaktpoeng)) {
-        connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, tidslutt = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, id], (error, result) => {
+        connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, tidslutt = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, arrid], (error, result) => {
           if (error) throw error;
 
           callback();
         });
       } else {
-        connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, tidslutt = ?, vaktpoeng = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, vaktpoeng, id], (error, result) => {
+        connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, tidslutt = ?, vaktpoeng = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, vaktpoeng, arrid], (error, result) => {
           if (error) throw error;
 
           callback();
@@ -358,7 +421,7 @@ class Arrangement {
     }
     //Hvis vaktpoeng er tom
     else if(erTom(vaktpoeng)) {
-      connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, tidslutt = ?, utstyrsliste = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, utstyr, id], (error, result) => {
+      connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, tidslutt = ?, utstyrsliste = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, utstyr, arrid], (error, result) => {
         if (error) throw error;
 
         callback();
@@ -366,7 +429,7 @@ class Arrangement {
     }
     //Hvis ingen er tomme
     else {
-      connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, tidslutt = ?, utstyrsliste = ?, vaktpoeng = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, utstyr, vaktpoeng, id], (error, result) => {
+      connection.query("UPDATE Arrangement SET arrnavn = ?, beskrivelse = ?, startdato = ?, oppmøtetid = ?, oppmøtested = ?, postnr = ?, tidstart = ?, tidslutt = ?, utstyrsliste = ?, vaktpoeng = ? WHERE arrid = ?", [arrnavn, beskrivelse, dato, opptid, sted, postnr, starttid, sluttid, utstyr, vaktpoeng, arrid], (error, result) => {
         if (error) throw error;
 
         callback();
@@ -375,20 +438,32 @@ class Arrangement {
   }
 
   //Jeg lurer på hva denne gjør
-  slettArrangement(id, callback) {
-    connection.query("DELETE FROM Arrangement WHERE arrid = ?", [id], (error, result) => {
+  slettArrangement(arrid, callback) {
+    connection.query("DELETE FROM Arrangement WHERE arrid = ?", [arrid], (error, result) => {
       if (error) throw error;
 
       callback();
     });
   }
 
-  slettMannskapsliste(id, callback) {
-    connection.query("DELETE FROM Mannskapsliste WHERE arrid = ?", [id], (error, result) => {
+  slettMannskapsliste(arrid, callback) {
+    connection.query("DELETE FROM Mannskapsliste WHERE arrid = ?", [arrid], (error, result) => {
       if (error) throw error;
 
       callback();
     });
+  }
+
+  slettInteresserte(arrid, callback) {
+    connection.query("DELETE FROM Interesse WHERE arrid = ?", [arrid], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  slettVakter(arrid, callback) {
+
   }
 }
 

@@ -925,6 +925,9 @@ class Kalender extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
+    let iDag = new Date();
+
+    let string; let array;
     arrangement.hentArrangementer((result) => {
       for (let arr of result) {
         let arrDiv = document.createElement("div");
@@ -933,9 +936,19 @@ class Kalender extends React.Component {
         let arrTittel = document.createElement("p");
         let arrNavn = document.createElement("span");
         let arrBeskrivelse = document.createElement("span");
+        let arrDato = document.createElement("span");
+
         //Navn og beskrivelse av arrangement
         arrNavn.innerText = arr.arrnavn+"\n";
-        arrBeskrivelse.innerText = arr.beskrivelse;
+        arrBeskrivelse.innerText = arr.beskrivelse+"\n";
+
+        //Drittgreie for å få dato
+        string = arr.startdato;
+        if (string != null) {
+          string = string.toString();
+          array = string.split(" ");
+          arrDato.innerText = array[2]+" "+array[1]+" "+array[3];
+        }
 
         arrDiv.onclick = () => {
           history.push("/bruker/:medlemsnr/arrangement/"+arr.arrid);
@@ -945,12 +958,13 @@ class Kalender extends React.Component {
 
         arrTittel.appendChild(arrNavn);
         arrTittel.appendChild(arrBeskrivelse);
+        arrTittel.appendChild(arrDato);
 
         arrDiv.appendChild(arrTittel);
 
-        if (this.refs.kommendeArrangementer && arr.ferdig == 0) {
+        if (this.refs.kommendeArrangementer && arr.ferdig == 0 && arr.startdato >= iDag) {
           this.refs.kommendeArrangementer.appendChild(arrDiv);
-        } else if (this.refs.tidligereArrangementer && arr.ferdig >= 1) {
+        } else if (this.refs.tidligereArrangementer && arr.ferdig >= 1 || this.refs.tidligereArrangementer && arr.startdato < iDag) {
           this.refs.tidligereArrangementer.appendChild(arrDiv);
         }
       }
@@ -992,11 +1006,19 @@ class KalenderDetaljer extends React.Component {
           <p ref="arrUtstyrslisteP">
             <span ref="arrUtstyrsliste"></span>
           </p>
+          <p ref="arrangementKnappeP">
+            <span ref="arrKnapperSpan"></span>
+            <br />
+            <span ref="interesseKnappSpan"></span>
+          </p>
         </div>
         <div ref="arrangementMannskapDiv" className="arrangementDetaljerDiv">
           <h2>Mannskap og roller</h2>
           <p>
             <span ref="arrMannskapPlasser"></span>
+            <span ref="arrMannskapPlasserListe"></span>
+            <span ref="arrInteresserte"></span>
+            <span ref="arrInteresseListe"></span>
             <span ref="arrMannskapRoller"></span>
           </p>
         </div>
@@ -1022,8 +1044,13 @@ class KalenderDetaljer extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
+    this.refs.interesseKnappSpan.innerText = " ";
+    this.refs.arrKnapperSpan.innerText = " ";
+
+    let iDag = new Date();
+
     let str; let string; let array; let array2; let detaljerArrid; let detaljerArrnavn;
-    let mannskapPlasser;
+    let mannskapPlasser; let bruktePlasser; let listeid;
     if (arrid) {
       arrangement.hentArrangement(arrid, (result) => {
         if (this.refs.arrangementDiv) {
@@ -1098,8 +1125,77 @@ class KalenderDetaljer extends React.Component {
 
           arrangement.hentMannskapsliste(this.arrangement.arrid, (result) => {
             mannskapPlasser = result.antall_pers;
+            listeid = result.listeid;
+
             arrangement.hentMannskapsVakter(result.listeid, (result) => {
-              this.refs.arrMannskapPlasser.innerText = "Plasser: "+result["COUNT(Medlemsnr)"]+"/"+mannskapPlasser+"\n";
+              bruktePlasser = result.length;
+
+              this.refs.arrMannskapPlasser.innerText = "Plasser: "+bruktePlasser+"/"+mannskapPlasser+"\n";
+              if (result.length >= 1) {
+                this.refs.arrMannskapPlasserListe.innerText = "Vakter:"
+                for (let medlem of result) {
+                  //Spørring for å se om allerede er meldt opp til vakt
+                  arrangement.eksistererArrangementVakt(medlem.Medlemsnr, listeid, (result) => {
+                    if (result != undefined) {
+                      bruker.hentSokBruker(medlem.Medlemsnr, (result) => {
+                        let vaktMedlemP = document.createElement("p");
+                        vaktMedlemP.innerText += result.Fornavn+" "+result.Etternavn+", Rolle: ";
+
+                        if (this.arrangement.startdato >= iDag && this.innloggetBruker.Medlemsnr == result.Medlemsnr || this.innloggetBruker.Adminlvl >= 1) {
+                          let vaktKnappSpan = document.createElement("span");
+                          let vaktKnapp = document.createElement("button");
+                          vaktKnapp.innerText = "Meld av vakt";
+                          vaktKnapp.onclick = () => {
+                            arrangement.slettVakt(result.Medlemsnr, listeid, (result) => {
+                              console.log("Bruker meldt av vakt");
+                              this.update();
+                            });
+                          }
+                          vaktKnappSpan.appendChild(vaktKnapp);
+                          vaktMedlemP.appendChild(vaktKnappSpan);
+                        }
+                        this.refs.arrMannskapPlasserListe.appendChild(vaktMedlemP);
+                      });
+                    }
+                  });
+                }
+              } else if (result <= 0) {
+                this.refs.arrMannskapPlasserListe.innerText = " ";
+              }
+
+              arrangement.hentInteresserte(this.arrangement.arrid, (result) => {
+                this.refs.arrInteresserte.innerText = "Antall interesserte: "+result.length+"\n";
+
+                if (this.innloggetBruker.Adminlvl >= 1 && result.length >= 1) {
+                  this.refs.arrInteresseListe.innerText = "Interesserte:"
+                  for (let medlem of result) {
+                    //Spørring for å se om allerede er meldt opp til vakt
+                    arrangement.eksistererArrangementVakt(medlem.Medlemsnr, listeid, (result) => {
+                      if (result == undefined) {
+                        bruker.hentSokBruker(medlem.Medlemsnr, (result) => {
+                          let interesseMedlemP = document.createElement("p");
+                          interesseMedlemP.innerText += result.Fornavn+" "+result.Etternavn+", Vaktpoeng: "+result.Vaktpoeng+", Rolle: ";
+
+                          if (mannskapPlasser - bruktePlasser >= 1 && this.arrangement.startdato >= iDag) {
+                            let vaktKnappSpan = document.createElement("span");
+                            let vaktKnapp = document.createElement("button");
+                            vaktKnapp.innerText = "Meld til vakt";
+                            vaktKnapp.onclick = () => {
+                              arrangement.lagVakt(result.Medlemsnr, listeid, (result) => {
+                                console.log("Bruker meldt opp til vakt");
+                                this.update();
+                              });
+                            }
+                            vaktKnappSpan.appendChild(vaktKnapp);
+                            interesseMedlemP.appendChild(vaktKnappSpan);
+                          }
+                          this.refs.arrInteresseListe.appendChild(interesseMedlemP);
+                        });
+                      }
+                    });
+                  }
+                }
+              });
             });
             if (result.roller == null) {
               this.refs.arrMannskapRoller.innerText = "Ingen roller er satt opp enda";
@@ -1108,6 +1204,33 @@ class KalenderDetaljer extends React.Component {
             }
           });
 
+          arrangement.sjekkInteresse(this.innloggetBruker.Medlemsnr, this.arrangement.arrid, (result) => {
+            if (result == undefined) {
+              let meldInteresseKnapp = document.createElement("button");
+              meldInteresseKnapp.innerText = "Meld interessert";
+
+              meldInteresseKnapp.onclick = () => {
+                arrangement.meldInteressert(this.innloggetBruker.Medlemsnr, this.arrangement.arrid, (result) => {
+                  console.log("Medlem: "+this.innloggetBruker.Fornavn+" meldte seg interessert i arrangement: "+this.arrangement.arrnavn);
+                  this.update();
+                });
+              }
+
+              this.refs.interesseKnappSpan.appendChild(meldInteresseKnapp);
+            } else if (result != undefined) {
+              let meldInteresseKnapp = document.createElement("button");
+              meldInteresseKnapp.innerText = "Avmeld interesse";
+
+              meldInteresseKnapp.onclick = () => {
+                arrangement.avmeldInteresse(this.innloggetBruker.Medlemsnr, this.arrangement.arrid, (result) => {
+                  console.log("Medlem: "+this.innloggetBruker.Fornavn+" meldte seg ikke lenger interessert i arrangement: "+this.arrangement.arrnavn);
+                  this.update();
+                });
+              }
+
+              this.refs.interesseKnappSpan.appendChild(meldInteresseKnapp);
+            }
+          });
 
           if (this.innloggetBruker.Adminlvl >= 1) {
             let redigerArrKnapp = document.createElement("button");
@@ -1133,11 +1256,18 @@ class KalenderDetaljer extends React.Component {
               }
             }
 
-            if (this.arrangement.ferdig == 0) {
+            if (this.arrangement.ferdig == 0 && this.arrangement.startdato >= iDag) {
               redigerArrKnapp.innerText = "Rediger";
               slettArrKnapp.innerText = "Slett";
-              this.refs.arrangementDiv.appendChild(redigerArrKnapp);
-              this.refs.arrangementDiv.appendChild(slettArrKnapp);
+              this.refs.arrKnapperSpan.appendChild(redigerArrKnapp);
+              this.refs.arrKnapperSpan.appendChild(slettArrKnapp);
+            } else if (this.arrangement.startdato < iDag) {
+              if(this.arrangement.ferdig == 1) {
+                this.refs.arrangementDiv.removeChild(this.refs.arrangementKnappeP);
+              } else if (this.arrangement.ferdig == 0) {
+                redigerArrKnapp.innerText = "Rediger";
+                this.refs.arrKnapperSpan.appendChild(redigerArrKnapp);
+              }
             }
 
             arrangement.hentArrangementKontakt(this.arrangement.Kontakt_id, (result) => {
@@ -1149,7 +1279,9 @@ class KalenderDetaljer extends React.Component {
               }
             });
           } else if (this.innloggetBruker.Adminlvl <= 0) {
-            this.refs.arrangementDetaljer.removeChild(this.refs.arrangementKontaktDiv);
+            if (this.arrangement.ferdig == 1 || this.arrangement.startdato < iDag) {
+              this.refs.arrangementDiv.removeChild(this.refs.arrangementKnappeP);
+            }
           }
         }
       });

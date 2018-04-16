@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {Link, HashRouter, Switch, Route, Redirect} from "react-router-dom";
+import {NavLink, IndexLink, HashRouter, Switch, Route, Redirect} from "react-router-dom";
 import {createHashHistory} from "history";
 import {bruker, arrangement} from "./sql_server";
 import BigCalendar from 'react-big-calendar';
@@ -40,9 +40,9 @@ class Hjem extends React.Component {
         <div>
           <div className="navbar">
             <hr />
-            <span className="spanbar"><Link to="/hjem" className="linker">Hjem</Link> </span>
-            <span className="spanbar"><Link to="/hjelp" className="linker">Hjelp</Link> </span>
-            <span className="spanbar"><Link to="/logginn" className="linker">Logg inn</Link></span>
+            <span className="spanbar"><NavLink exact to="/hjem" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Hjem</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/hjelp" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Hjelp</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/logginn" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Logg inn</NavLink></span>
             <hr />
           </div>
           <div>
@@ -57,11 +57,11 @@ class Hjem extends React.Component {
         <div>
           <div className="navbar">
             <hr />
-            <span className="spanbar"><Link to="/hjem" className="linker">Hjem</Link> </span>
-            <span className="spanbar"><Link to="/hjelp" className="linker">Hjelp</Link> </span>
-            <span className="spanbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Arrangementer</Link> </span>
-            <span className="spanbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker">Profil</Link> </span>
-            <span className="navbar"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/sok" className="linker">Søk</Link> </span>
+            <span className="spanbar"><NavLink exact to="/hjem" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Hjem</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/hjelp" className="linker" activeStyle={{color : 'red', fontWeight : 'bold'}} replace>Hjelp</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Arrangementer</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Profil</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/sok" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Søk</NavLink> </span>
             <span className="spanbar"><button ref="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
               this.forceUpdate(),
               history.push("/hjem/"),
@@ -371,8 +371,8 @@ class LoggInn extends React.Component {
         Epost: <input type="text" ref="brukernavnInput" className="logginninput" autoFocus /><br />
         Passord: <input type="password" ref="passordInput" className="logginninput" /><br />
         <span><button ref="loggInnKnapp" className="logginnknapp">Logg inn</button>
-        <Link to="/glemtpassord" className="glemtpassordknapp">Glemt passord</Link></span>
-        <p>Har du ikke bruker, registrer deg <span><Link to="/registrerBruker" className="registrerherknapp">her</Link></span></p>
+        <NavLink exact to="/glemtpassord" className="glemtpassordknapp">Glemt passord</NavLink></span>
+        <p>Har du ikke bruker, registrer deg <span><NavLink exact to="/registrerBruker" className="registrerherknapp">her</NavLink></span></p>
       </div>
     );
   }
@@ -435,7 +435,7 @@ class Profil extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return (
       <div id="profil">
-        <p id="redigerprofilknapp"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="redigerprofil">Rediger profil</Link></p>
+        <p id="redigerprofilknapp"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</NavLink></p>
         <ul id="profilinfo">
           <li>Navn: {this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn}</li>
           <li>Adresse: {this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed}</li>
@@ -444,7 +444,7 @@ class Profil extends React.Component {
           <li>Medlemsnummer: {this.innloggetBruker.Medlemsnr}</li>
           <li>Vaktpoeng: {this.innloggetBruker.Vaktpoeng}</li>
         </ul>
-        <p id="kommendearr"><Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="kommendearr">Kommende arrangementer</Link></p>
+        <p id="kommendearr"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Kommende arrangementer</NavLink></p>
         <BigCalendar
           style={{ height: 500, width: this.state.width }}
           events={[]}
@@ -672,7 +672,7 @@ class BrukerSokDetaljer extends React.Component {
             <li>Tlf: {this.sokBruker.Telefon}</li>
             <li>Epost: {this.sokBruker.Epost}</li>
           </ul>
-          <Link to="/bruker/{this.innloggetBruker.Medlemsnr}/sok">Tilbake</Link>
+          <NavLink exact to="/bruker/{this.innloggetBruker.Medlemsnr}/sok">Tilbake</NavLink>
         </div>
       );
     } else if (this.innloggetBruker.Adminlvl >= 1) {
@@ -690,7 +690,7 @@ class BrukerSokDetaljer extends React.Component {
           <select ref="adminLevelSelect"></select>
           <button ref="adminKnapp" id="adminKnapp" className="knapper">Gjør admin</button> <br />
           <button ref="redigerSokBrukerKnapp" id="redigerSokBrukerKnapp" className="knapper">Rediger</button> <br />
-          <Link to="/bruker/{this.innloggetBruker.Medlemsnr}/sok">Tilbake</Link>
+          <NavLink exact to="/bruker/{this.innloggetBruker.Medlemsnr}/sok">Tilbake</NavLink>
         </div>
       );
     }
@@ -913,7 +913,7 @@ class Kalender extends React.Component {
     } else if (this.innloggetBruker.Adminlvl >= 1) {
       return(
         <div>
-          <Link to="/bruker/${this.innloggetBruker.Medlemsnr}/adminkalender" className="linker">Opprett arrangement</Link>
+          <NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/adminkalender" className="linker">Opprett arrangement</NavLink>
           <h2>Kommende arrangementer</h2>
           <div ref="kommendeArrangementer"></div>
           <h2>Ferdige arrangementer</h2>
@@ -999,7 +999,7 @@ class KalenderDetaljer extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return(
       <div ref="arrangementDetaljer">
-        <Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Tilbake</Link>
+        <NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Tilbake</NavLink>
         <div ref="arrangementDiv" className="arrangementDetaljerDiv">
           <h2>Arrangement</h2>
           <p ref="arrTittel">
@@ -1630,7 +1630,7 @@ class AvsluttArrangement extends React.Component {
   render() {
     return(
       <div ref="arrangementAvslutt">
-        <Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Tilbake</Link>
+        <NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Tilbake</NavLink>
         <h2>Ferdigstilling av arrangement</h2>
         <div ref="arrangementAvsluttDetaljer">
           <h3>Arrangement</h3>

@@ -1698,22 +1698,25 @@ class AvsluttArrangement extends React.Component {
             }
           });
           this.refs.avsluttArrangementKnapp.onclick = () => {
-            let sjekkbokserKlasse = document.getElementsByClassName("avsluttArrangementSjekkboks");
-            for (let sjekkbokser of sjekkbokserKlasse) {
-              if (!sjekkbokser.checked) {
-                arrangement.ferdigstillVakt(sjekkbokser.id, result.listeid, (result) => {
-                  console.log("Bruker: "+sjekkbokser.id+" var ikke tilstede");
-                });
-              } else if (sjekkbokser.checked) {
-                arrangement.ferdigstillVaktVaktpoeng(sjekkbokser.id, this.arrangement.arrid, (result) => {
-                  console.log("Bruker: "+sjekkbokser.id+" fikk "+arrangement.vaktpoeng+" vaktpoeng");
-                });
+            let erDuSikker = confirm("Vil du ferdigstille arrangementet?")
+            if (erDuSikker) {
+              let sjekkbokserKlasse = document.getElementsByClassName("avsluttArrangementSjekkboks");
+              for (let sjekkbokser of sjekkbokserKlasse) {
+                if (!sjekkbokser.checked) {
+                  arrangement.ferdigstillVakt(sjekkbokser.id, result.listeid, (result) => {
+                    console.log("Bruker: "+sjekkbokser.id+" var ikke tilstede");
+                  });
+                } else if (sjekkbokser.checked) {
+                  arrangement.ferdigstillVaktVaktpoeng(sjekkbokser.id, this.arrangement.arrid, (result) => {
+                    console.log("Bruker: "+sjekkbokser.id+" fikk "+arrangement.vaktpoeng+" vaktpoeng");
+                  });
+                }
               }
+              arrangement.ferdigstillArrangement(this.arrangement.arrid, (result) => {
+                console.log("Arrangement: "+this.arrangement.arrnavn+" ble satt til ferdig");
+                history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer/");
+              });
             }
-            arrangement.ferdigstillArrangement(this.arrangement.arrid, (result) => {
-              console.log("Arrangement: "+this.arrangement.arrnavn+" ble satt til ferdig");
-              history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer/");
-            });
           }
         });
       });

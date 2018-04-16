@@ -492,7 +492,7 @@ class Arrangement {
       if (error) throw error;
 
       callback();
-    })
+    });
   }
 
   //Jeg lurer på hva denne gjør
@@ -520,8 +520,12 @@ class Arrangement {
     });
   }
 
-  slettVakter(arrid, callback) {
+  slettVakter(listeid, callback) {
+    connection.query("DELETE FROM Vakt WHERE listeid = ?", [listeid], (error, result) => {
+      if (error) throw error;
 
+      callback();
+    });
   }
 }
 

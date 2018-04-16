@@ -470,6 +470,31 @@ class Arrangement {
     }
   }
 
+  //Ferdigstiller en vakt
+  ferdigstillVakt(medlemsnr, listeid, callback) {
+    connection.query("UPDATE Vakt SET oppdatert = 1 WHERE Medlemsnr = ? AND listeid = ?", [medlemsnr, listeid], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  ferdigstillVaktVaktpoeng(medlemsnr, arrid, callback) {
+    connection.query("UPDATE Vakt, Medlem, Arrangement, Mannskapsliste SET Medlem.Vaktpoeng = Medlem.Vaktpoeng + Arrangement.vaktpoeng, Vakt.oppdatert = 1 WHERE Arrangement.arrid = ? AND Medlem.Medlemsnr = ? AND (Vakt.Medlemsnr = ? AND Arrangement.arrid = Mannskapsliste.arrid AND Mannskapsliste.listeid = Vakt.listeid)", [arrid, medlemsnr, medlemsnr], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  ferdigstillArrangement(arrid, callback) {
+    connection.query("UPDATE Arrangement SET ferdig = 1 WHERE arrid = ?", [arrid], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    })
+  }
+
   //Jeg lurer på hva denne gjør
   slettArrangement(arrid, callback) {
     connection.query("DELETE FROM Arrangement WHERE arrid = ?", [arrid], (error, result) => {

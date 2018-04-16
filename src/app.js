@@ -188,13 +188,14 @@ class GlemtPassord extends React.Component {
     //Henter passordet og viser det i en alert hvis du har riktig navn og epost
     //"Kjempesikkert..." - Steve Jobs
     //"Det er sånn vi gjør det" - Equifax CEO
-    if (erTom(fornavn), erTom(etternavn), erTom(epost)) {
-      alert("Du skrev inn feil informasjon");
-    } else {
-      this.refs.glemtPassordKnapp.onclick = () => {
-        fornavn = this.refs.glemtPassordFornavn.value;
-        etternavn = this.refs.glemtPassordEtternavn.value;
-        epost = this.refs.glemtPassordEpost.value;
+    this.refs.glemtPassordKnapp.onclick = () => {
+      fornavn = this.refs.glemtPassordFornavn.value;
+      etternavn = this.refs.glemtPassordEtternavn.value;
+      epost = this.refs.glemtPassordEpost.value;
+
+      if (erTom(fornavn), erTom(etternavn), erTom(epost)) {
+        alert("Du må fylle inn alt");
+      } else {
         bruker.hentBrukerPassord(fornavn, etternavn, epost, (result) => {
           if (result != undefined) {
             alert("Passordet ditt er: "+result.Passord);
@@ -955,7 +956,7 @@ class Kalender extends React.Component {
         }
 
         arrDiv.onclick = () => {
-          history.push("/bruker/:medlemsnr/arrangement/"+arr.arrid);
+          history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangement/"+arr.arrid);
           arrid = arr.arrid;
           return arrid;
         }
@@ -1212,35 +1213,39 @@ class KalenderDetaljer extends React.Component {
             } else if (result.roller != null) {
               this.refs.arrMannskapRoller.innerText = "Roller: "+result.roller;
             }
-          });
 
-          //Lager knapp for å melde seg interessert eller ikke interessert i et arrangement
-          arrangement.sjekkInteresse(this.innloggetBruker.Medlemsnr, this.arrangement.arrid, (result) => {
-            if (result == undefined) {
-              let meldInteresseKnapp = document.createElement("button");
-              meldInteresseKnapp.innerText = "Meld interessert";
+            arrangement.eksistererArrangementVakt(this.innloggetBruker.Medlemsnr, listeid, (result) => {
+              if (result == undefined) {
+                //Lager knapp for å melde seg interessert eller ikke interessert i et arrangement
+                arrangement.sjekkInteresse(this.innloggetBruker.Medlemsnr, this.arrangement.arrid, (result) => {
+                  if (result == undefined) {
+                    let meldInteresseKnapp = document.createElement("button");
+                    meldInteresseKnapp.innerText = "Meld interessert";
 
-              meldInteresseKnapp.onclick = () => {
-                arrangement.meldInteressert(this.innloggetBruker.Medlemsnr, this.arrangement.arrid, (result) => {
-                  console.log("Medlem: "+this.innloggetBruker.Fornavn+" meldte seg interessert i arrangement: "+this.arrangement.arrnavn);
-                  this.update();
+                    meldInteresseKnapp.onclick = () => {
+                      arrangement.meldInteressert(this.innloggetBruker.Medlemsnr, this.arrangement.arrid, (result) => {
+                        console.log("Medlem: "+this.innloggetBruker.Fornavn+" meldte seg interessert i arrangement: "+this.arrangement.arrnavn);
+                        this.update();
+                      });
+                    }
+
+                    this.refs.interesseKnappSpan.appendChild(meldInteresseKnapp);
+                  } else if (result != undefined) {
+                    let meldInteresseKnapp = document.createElement("button");
+                    meldInteresseKnapp.innerText = "Avmeld interesse";
+
+                    meldInteresseKnapp.onclick = () => {
+                      arrangement.avmeldInteresse(this.innloggetBruker.Medlemsnr, this.arrangement.arrid, (result) => {
+                        console.log("Medlem: "+this.innloggetBruker.Fornavn+" meldte seg ikke lenger interessert i arrangement: "+this.arrangement.arrnavn);
+                        this.update();
+                      });
+                    }
+
+                    this.refs.interesseKnappSpan.appendChild(meldInteresseKnapp);
+                  }
                 });
               }
-
-              this.refs.interesseKnappSpan.appendChild(meldInteresseKnapp);
-            } else if (result != undefined) {
-              let meldInteresseKnapp = document.createElement("button");
-              meldInteresseKnapp.innerText = "Avmeld interesse";
-
-              meldInteresseKnapp.onclick = () => {
-                arrangement.avmeldInteresse(this.innloggetBruker.Medlemsnr, this.arrangement.arrid, (result) => {
-                  console.log("Medlem: "+this.innloggetBruker.Fornavn+" meldte seg ikke lenger interessert i arrangement: "+this.arrangement.arrnavn);
-                  this.update();
-                });
-              }
-
-              this.refs.interesseKnappSpan.appendChild(meldInteresseKnapp);
-            }
+            });
           });
 
           if (this.innloggetBruker.Adminlvl >= 1) {
@@ -1295,6 +1300,17 @@ class KalenderDetaljer extends React.Component {
             }
           }
         }
+
+        setTimeout(function(){
+          arrangement.hentArrangement(arrid, (result) => {
+            if (result.startdato < iDag && result.ferdig == 0) {
+              let avslutt = confirm("Arrangementet er ferdig, vil du ferdigstille arrangementet?");
+              if (avslutt) {
+                history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangementer/{this.arrangement.arrid}/avslutt");
+              }
+            }
+          });
+        }, 500)
       });
     }
   }
@@ -1408,34 +1424,45 @@ class RedigerArrangment extends React.Component {
 
   render() {
     return(
-      <div ref="redigerArrDiv">
+      <div ref="redigerArrDiv" id="redigerArrDiv">
         <p>Alle felter med * er obligatoriske</p>
-        <div>
-          Arrangementnavn*: <input type="text" ref="oppdaterArrNavn" placeholder="Arrangementnavn" />
+        <div ref="arrangementRediger" id="arrangementRediger">
+          <h2>Arrangment</h2>
+          <div ref="redigerNavnBeskrivelseDiv" id="redigerNavnBeskrivelseDiv">
+            <span>Arrangementnavn*: </span><input type="text" ref="oppdaterArrNavn" id="oppdaterArrNavn" placeholder="Arrangementnavn" />
+            <br />
+            <span>Arrangementbeskrivelse*: </span><textarea rows="5" cols="40" ref="oppdaterArrBeskrivelse" id="oppdaterArrBeskrivelse" placeholder="Beskrivelse" />
+          </div>
           <br />
-          Arrangementbeskrivelse*: <textarea rows="5" cols="40" ref="oppdaterArrBeskrivelse" placeholder="Beskrivelse" />
+          <div ref="redigerDatoTidStedDiv" id="redigerDatoTidStedDiv">
+            <span>Dato og oppmøtetid*: </span><input type="date" ref="oppdaterDato" id="oppdaterDato" />
+            <input type="time" ref="oppdaterOppmote" id="oppdaterOppmote" />
+            <br />
+            <span>Sted*: </span><input type="text" ref="oppdaterSted" id="oppdaterSted" placeholder="Oppmøtested" />
+            <br />
+            <span>Postnummer*/sted: </span><input type="number" ref="oppdaterPostnr" id="oppdaterPostnr" />
+            <input type="text" ref="oppdaterPoststed" id="oppdaterPoststed" readOnly/>
+            <br />
+            <span>Arrangementstart*/slutt: </span><input type="time" ref="oppdaterStartTid" id="oppdaterStartTid" />
+            <input type="time" ref="oppdaterSluttTid" />
+          </div>
+          <div ref="redigerUtstyrVaktpoengDiv" id="redigerUtstyrVaktpoengDiv">
+            <span>Utstyrsliste: </span><textarea rows="5" cols="40" ref="oppdaterUtstyrsliste" id="oppdaterUtstyrsliste" placeholder="Utstyrsliste" />
+            <br />
+            <span>Vaktpoeng: </span><input type="number" ref="oppdaterVaktPoeng" id="oppdaterVaktPoeng" />
+          </div>
         </div>
-        <br />
-        <div>
-          Dato og oppmøtetid*: <input type="date" ref="oppdaterDato" />
-          <input type="time" ref="oppdaterOppmote" />
-          <br />
-          Sted*: <input type="text" ref="oppdaterSted" placeholder="Oppmøtested" />
-          <br />
-          Postnummer*/sted: <input type="number" ref="oppdaterPostnr"/>
-          <input type="text" ref="oppdaterPoststed" readOnly/>
-          <br />
-          Arrangementstart*/slutt: <input type="time" ref="oppdaterStartTid" />
-          <input type="time" ref="oppdaterSluttTid" />
+        <div ref="medlemslisteRedigerDiv" id="medlemslisteRedigerDiv">
+          <h2>Mannskapsliste</h2>
+          <div ref="redigerMannskapRolleDiv" id="redigerMannskapRolleDiv">
+            <span>Mannskap: </span><input type="number" ref="antallMannskap" id="antallMannskap" />
+            <br />
+            <span>Roller: </span><textarea rows="5" cols="40" ref="rollerMannskap" id="rollerMannskap" placeholder="Roller til arrangementet" />
+          </div>
         </div>
-        <div>
-          Utstyrsliste: <textarea rows="5" cols="40" ref="oppdaterUtstyrsliste" placeholder="Utstyrsliste" />
-          <br />
-          Vaktpoeng: <input type="number" ref="oppdaterVaktPoeng" />
-        </div>
-        <div>
-          <button ref="redigerArrangement">Rediger</button>
-          <button ref="avbrytRedigerArrangement">Lukk</button>
+        <div ref="redigerArrangementKnapperDiv" id="redigerArrangementKnapperDiv">
+          <button ref="redigerArrangementKnapp" id="redigerArrangementKnapp">Rediger</button>
+          <button ref="avbrytRedigerArrangementKnapp" id="avbrytRedigerArrangementKnapp">Lukk</button>
         </div>
       </div>
     );
@@ -1446,7 +1473,8 @@ class RedigerArrangment extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
-    let arrnavn; let beskrivelse; let arrDato; let oppmotetid; let sted; let postnr; let starttid; let sluttid; let utstyrsliste; let vaktpoeng;
+    let arrnavn; let beskrivelse; let arrDato; let oppmotetid; let sted; let postnr; let starttid; let sluttid; let utstyrsliste; let vaktpoeng; let antallMannskap; let rollerMannskap;
+    let dato;
 
     if (arrid) {
       arrangement.hentArrangement(arrid, (result) => {
@@ -1474,9 +1502,14 @@ class RedigerArrangment extends React.Component {
         // }
         //Dette er det samme som valueAsNumber!!!!!!!!!!!
 
+        //Må sette datoen selv, fordi JS begynner dato på 0
+        dato = new Date();
+        dato.setDate(this.arrangement.startdato.getDate());
+
         this.refs.oppdaterArrNavn.value = this.arrangement.arrnavn;
         this.refs.oppdaterArrBeskrivelse.value = this.arrangement.beskrivelse;
-        this.refs.oppdaterDato.valueAsNumber = this.arrangement.startdato;
+        this.refs.oppdaterDato.valueAsNumber = dato;
+        // this.refs.oppdaterDato.valueAsNumber = this.arrangement.startdato;
         this.refs.oppdaterOppmote.value = this.arrangement.oppmøtetid;
         this.refs.oppdaterSted.value = this.arrangement.oppmøtested;
         this.refs.oppdaterPostnr.value = this.arrangement.postnr;
@@ -1484,6 +1517,11 @@ class RedigerArrangment extends React.Component {
         this.refs.oppdaterSluttTid.value = this.arrangement.tidslutt;
         this.refs.oppdaterUtstyrsliste.value = this.arrangement.utstyrsliste;
         this.refs.oppdaterVaktPoeng.value = this.arrangement.vaktpoeng;
+
+        arrangement.hentMannskapsliste(this.arrangement.arrid, (result) => {
+          this.refs.antallMannskap.value = result.antall_pers;
+          this.refs.rollerMannskap.value = result.roller;
+        });
 
         if (this.arrangement.postnr) {
           arrangement.hentArrangementPoststed(this.arrangement.postnr, (result) => {
@@ -1503,7 +1541,7 @@ class RedigerArrangment extends React.Component {
           });
         };
 
-        this.refs.redigerArrangement.onclick = () => {
+        this.refs.redigerArrangementKnapp.onclick = () => {
           arrnavn = this.refs.oppdaterArrNavn.value
           beskrivelse = this.refs.oppdaterArrBeskrivelse.value
           arrDato = this.refs.oppdaterDato.value
@@ -1514,23 +1552,45 @@ class RedigerArrangment extends React.Component {
           sluttid = this.refs.oppdaterSluttTid.value
           utstyrsliste = this.refs.oppdaterUtstyrsliste.value
           vaktpoeng = this.refs.oppdaterVaktPoeng.value
+          antallMannskap = this.refs.antallMannskap.value;
+          rollerMannskap = this.refs.rollerMannskap.value;
 
           if (erTom(arrnavn) || erTom(beskrivelse) || erTom(arrDato) || erTom(oppmotetid) || erTom(sted) || erTom(postnr) || erTom(starttid)) {
 
           } else {
-            arrangement.redigerArrangement(arrid, arrnavn, beskrivelse, dato, oppmotetid, sted, postnr, starttid, sluttid, utstyrsliste, vaktpoeng, (result) => {
+            arrangement.redigerArrangement(this.arrangement.arrid, arrnavn, beskrivelse, arrDato, oppmotetid, sted, postnr, starttid, sluttid, utstyrsliste, vaktpoeng, (result) => {
               console.log("Arrangementet er oppdatert");
+            });
+            arrangement.redigerMannskapsliste(this.arrangement.arrid, antallMannskap, rollerMannskap, (result) => {
+              console.log("Mannskapslista er oppdatert");
               history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer/");
               this.forceUpdate();
-            });
+            })
           }
         }
-        this.refs.avbrytRedigerArrangement.onclick = () => {
+        this.refs.avbrytRedigerArrangementKnapp.onclick = () => {
           history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer/");
           this.forceUpdate();
         }
       });
     }
+  }
+}
+
+class AvsluttArrangment extends React.Component {
+  constructor() {
+    super();
+
+    this.innloggetBruker;
+    this.arrangement;
+  }
+
+  render() {
+    return(
+      <div>
+
+      </div>
+    );
   }
 }
 
@@ -1557,6 +1617,7 @@ ReactDOM.render((
         <Route exact path="/bruker/:medlemsnr/adminkalender" component={KalenderAdmin} />
         <Route exact path="/bruker/:medlemsnr/arrangement/:arrid" component={KalenderDetaljer} />
         <Route exact path="/bruker/:medlemsnr/arrangement/:arrid/rediger" component={RedigerArrangment} />
+        <Route exact path="/bruker/:medlemsnr/arrangement/:arrid/avslutt" component={AvsluttArrangment} />
       </Switch>
     </div>
   </HashRouter>

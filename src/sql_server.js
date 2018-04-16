@@ -437,6 +437,39 @@ class Arrangement {
     }
   }
 
+  //Redigerer mannskapslista
+  redigerMannskapsliste(arrid, mannskap, roller, callback) {
+    //Hvis antall mannskap er tomt
+    if (erTom(mannskap)) {
+      //Hvis både antall mannskap og roller er tomme, henter bare 1 for at den skal gjøre noe
+      if (erTom(roller)) {
+        connection.query("SELECT 1 FROM Mannskapsliste WHERE arrid = ?", [arrid], (error, result) => {
+          if (error) throw error;
+
+          callback();
+        });
+      } else {
+        connection.query("UPDATE Mannskapsliste SET roller = ? WHERE arrid = ?", [roller, arrid], (error, result) => {
+          if (error) throw error;
+
+          callback();
+        });
+      }
+    } else if (erTom(roller)) {
+      connection.query("UPDATE Mannskapsliste SET antall_pers = ? WHERE arrid = ?", [mannskap, arrid], (error, result) => {
+        if (error) throw error;
+
+        callback();
+      });
+    } else {
+      connection.query("UPDATE Mannskapsliste SET antall_pers = ?, roller = ? WHERE arrid = ?", [mannskap, roller, arrid], (error, result) => {
+        if (error) throw error;
+
+        callback();
+      });
+    }
+  }
+
   //Jeg lurer på hva denne gjør
   slettArrangement(arrid, callback) {
     connection.query("DELETE FROM Arrangement WHERE arrid = ?", [arrid], (error, result) => {

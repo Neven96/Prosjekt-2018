@@ -310,6 +310,10 @@ class RegistrerBruker extends React.Component {
       //Sjekker om noen av feltene er tomme, alle kreves for å kunne registrere seg
       if (erTom(fnavn) || erTom(enavn) || erTom(tlf) || erTom(adr) || erTom(postnr) || erTom(epost) || erTom(passord)) {
         this.refs.feilRegistrering.innerText = "Du må ha med alle feltene";
+        window.scrollTo(0,document.body.scrollHeight);
+      } else if (tlf.length > 8 || tlf.length < 8 || postnr.length > 4) {
+        this.refs.feilRegistrering.innerText = "Telefon eller postnummer er feil lengde";
+        window.scrollTo(0,document.body.scrollHeight);
       } else {
         //Sjekker om du har oppgitt et ekte postnummer
         bruker.eksistererStedPostnr(postnr, (result) => {
@@ -535,11 +539,10 @@ class RedigerProfil extends React.Component {
       oppTlf = this.refs.oppdaterTlfInput.value;
       oppAdr = this.refs.oppdaterAdrInput.value;
       oppPostnr = this.refs.oppdaterPostnrInput.value;
-      if (erTom(oppFnavn) || erTom(oppEnavn) || erTom(oppTlf) || erTom(oppAdr) || erTom(oppPostnr) || oppTlf.length > 8 || oppPostnr.length > 4 || oppTlf.length < 8) {
+      if (erTom(oppFnavn) || erTom(oppEnavn) || erTom(oppTlf) || erTom(oppAdr) || erTom(oppPostnr)) {
         this.refs.feilOppdatering.innerText = "Ingen felter kan være tomme";
-        if (oppTlf.length > 8 || oppPostnr.length > 4 || oppTlf.length < 8) {
-          this.refs.feilOppdatering.innerText = "Telefon eller postnummer er feil lengde";
-        }
+      } else if (oppTlf.length > 8 || oppTlf.length < 8 || oppPostnr.length > 4) {
+        this.refs.feilOppdatering.innerText = "Telefon eller postnummer er feil lengde";
       } else {
         bruker.eksistererStedPostnr(oppPostnr, (result) => {
           console.log(result);
@@ -843,6 +846,8 @@ class BrukerSokRediger extends React.Component {
         oppPostnr = this.refs.oppdaterPostnrInput.value;
         if (erTom(oppFnavn) || erTom(oppEnavn) || erTom(oppTlf) || erTom(oppAdr) || erTom(oppPostnr)) {
           this.refs.feilOppdatering.innerText = "Ingen felter kan være tomme";
+        } else if (oppTlf.length > 8 || oppTlf.length < 8 || oppPostnr.length > 4) {
+          this.refs.feilOppdatering.innerText = "Telefon eller postnummer er feil lengde"
         } else {
           bruker.eksistererStedPostnr(oppPostnr, (result) => {
             console.log(result);
@@ -898,11 +903,11 @@ class Kalender extends React.Component {
       return(
         <div>
           <h2>Kommende arrangementer</h2>
-          <div ref="kommendeArrangementer">
-          </div>
+          <div ref="kommendeArrangementer"></div>
+          <h2>Ferdige arrangementer</h2>
+          <div ref="ferdigeArrangementer"></div>
           <h2>Tidligere arrangementer</h2>
-          <div ref="tidligereArrangementer">
-          </div>
+          <div ref="tidligereArrangementer"></div>
         </div>
       );
     } else if (this.innloggetBruker.Adminlvl >= 1) {
@@ -910,11 +915,11 @@ class Kalender extends React.Component {
         <div>
           <Link to="/bruker/${this.innloggetBruker.Medlemsnr}/adminkalender" className="linker">Opprett arrangement</Link>
           <h2>Kommende arrangementer</h2>
-          <div ref="kommendeArrangementer">
-          </div>
+          <div ref="kommendeArrangementer"></div>
+          <h2>Ferdige arrangementer</h2>
+          <div ref="ferdigeArrangementer"></div>
           <h2>Tidligere arrangementer</h2>
-          <div ref="tidligereArrangementer">
-          </div>
+          <div ref="tidligereArrangementer"></div>
         </div>
       );
     }
@@ -970,7 +975,9 @@ class Kalender extends React.Component {
 
         if (this.refs.kommendeArrangementer && arr.ferdig == 0 && arr.startdato >= iDag) {
           this.refs.kommendeArrangementer.appendChild(arrDiv);
-        } else if (this.refs.tidligereArrangementer && arr.ferdig >= 1 || this.refs.tidligereArrangementer && arr.startdato < iDag) {
+        } else if (this.refs.tidligereArrangementer && arr.startdato < iDag && arr.ferdig == 0) {
+          this.refs.ferdigeArrangementer.appendChild(arrDiv);
+        } else if (this.refs.tidligereArrangementer && arr.ferdig >= 1) {
           this.refs.tidligereArrangementer.appendChild(arrDiv);
         }
       }
@@ -1297,23 +1304,29 @@ class KalenderDetaljer extends React.Component {
           }
         }
 
-        setTimeout(function(){
-          arrangement.hentArrangement(arrid, (result) => {
-            if (result.startdato < iDag && result.ferdig <= 0) {
-              let avslutt = confirm("Arrangementet er ferdig, vil du ferdigstille arrangementet?");
-              if (avslutt) {
-                history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangement/{arrid}/avslutt");
-                arrid = result.arrid;
-                return arrid;
+        if (this.innloggetBruker.Adminlvl >= 1) {
+          setTimeout(function(){
+            arrangement.hentArrangement(arrid, (result) => {
+              if (result.startdato < iDag && result.ferdig <= 0) {
+                let avslutt = confirm("Arrangementet er ferdig, vil du ferdigstille arrangementet?");
+                if (avslutt) {
+                  history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangement/{arrid}/avslutt");
+                  arrid = result.arrid;
+                  return arrid;
+                }
               }
-            }
-          });
-        }, 500)
+            });
+          }, 500)
 
-        this.refs.ferdigstillArrangementKnapp.onclick = () => {
-          history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangement/{arrid}/avslutt");
-          arrid = this.arrangement.arrid;
-          return arrid;
+          if (result.ferdig == 0) {
+            this.refs.ferdigstillArrangementKnapp.onclick = () => {
+              history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangement/{arrid}/avslutt");
+              arrid = this.arrangement.arrid;
+              return arrid;
+            }
+          } else if (result.ferdig >= 1) {
+            this.refs.arrangementDetaljer.removeChild(this.refs.ferdigstillArrangementKnapp);
+          }
         }
       });
     }
@@ -1617,7 +1630,7 @@ class AvsluttArrangement extends React.Component {
   render() {
     return(
       <div ref="arrangementAvslutt">
-        <Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Tilbake</Link> 
+        <Link to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Tilbake</Link>
         <h2>Ferdigstilling av arrangement</h2>
         <div ref="arrangementAvsluttDetaljer">
           <h3>Arrangement</h3>

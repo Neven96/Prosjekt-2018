@@ -101,6 +101,14 @@ strong {
   color: red;
 }
 
+.loggInnInfo {
+  font-size: 16px;
+}
+
+#loggInnInfoPassord {
+  font-size: 9px;
+}
+
 #profilinfo {
   list-style-type: none;
   margin-left: auto;

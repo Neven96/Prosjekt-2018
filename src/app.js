@@ -217,7 +217,11 @@ class RegistrerBruker extends React.Component {
     //Registrering av bruker med mange div-er for å få det ordentlig lina opp
     return (
       <div id="registrerbox">
-        <p>Fyll inn alle felter</p>
+        <p>
+          <span className="loggInnInfo">Fyll inn alle felter</span>
+          <br />
+          <span className="loggInnInfo" id="loggInnInfoPassord">(og ikke bruk ditt ekte passord)</span>
+        </p>
         <div className="rad">
           <div>
             <label id="FornavnReg">Fornavn: </label>
@@ -239,7 +243,7 @@ class RegistrerBruker extends React.Component {
             <label id="TelefonReg">Telefonnummer: </label>
           </div>
           <div className="registrer" id="registrerTlfInput">
-            <input type="number" ref="registrerTlfInput" size="20" />
+            <input type="number" ref="registrerTlfInput" size="20" min="0" />
           </div>
         </div>
         <div className="rad">
@@ -255,7 +259,7 @@ class RegistrerBruker extends React.Component {
             <label id="PostnrReg">Postnr: </label>
           </div>
           <div>
-            <input id="registrerPostnrInput" type="number" ref="registrerPostnrInput" maxLength="4" size="4" />
+            <input id="registrerPostnrInput" type="number" ref="registrerPostnrInput" maxLength="4" size="4" min="0" />
             <input id="registrerPoststedInput" type="text" ref="registrerPoststedInput" readOnly />
           </div>
         </div>
@@ -308,11 +312,20 @@ class RegistrerBruker extends React.Component {
       passord = this.refs.registrerPassordInput.value;
 
       //Sjekker om noen av feltene er tomme, alle kreves for å kunne registrere seg
+      //Sjekker om epost og postnummer er riktig
+      //Sjekker om epost er riktig
+      //Sjekker om passord er bra nok
       if (erTom(fnavn) || erTom(enavn) || erTom(tlf) || erTom(adr) || erTom(postnr) || erTom(epost) || erTom(passord)) {
         this.refs.feilRegistrering.innerText = "Du må ha med alle feltene";
         window.scrollTo(0,document.body.scrollHeight);
-      } else if (tlf.length > 8 || tlf.length < 8 || postnr.length > 4) {
-        this.refs.feilRegistrering.innerText = "Telefon eller postnummer er feil lengde";
+      } else if (tlf.length > 8 || tlf.length < 8 || tlf < 0 || postnr.length > 4 || postnr < 0) {
+        this.refs.feilRegistrering.innerText = "Telefon eller postnummer er feil";
+        window.scrollTo(0,document.body.scrollHeight);
+      } else if (!epost.includes("@") || !epost.includes(".")) {
+        this.refs.feilRegistrering.innerText = "Eposten er feil";
+        window.scrollTo(0,document.body.scrollHeight);
+      } else if (passord.length < 8) {
+        this.refs.feilRegistrering.innerText = "Passordet må være minst 8 tegn";
         window.scrollTo(0,document.body.scrollHeight);
       } else {
         //Sjekker om du har oppgitt et ekte postnummer
@@ -630,7 +643,8 @@ class BrukerSok extends React.Component {
             let navn = document.createElement("li");
             navn.className="sokenavn"
 
-            //Legg farge på brukere her
+            //Legger farge på brukere her(eller i CSS-en da..., dette gir dem bare en klasse)
+            //Rød hvis ikke aktivert, grå hvis deaktivert
             if (medlem.Aktivert == 0) {
               navn.className="aktiver"
             }
@@ -638,6 +652,7 @@ class BrukerSok extends React.Component {
               navn.className="deaktiver";
             }
 
+            //Skriver ut navnene på resultatene og om de er administratorer
             navn.innerText = medlem.Fornavn + ' ' + medlem.Etternavn;
             if (medlem.Adminlvl >= 1) {
               navn.innerText += ", (Administrator)"
@@ -675,20 +690,23 @@ class BrukerSokDetaljer extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
+    //Hvis den innloggede brukeren er admin, så får den se mer informasjon om brukeren
+    //og har mulighet til å aktiver, deaktivere og gjøre brukeren til admin
     if (this.innloggetBruker.Adminlvl <= 0) {
       return(
-        <div>
+        <div ref="brukerSokDetaljer">
           <ul>
+            <NavLink exact to="/bruker/{this.innloggetBruker.Medlemsnr}/sok" className="linker" >Tilbake</NavLink>
             <li>Navn: {this.sokBruker.Fornavn} {this.sokBruker.Etternavn}</li>
             <li>Tlf: {this.sokBruker.Telefon}</li>
             <li>Epost: {this.sokBruker.Epost}</li>
           </ul>
-          <NavLink exact to="/bruker/{this.innloggetBruker.Medlemsnr}/sok">Tilbake</NavLink>
         </div>
       );
     } else if (this.innloggetBruker.Adminlvl >= 1) {
       return(
         <div ref="brukerSokDetaljer">
+          <NavLink exact to="/bruker/{this.innloggetBruker.Medlemsnr}/sok" className="linker">Tilbake</NavLink>
           <ul>
             <li>Navn: {this.sokBruker.Fornavn} {this.sokBruker.Etternavn}</li>
             <li>Tlf: {this.sokBruker.Telefon}</li>
@@ -697,11 +715,12 @@ class BrukerSokDetaljer extends React.Component {
             <li>Postnummer og sted: {this.sokBruker.Postnr} {this.sokBrukerPoststed.Poststed}</li>
             <li>Medlemsnr: {this.sokBruker.Medlemsnr}</li>
           </ul>
-          <button ref="aktiveringsKnapp" id="aktiveringsKnapp" className="knapper"></button> <br />
-          <select ref="adminLevelSelect"></select>
-          <button ref="adminKnapp" id="adminKnapp" className="knapper">Gjør admin</button> <br />
-          <button ref="redigerSokBrukerKnapp" id="redigerSokBrukerKnapp" className="knapper">Rediger</button> <br />
-          <NavLink exact to="/bruker/{this.innloggetBruker.Medlemsnr}/sok">Tilbake</NavLink>
+          <div ref="sokBrukerKnappeDiv">
+            <button ref="aktiveringsKnapp" id="aktiveringsKnapp" className="knapper"></button> <br />
+            <select ref="adminLevelSelect"></select>
+            <button ref="adminKnapp" id="adminKnapp" className="knapper">Gjør admin</button> <br />
+            <button ref="redigerSokBrukerKnapp" id="redigerSokBrukerKnapp" className="knapper">Rediger</button>
+          </div>
         </div>
       );
     }
@@ -719,15 +738,27 @@ class BrukerSokDetaljer extends React.Component {
     bruker.hentSokBruker(sokMedlemsnr, (result) => {
       this.sokBruker = result;
       if (this.sokBruker) {
+        //Ignorer denne, ikke noe spennende her (plystre, plystre)
         if (this.sokBruker.Medlemsnr == 10017 && this.innloggetBruker.Medlemsnr != 10017) {
           this.sokBruker.Epost = "Hemmelig";
           this.sokBruker.Telefon = "Hemmelig";
         }
-        bruker.hentPoststed(this.sokBruker.Postnr, (result) => {
-          this.sokBrukerPoststed = result;
-          this.forceUpdate();
-        });
 
+        //Henter poststedet til brukeren
+        if (this.sokBruker.Aktivert <= 1) {
+          bruker.hentPoststed(this.sokBruker.Postnr, (result) => {
+            this.sokBrukerPoststed = result;
+            this.forceUpdate();
+          });
+        } else if (this.sokBruker.Aktivert == 2) {
+          bruker.hentPoststed(this.sokBruker.Postnr, (result) => {
+            this.sokBrukerPoststed = result;
+            this.sokBrukerPoststed.Poststed = "Deaktivert";
+            this.forceUpdate();
+          });
+        }
+
+        //Lager knapper for å aktivere og deaktivere brukeren hvis den innloggede brukeren er admin
         if (this.innloggetBruker.Adminlvl >= 1) {
           if (this.sokBruker.Aktivert == 0) {
             this.refs.aktiveringsKnapp.innerText = "Aktiver";
@@ -747,13 +778,21 @@ class BrukerSokDetaljer extends React.Component {
                 this.update();
               });
             }
+            //Fjerner alle knapper og liknende hvis bruker er deaktivert, eller du søker opp den innloggede brukeren, eller hvis brukeren er høyere admin enn den innloggede brukeren
           } else if (this.sokBruker.Aktivert == 2 || this.sokBruker.Medlemsnr == this.innloggetBruker.Medlemsnr || this.sokBruker.Adminlvl > this.innloggetBruker.Adminlvl || this.sokBruker.Medlemsnr == 10017) {
-            this.refs.brukerSokDetaljer.removeChild(this.refs.aktiveringsKnapp);
-            this.refs.brukerSokDetaljer.removeChild(this.refs.adminLevelSelect);
-            this.refs.brukerSokDetaljer.removeChild(this.refs.adminKnapp);
-            this.refs.brukerSokDetaljer.removeChild(this.refs.redigerSokBrukerKnapp);
+            this.refs.brukerSokDetaljer.removeChild(this.refs.sokBrukerKnappeDiv);
           }
         }
+
+        //Fjerner epost og telefon og adresse og liknende hvis bruker er deaktivert
+        if (this.sokBruker.Aktivert == 2) {
+          this.sokBruker.Epost = "Deaktivert";
+          this.sokBruker.Telefon = "Deaktivert";
+          this.sokBruker.Adresse = "Deaktivert";
+          this.sokBruker.Postnr = "Deaktivert";
+        }
+
+        //Setter opp dropdownmeny for å gjøre brukeren til admin
         for (var i = 0; i <= this.innloggetBruker.Adminlvl; i++) {
           let key = "Adminlvl: "+i;
           let verdi = i.toString();
@@ -777,6 +816,7 @@ class BrukerSokDetaljer extends React.Component {
     });
   }
 
+  //Tømmer en select når ting skjer, ellers blir den fort full hvis du holder på...
   tomSelect() {
     for (var i = this.refs.adminLevelSelect.length - 1; i >= 0; i--) {
       this.refs.adminLevelSelect.remove(i);
@@ -823,6 +863,7 @@ class BrukerSokRediger extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
+    //Henter en bruker utifra medlemsnummer og viser inforamsjonen så det kan redigeres.
     bruker.hentSokBruker(sokMedlemsnr, (result) => {
       midMedlemsnr = result.Medlemsnr
       this.refs.oppdaterFornavnInput.value = result.Fornavn;
@@ -861,7 +902,7 @@ class BrukerSokRediger extends React.Component {
           this.refs.feilOppdatering.innerText = "Telefon eller postnummer er feil lengde"
         } else {
           bruker.eksistererStedPostnr(oppPostnr, (result) => {
-            console.log(result);
+            console.log("Poststedoppdater funker");
             if (result != undefined) {
               console.log("Postnummeroppdater funker");
               bruker.eksistererBrukerTlfOppdater(midMedlemsnr, oppTlf, (result) => {

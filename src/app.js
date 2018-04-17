@@ -424,8 +424,8 @@ class Profil extends React.Component {
     super();
 
     this.state = {width: 500}
-    this.brukerSted = {};
     this.innloggetBruker = {};
+    this.brukerSted = {};
   }
   render() {
     //Kaller på hentbruker to ganger fordi hvorfor ikke :P
@@ -434,15 +434,15 @@ class Profil extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return (
-      <div id="profil">
+      <div id="profil" ref="profilDiv">
         <p id="redigerprofilknapp"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</NavLink></p>
         <ul id="profilinfo">
-          <li>Navn: {this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn}</li>
-          <li>Adresse: {this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed}</li>
-          <li>Telefonnummer: {this.innloggetBruker.Telefon}</li>
-          <li>Epost: {this.innloggetBruker.Epost}</li>
-          <li>Medlemsnummer: {this.innloggetBruker.Medlemsnr}</li>
-          <li>Vaktpoeng: {this.innloggetBruker.Vaktpoeng}</li>
+          <li ref="profilNavn"></li>
+          <li ref="profilAdresse"></li>
+          <li ref="profilNummer"></li>
+          <li ref="profilEpost"></li>
+          <li ref="profilMedlemsnr"></li>
+          <li ref="profilVaktpoeng"></li>
         </ul>
         <p id="kommendearr"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Kommende arrangementer</NavLink></p>
         <BigCalendar
@@ -461,8 +461,19 @@ class Profil extends React.Component {
     //Henter kommunen til brukeren utifra postnummeret
     bruker.hentPoststed(this.innloggetBruker.Postnr, (result) => {
       this.brukerSted = result;
-      this.forceUpdate();
+      this.update();
     });
+  }
+
+  update() {
+    if (this.refs.profilDiv) {
+      this.refs.profilNavn.innerText = "Navn: "+this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn;
+      this.refs.profilAdresse.innerText = "Adresse: "+this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed;
+      this.refs.profilNummer.innerText = "Telefonnummer: "+this.innloggetBruker.Telefon;
+      this.refs.profilEpost.innerText = "Epost: "+this.innloggetBruker.Epost
+      this.refs.profilMedlemsnr.innerText = "Medlemsnummer: "+this.innloggetBruker.Medlemsnr
+      this.refs.profilVaktpoeng.innerText = "Vaktpoeng: "+this.innloggetBruker.Vaktpoeng
+    }
   }
 }
 
@@ -1374,17 +1385,17 @@ class KalenderAdmin extends React.Component {
       <div>
         <div id="opprettArrangementDiv" ref="opprettArrangementDiv">
           <h2>Arrangement</h2>
-          <input type="text" ref="arrNavn" placeholder="Arrangementnavn" /> <br />
-          <textarea rows="5" cols="40" ref="arrBeskrivelse" placeholder="Beskrivelse" /> <br />
-          <input type="date" ref="arrDato"/> <br />
-          <input type="text" ref="arrSted" placeholder="Lokasjon" /> <br />
+          Navn: <input type="text" ref="arrNavn" placeholder="Arrangementnavn" /> <br />
+          Beskrivelse: <textarea rows="5" cols="40" ref="arrBeskrivelse" placeholder="Beskrivelse" /> <br />
+          Startdato: <input type="date" ref="arrDato"/> <br />
+          Sted: <input type="text" ref="arrSted" placeholder="Lokasjon" /> <br />
         </div>
         <div id="opprettArrangementKontakt" ref="opprettArrangementKontakt">
           <h2>Kontaktperson</h2>
-          <input type="text" ref="kontaktFornavn" placeholder="Fornavn" />
+          Navn: <input type="text" ref="kontaktFornavn" placeholder="Fornavn" />
           <input type="text" ref="kontaktEtternavn" placeholder="Etternavn" /> <br />
-          <input type="number" ref="kontaktTlf" /> <br />
-          <input type="text" ref="kontaktEpost" placeholder="Epost" /> <br />
+          Telefon: <input type="number" ref="kontaktTlf" /> <br />
+          Epost: <input type="text" ref="kontaktEpost" placeholder="Epost" /> <br />
           <p ref="opprettArrangementAdvarsel"></p>
           <button ref="opprettArrangement">Opprett arrangement</button>
           <button ref="tilbakeArrangement">Lukk</button>

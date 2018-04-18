@@ -1,4 +1,4 @@
-->Teller antall medlemmer på mannskapsliste
+->Teller antall medlemmer pÃ¥ mannskapsliste
 SELECT COUNT(*) FROM Medlem 
 INNER JOIN Interesse ON Medlem.Medlemsnr = Interesse.Medlemsnr 
 INNER JOIN Arrangement ON Interesse.Arrid = Arrangement.arrid
@@ -35,3 +35,41 @@ SET Medlem.Vaktpoeng = Medlem.Vaktpoeng + Arrangement.vaktpoeng,
 	Vakt.oppdatert = 1
 WHERE Arrangement.arrid = ? AND Medlem.Medlemsnr = ? AND (Vakt.Medlemsnr = ? AND 
 Arrangement.arrid = Mannskapsliste.arrid  AND Mannskapsliste.listeid = Vakt.listeid) 
+_______________________________________________
+-> Medlem har kompetanse
+SELECT Kompetanse_navn, Bruker_kompetanse.Varighet_start, Bruker_kompetanse.Varighet_slutt FROM `Kompetanse`
+INNER JOIN Bruker_kompetanse ON Kompetanse.Kompetanse_id = Bruker_kompetanse.Kompetanse_id
+INNER JOIN Medlem ON Bruker_kompetanse.Medlemsnr = Medlem.Medlemsnr
+WHERE Medlem.Medlemsnr = ?
+_____________________________________
+-> Hvilken rolle kan kompetanse gi (sikkert ikke nyttig)
+SELECT Rolle.Rolle_navn, Kompetanse.Kompetanse_navn FROM `Rolle` 
+INNER JOIN Rolle_kompetanse ON Rolle.Rolle_id = Rolle_kompetanse.Rolle_id
+INNER JOIN Kompetanse ON Rolle_kompetanse.Kompetanse_id = Kompetanse.Kompetanse_id
+WHERE Kompetanse.Kompetanse_id = ?
+___________________________________________
+->Hvilken kompetanse krever rollen (sikkert ikke nyttig)
+SELECT Rolle.Rolle_navn, Kompetanse.Kompetanse_navn FROM `Rolle` 
+INNER JOIN Rolle_kompetanse ON Rolle.Rolle_id = Rolle_kompetanse.Rolle_id
+INNER JOIN Kompetanse ON Rolle_kompetanse.Kompetanse_id = Kompetanse.Kompetanse_id
+WHERE Rolle.Rolle_id = ?
+___________________________________________
+->Viser kompetanse og rolle hos bruker
+SELECT k.Kompetanse_navn, bk.Varighet_slutt, r.Rolle_navn
+FROM  Kompetanse k, 
+Bruker_kompetanse bk, Medlem m, Bruker_rolle br, Rolle r, Rolle_kompetanse rk
+WHERE m.Medlemsnr = ?
+AND m.Medlemsnr = bk.Medlemsnr
+AND bk.Kompetanse_id = k.Kompetanse_id
+AND m.Medlemsnr = br.Medlemsnr
+AND br.Rolle_id = r.Rolle_id
+AND r.Rolle_id = rk.Rolle_id
+AND rk.Kompetanse_id = k.Kompetanse_id
+ORDER BY r.Rolle_id ASC;
+_________________________________ 
+->kompetanse til bruker (samme som Medlem har kompetanse, bare smoothere)
+SELECT k.Kompetanse_navn, k.Kompetanse_id
+FROM  Kompetanse k, Bruker_kompetanse bk, Medlem m
+WHERE m.Medlemsnr = ?
+AND m.Medlemsnr = bk.Medlemsnr
+AND bk.Kompetanse_id = k.Kompetanse_id

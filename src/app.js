@@ -1260,6 +1260,7 @@ class KalenderDetaljer extends React.Component {
               arrangement.hentInteresserte(this.arrangement.arrid, (result) => {
                 this.refs.arrInteresserte.innerText = "Antall interesserte: "+result.length+"\n";
 
+                this.refs.arrInteresseListe.innerText = " "
                 if (this.innloggetBruker.Adminlvl >= 1 && result.length >= 1) {
                   this.refs.arrInteresseListe.innerText = "Interesserte:"
                   for (let medlem of result) {
@@ -1376,6 +1377,7 @@ class KalenderDetaljer extends React.Component {
               this.refs.arrangementDiv.removeChild(this.refs.arrangementKnappeP);
             }
             this.refs.arrangementDetaljer.removeChild(this.refs.ferdigstillArrangementKnapp);
+            this.refs.arrangementKontaktDiv.id="sjulKontaktperson"
           }
         }
 

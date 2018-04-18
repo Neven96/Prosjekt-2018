@@ -209,6 +209,10 @@ strong {
   border-style: outset;
 }
 
+#sjulKontaktperson {
+  display: none;
+}
+
 .knapper {
   text-decoration: none;
 }

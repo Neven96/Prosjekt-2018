@@ -1375,6 +1375,7 @@ class KalenderDetaljer extends React.Component {
             if (this.arrangement.ferdig == 1 || this.arrangement.startdato < iDag) {
               this.refs.arrangementDiv.removeChild(this.refs.arrangementKnappeP);
             }
+            this.refs.arrangementDetaljer.removeChild(this.refs.ferdigstillArrangementKnapp);
           }
         }
 

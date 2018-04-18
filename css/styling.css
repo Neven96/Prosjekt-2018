@@ -121,6 +121,18 @@ strong {
 
 #profil {
   text-align: center;
+  width: 100%;
+}
+
+#profilvisning1 {
+  float: left;
+  width: 49%;
+}
+
+#profilvisning2 {
+  float: right;
+  width: 49%;
+  height: 100%
 }
 
 #redigerprofil {

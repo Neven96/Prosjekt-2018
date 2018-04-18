@@ -436,7 +436,7 @@ class Profil extends React.Component {
   constructor() {
     super();
 
-    this.state = {width: 500}
+    this.state = {width: 500, events: []}
     this.innloggetBruker = {};
     this.brukerSted = {};
   }
@@ -448,6 +448,7 @@ class Profil extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return (
       <div id="profil" ref="profilDiv">
+      <div id="profilvisning1">
         <p id="redigerprofilknapp"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</NavLink></p>
         <ul id="profilinfo">
           <li ref="profilNavn"></li>
@@ -458,12 +459,27 @@ class Profil extends React.Component {
           <li ref="profilVaktpoeng"></li>
         </ul>
         <p id="kommendearr"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Kommende arrangementer</NavLink></p>
+      </div>
+      <div id="profilvisning2" ref="kalenderDiv">
         <BigCalendar
-          style={{ height: 500, width: this.state.width }}
-          events={[]}
+          style={{ height: 500}}
+          events={this.state.events}
+          step={60}
+          ShowMultiDayTimes
+          startAccessor='startDate'
+          endAccessor='startDate'
+          defaultDate={new Date()}
+          onSelectEvent={event => this.setArrinfo(event)}
         />
       </div>
+      </div>
     );
+  }
+
+  setArrinfo(event) {
+    history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangement/"+event.arrid);
+    arrid = event.arrid;
+    return arrid;
   }
 
   componentDidMount() {
@@ -486,6 +502,12 @@ class Profil extends React.Component {
       this.refs.profilEpost.innerText = "Epost: "+this.innloggetBruker.Epost
       this.refs.profilMedlemsnr.innerText = "Medlemsnummer: "+this.innloggetBruker.Medlemsnr
       this.refs.profilVaktpoeng.innerText = "Vaktpoeng: "+this.innloggetBruker.Vaktpoeng
+    }
+    if (this.refs.kalenderDiv){
+      arrangement.hentArrKal((result) => {
+        console.log(result);
+          this.setState({ events: result });
+      })
     }
   }
 }

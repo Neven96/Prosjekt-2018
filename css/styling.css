@@ -220,7 +220,7 @@ input {
 }
 
 .arrangementDiv:hover {
-  border-style: groove;
+  border-style: ridge;
   cursor: pointer;
 }
 

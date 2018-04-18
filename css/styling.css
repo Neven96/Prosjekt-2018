@@ -66,26 +66,32 @@ strong {
 
 .navbar {
   background-color: #f8f8f9;
-  position: relative;
   left: auto;
-  right: auto;
   margin-left: auto;
   margin-right: auto;
+  position: relative;
+  right: auto;
   text-align: right;
 }
 
-.linker {
-  position: sticky;
+.linker, .menyLinker{
   color: #000000;
   font-size: 150%;
   margin-right: 0.5em;
+  position: sticky;
   text-decoration: none;
 }
 
-/* .linker:hover {
+.menyLinker:hover {
   font-weight: bold;
   text-decoration: none;
-} */
+}
+
+.linker:hover {
+  color: red;
+  font-weight: bold;
+  text-decoration: none;
+}
 
 #registrerbox, #loginbox, #forsidetekst, #hjelptekst, #profilinfo, #glemtpassord {
   position: relative;
@@ -199,33 +205,33 @@ input {
 
 .sokenavn:hover {
   color: #5aa8fb;
-  text-decoration: underline;
   cursor: pointer;
+  text-decoration: underline;
 }
 
 .arrangementside {
-  position: relative;
-  zoom: 100%;
-  text-align: center;
   margin-top: 1.5em;
+  position: relative;
+  text-align: center;
+  zoom: 100%;
 }
 
-.arrangementDiv, #opprettArrangement, #redigerArrDiv, .arrangementDetaljerDiv {
+.arrangementDiv, .arrangementDetaljerDiv {
   border-style: groove;
-  width: 50%;
-  text-align: center;
+  margin-bottom: 6px;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 6px;
+  text-align: center;
+  width: 65%;
+}
+
+.arrNavn {
+  font-size: 1.5em;
 }
 
 .arrangementDiv:hover {
   border-style: ridge;
   cursor: pointer;
-}
-
-.arrangementDetaljerDiv {
-  border-style: groove;
 }
 
 #arrnavn {
@@ -241,8 +247,8 @@ input {
 }
 
 .glemtpassordknapp {
-  margin-left: 1em;
   font-size: 65%;
+  margin-left: 1em;
 }
 
 .logginninput, .glemtpassordinput {
@@ -260,15 +266,15 @@ input {
 }
 
 .rad:after {
+  clear: both;
   content: "";
   display: table;
-  clear: both;
 }
 
 .registrer {
   float: left;
-  width: 75%;
   margin-top: 6px;
+  width: 75%;
 }
 
 #registrerPostnrInput {

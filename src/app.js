@@ -40,9 +40,9 @@ class Hjem extends React.Component {
         <div>
           <div className="navbar">
             <hr />
-            <span className="spanbar"><NavLink exact to="/hjem" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Hjem</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/hjelp" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Hjelp</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/logginn" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Logg inn</NavLink></span>
+            <span className="spanbar"><NavLink exact to="/hjem" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Hjem</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/hjelp" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Hjelp</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/logginn" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Logg inn</NavLink></span>
             <hr />
           </div>
           <div>
@@ -57,11 +57,11 @@ class Hjem extends React.Component {
         <div>
           <div className="navbar">
             <hr />
-            <span className="spanbar"><NavLink exact to="/hjem" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Hjem</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/hjelp" className="linker" activeStyle={{color : 'red', fontWeight : 'bold'}} replace>Hjelp</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Arrangementer</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Profil</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/sok" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Søk</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/hjem" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Hjem</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/hjelp" className="menyLinker" activeStyle={{color : 'red', fontWeight : 'bold'}} replace>Hjelp</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Arrangementer</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Profil</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/sok" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Søk</NavLink> </span>
             <span className="spanbar"><button ref="loggUtKnapp" id="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
               this.forceUpdate(),
               history.push("/hjem/"),
@@ -998,7 +998,7 @@ class Kalender extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     if (this.innloggetBruker.Adminlvl <= 0) {
       return(
-        <div>
+        <div className="arrangementside">
           <h2>Kommende arrangementer</h2>
           <div ref="kommendeArrangementer"></div>
           <h2>Ferdige arrangementer</h2>
@@ -1045,6 +1045,8 @@ class Kalender extends React.Component {
         let arrNavn = document.createElement("span");
         let arrBeskrivelse = document.createElement("span");
         let arrDato = document.createElement("span");
+
+        arrNavn.className = "arrNavn"
 
         //Navn og beskrivelse av arrangement
         arrNavn.innerText = arr.arrnavn+"\n";
@@ -1281,10 +1283,10 @@ class KalenderDetaljer extends React.Component {
               }
 
               arrangement.hentInteresserte(this.arrangement.arrid, (result) => {
-                this.refs.arrInteresserte.innerText = "Antall interesserte: "+result.length+"\n";
-
                 this.refs.arrInteresseListe.innerText = " "
+
                 if (this.innloggetBruker.Adminlvl >= 1 && result.length >= 1) {
+                  this.refs.arrInteresserte.innerText = "Antall interesserte: "+result.length+"\n";
                   this.refs.arrInteresseListe.innerText = "Interesserte:"
                   for (let medlem of result) {
                     //Spørring for å se om allerede er meldt opp til vakt
@@ -1369,12 +1371,20 @@ class KalenderDetaljer extends React.Component {
             slettArrKnapp.onclick = () => {
               let slett = confirm("Er du sikker på du vil slette arrangement\n"+this.arrangement.arrnavn+"?")
               if (slett) {
-                arrangement.slettMannskapsliste(this.arrangement.arrid, (result) => {
-                  console.log("Mannskapsliste til arrangement: "+this.arrangement.arrid);
-                  arrangement.slettArrangement(this.arrangement.arrid, (result) => {
-                    console.log("Arrangement med navn: "+this.arrangement.arrnavn+", og id:"+this.arrangement.arrid+" slettet");
-                    history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangementer/");
-                    this.forceUpdate();
+                arrangement.hentMannskapsliste(this.arrangement.arrid, (result) => {
+                  arrangement.slettVakter(result.listeid, (result) => {
+                    console.log("Vaktene til arrangement: "+this.arrangement.arrnavn+" slettet");
+                    arrangement.slettInteresserte(this.arrangement.arrid, (result) => {
+                      console.log("De interesserte til arrangement: "+this.arrangement.arrnavn);
+                    });
+                    arrangement.slettMannskapsliste(this.arrangement.arrid, (result) => {
+                      console.log("Mannskapsliste til arrangement: "+this.arrangement.arrnavn+" slettet");
+                      arrangement.slettArrangement(this.arrangement.arrid, (result) => {
+                        console.log("Arrangement med navn: "+this.arrangement.arrnavn+", og id:"+this.arrangement.arrid+" slettet");
+                        history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangementer/");
+                        this.forceUpdate();
+                      });
+                    });
                   });
                 });
               }
@@ -1471,20 +1481,48 @@ class KalenderAdmin extends React.Component {
 
   render() {
     return(
-      <div id="opprettArrangement">
+      <div id="opprettArrangement" className="arrangementDetaljerDiv">
         <div id="opprettArrangementDiv" ref="opprettArrangementDiv">
           <h2>Arrangement</h2>
-          Navn: <input type="text" ref="arrNavn" placeholder="Arrangementnavn" /> <br />
-          Beskrivelse: <textarea rows="5" cols="40" ref="arrBeskrivelse" placeholder="Beskrivelse" /> <br />
-          Startdato: <input type="date" ref="arrDato"/> <br />
-          Sted: <input type="text" ref="arrSted" placeholder="Lokasjon" /> <br />
+          <table style={{width:"100%"}}>
+            <tbody>
+              <tr>
+                <td>Navn: </td>
+                <td><input type="text" ref="arrNavn" placeholder="Arrangementnavn" /></td>
+              </tr>
+              <tr>
+                <td>Beskrivelse: </td>
+                <td><textarea rows="5" cols="30" ref="arrBeskrivelse" placeholder="Beskrivelse" /></td>
+              </tr>
+              <tr>
+                <td>Startdato: </td>
+                <td><input type="date" ref="arrDato"/></td>
+              </tr>
+              <tr>
+                <td>Sted: </td>
+                <td><input type="text" ref="arrSted" placeholder="Lokasjon" /></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div id="opprettArrangementKontakt" ref="opprettArrangementKontakt">
           <h2>Kontaktperson</h2>
-          Navn: <input type="text" ref="kontaktFornavn" placeholder="Fornavn" />
-          <input type="text" ref="kontaktEtternavn" placeholder="Etternavn" /> <br />
-          Telefon: <input type="number" ref="kontaktTlf" /> <br />
-          Epost: <input type="text" ref="kontaktEpost" placeholder="Epost" /> <br />
+          <table style={{width:"100%"}}>
+            <tbody>
+              <tr>
+                <td>Navn: </td>
+                <td><input type="text" ref="kontaktFornavn" placeholder="Fornavn" /> <input type="text" ref="kontaktEtternavn" placeholder="Etternavn" /></td>
+              </tr>
+              <tr>
+                <td>Telefon: </td>
+                <td><input type="number" ref="kontaktTlf" /></td>
+              </tr>
+              <tr>
+                <td>Epost: </td>
+                <td><input type="text" ref="kontaktEpost" placeholder="Epost" /></td>
+              </tr>
+            </tbody>
+          </table>
           <p ref="opprettArrangementAdvarsel"></p>
           <button ref="opprettArrangement">Opprett arrangement</button>
           <button ref="tilbakeArrangement">Lukk</button>
@@ -1538,7 +1576,6 @@ class KalenderAdmin extends React.Component {
             console.log("Arrangementkontakt eksisterer allerede");
 
             arrangement.velgArrangementKontakt(kontaktTlf, kontaktEpost, (result) => {
-              console.log(result);
               arrangement.oppdaterArrangementKontakt(result.Kontakt_id, arrNavn, arrDato, arrSted, (result) => {
                 console.log("Kontakt lagt til i arrangement");
                 history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer/");
@@ -1566,41 +1603,61 @@ class RedigerArrangement extends React.Component {
 
   render() {
     return(
-      <div ref="redigerArrDiv" id="redigerArrDiv">
+      <div ref="redigerArrDiv" id="redigerArrDiv" className="arrangementDetaljerDiv">
         <p>Alle felter med * er obligatoriske</p>
         <div ref="arrangementRediger" id="arrangementRediger">
           <h2>Arrangement</h2>
-          <div ref="redigerNavnBeskrivelseDiv" id="redigerNavnBeskrivelseDiv">
-            <span>Arrangementnavn*: </span><input type="text" ref="oppdaterArrNavn" id="oppdaterArrNavn" placeholder="Arrangementnavn" />
-            <br />
-            <span>Arrangementbeskrivelse*: </span><textarea rows="5" cols="40" ref="oppdaterArrBeskrivelse" id="oppdaterArrBeskrivelse" placeholder="Beskrivelse" />
-          </div>
-          <br />
-          <div ref="redigerDatoTidStedDiv" id="redigerDatoTidStedDiv">
-            <span>Dato og oppmøtetid*: </span><input type="date" ref="oppdaterDato" id="oppdaterDato" />
-            <input type="time" ref="oppdaterOppmote" id="oppdaterOppmote" />
-            <br />
-            <span>Sted*: </span><input type="text" ref="oppdaterSted" id="oppdaterSted" placeholder="Oppmøtested" />
-            <br />
-            <span>Postnummer*/sted: </span><input type="number" ref="oppdaterPostnr" id="oppdaterPostnr" />
-            <input type="text" ref="oppdaterPoststed" id="oppdaterPoststed" readOnly/>
-            <br />
-            <span>Arrangementstart*/slutt: </span><input type="time" ref="oppdaterStartTid" id="oppdaterStartTid" />
-            <input type="time" ref="oppdaterSluttTid" />
-          </div>
-          <div ref="redigerUtstyrVaktpoengDiv" id="redigerUtstyrVaktpoengDiv">
-            <span>Utstyrsliste: </span><textarea rows="5" cols="40" ref="oppdaterUtstyrsliste" id="oppdaterUtstyrsliste" placeholder="Utstyrsliste" />
-            <br />
-            <span>Vaktpoeng: </span><input type="number" ref="oppdaterVaktPoeng" id="oppdaterVaktPoeng" />
-          </div>
+          <table style={{width:"100%"}}>
+            <tbody>
+              <tr>
+                <td>Arrangementnavn*: </td>
+                <td><input type="text" ref="oppdaterArrNavn" id="oppdaterArrNavn" placeholder="Arrangementnavn" /></td>
+              </tr>
+              <tr>
+                <td>Arrangementbeskrivelse*: </td>
+                <td><textarea rows="5" cols="40" ref="oppdaterArrBeskrivelse" id="oppdaterArrBeskrivelse" placeholder="Beskrivelse" /></td>
+              </tr>
+              <tr>
+                <td>Dato og oppmøtetid*: </td>
+                <td><input type="date" ref="oppdaterDato" id="oppdaterDato" /> <input type="time" ref="oppdaterOppmote" id="oppdaterOppmote" /></td>
+              </tr>
+              <tr>
+                <td>Sted*: </td>
+                <td><input type="text" ref="oppdaterSted" id="oppdaterSted" placeholder="Oppmøtested" /></td>
+              </tr>
+              <tr>
+                <td>Postnummer*/sted: </td>
+                <td><input type="number" ref="oppdaterPostnr" id="oppdaterPostnr" /> <input type="text" ref="oppdaterPoststed" id="oppdaterPoststed" readOnly/></td>
+              </tr>
+              <tr>
+                <td>Arrangementstart*/-slutt</td>
+                <td><input type="time" ref="oppdaterStartTid" id="oppdaterStartTid" /> <input type="time" ref="oppdaterSluttTid" /></td>
+              </tr>
+              <tr>
+                <td>Utsyrsliste: </td>
+                <td><textarea rows="5" cols="40" ref="oppdaterUtstyrsliste" id="oppdaterUtstyrsliste" placeholder="Utstyrsliste" /></td>
+              </tr>
+              <tr>
+                <td>Vaktpoeng: </td>
+                <td><input type="number" ref="oppdaterVaktPoeng" id="oppdaterVaktPoeng" /></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div ref="medlemslisteRedigerDiv" id="medlemslisteRedigerDiv">
           <h2>Mannskapsliste</h2>
-          <div ref="redigerMannskapRolleDiv" id="redigerMannskapRolleDiv">
-            <span>Mannskap: </span><input type="number" ref="antallMannskap" id="antallMannskap" />
-            <br />
-            <span>Roller: </span><textarea rows="5" cols="40" ref="rollerMannskap" id="rollerMannskap" placeholder="Roller til arrangementet" />
-          </div>
+          <table style={{width:"100%"}}>
+            <tbody>
+              <tr>
+                <td>Mannskap: </td>
+                <td><input type="number" ref="antallMannskap" id="antallMannskap" /></td>
+              </tr>
+              <tr>
+                <td>Roller: </td>
+                <td><textarea rows="5" cols="40" ref="rollerMannskap" id="rollerMannskap" placeholder="Roller til arrangementet" /></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div ref="redigerArrangementKnapperDiv" id="redigerArrangementKnapperDiv">
           <button ref="redigerArrangementKnapp" id="redigerArrangementKnapp">Rediger</button>

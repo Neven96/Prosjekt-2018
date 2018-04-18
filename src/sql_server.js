@@ -196,20 +196,21 @@ class Arrangement {
     });
   }
 
-  hentArrKal(callback) {
-    connection.query("SELECT arrid, arrnavn AS title, startdato AS startDate FROM Arrangement", (error, result) => {
-      if (error) throw error;
-
-      callback(result);
-    });
-  }
-
   //Henter ut et spesifikt arrangement
   hentArrangement(arrid, callback) {
     connection.query("SELECT * FROM Arrangement WHERE arrid = ?", [arrid], (error, result) => {
       if (error) throw error;
 
       callback(result[0]);
+    });
+  }
+
+  //Hente arrangementet for kalenderen
+  hentArrKal(callback) {
+    connection.query("SELECT arrid, arrnavn AS title, startdato AS startDate FROM Arrangement", (error, result) => {
+      if (error) throw error;
+
+      callback(result);
     });
   }
 

@@ -434,6 +434,7 @@ class LoggInn extends React.Component {
           else {
             console.log("Feil epost/passord");
             this.refs.feilInnlogging.innerText = "Feil epost/passord";
+            bruker.loggUtBruker();
           }
         });
       }

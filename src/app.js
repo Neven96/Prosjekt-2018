@@ -62,7 +62,7 @@ class Hjem extends React.Component {
             <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Arrangementer</NavLink> </span>
             <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Profil</NavLink> </span>
             <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/sok" className="linker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Søk</NavLink> </span>
-            <span className="spanbar"><button ref="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
+            <span className="spanbar"><button ref="loggUtKnapp" id="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
               this.forceUpdate(),
               history.push("/hjem/"),
               console.log("Logget ut")}}>Logg ut</button></span>
@@ -116,6 +116,17 @@ class Nyheter extends React.Component {
           <p>Nyheter om Røde Kors og andre ting tang</p>
           <h3>Breaking News!!!</h3>
           <p>Røde Kors får nytt vaktsystem</p>
+
+          <div id="nyheter">
+              <ul id="nyhetercol">
+              <li className="underline"><strong>Ca. 340 000</strong>mennesker fikk matrasjoner i Sør-Sudan i første halvdel av 2017</li>
+              <li className="underline"><strong>4,7 millioner</strong>mennesker i Syria får hjelp av Røde Kors hver måned</li>
+              <li className="underline"><strong>3400</strong>var med på Ferie for alle i 2016</li>
+              <li className="underline"><strong>Ca. 15 000</strong>i Norge får besøk av en Røde Kors besøksvenn</li>
+              <li className="underline"><strong>Ca. 2 000</strong>flyktninger fikk en flyktningguide i 2016</li>
+              <li className="underline"><strong>Ca. 11 000</strong>vitner får vitnestøtte i løpet av et år</li>
+              </ul>
+            </div>
         </div>
       );
     }
@@ -127,6 +138,17 @@ class Nyheter extends React.Component {
             <p>Nyheter om Røde Kors og andre ting tang</p>
             <h3>Breaking News!!!</h3>
             <p>Røde Kors får nytt vaktsystem</p>
+
+            <div id="nyheter">
+                <ul id="nyhetercol">
+                <li className="underline"><strong>Ca. 340 000</strong>mennesker fikk matrasjoner i Sør-Sudan i første halvdel av 2017</li>
+                <li className="underline"><strong>4,7 millioner</strong>mennesker i Syria får hjelp av Røde Kors hver måned</li>
+                <li className="underline"><strong>3400</strong>var med på Ferie for alle i 2016</li>
+                <li className="underline"><strong>Ca. 15 000</strong>i Norge får besøk av en Røde Kors besøksvenn</li>
+                <li className="underline"><strong>Ca. 2 000</strong>flyktninger fikk en flyktningguide i 2016</li>
+                <li className="underline"><strong>Ca. 11 000</strong>vitner får vitnestøtte i løpet av et år</li>
+                </ul>
+              </div>
           </div>
         );
       }
@@ -170,12 +192,13 @@ class GlemtPassord extends React.Component {
   //Side for å få passordet hvis det er glemt
   render() {
     return(
-      <div>
+      <div id="glemtpassord">
         <p>Skriv inn navn og epost for å få passord</p>
-        <input type="text" ref="glemtPassordFornavn" placeholder="Fornavn"/>
-        <input type="text" ref="glemtPassordEtternavn" placeholder="Etternavn"/>
+        Fornavn: <input className="glemtpassordinput" type="text" ref="glemtPassordFornavn" />
         <br />
-        <input type="text" ref="glemtPassordEpost" placeholder="Epost"/>
+        Etternavn: <input className="glemtpassordinput" type="text" ref="glemtPassordEtternavn" />
+        <br />
+        Epost: <input className="glemtpassordinput" type="text" ref="glemtPassordEpost" />
         <br />
         <button ref="glemtPassordKnapp">Hent passord</button>
       </div>
@@ -280,7 +303,7 @@ class RegistrerBruker extends React.Component {
           </div>
         </div>
         <p id="feilRegistrering" ref="feilRegistrering" className="feilMelding"></p>
-        <button ref="registrerKnapp" className="knapper">Registrer</button>
+        <button id="registrerKnapp" ref="registrerKnapp" className="knapper">Registrer</button>
       </div>
     );
   }
@@ -986,7 +1009,7 @@ class Kalender extends React.Component {
       );
     } else if (this.innloggetBruker.Adminlvl >= 1) {
       return(
-        <div>
+        <div className="arrangementside">
           <NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/adminkalender" className="linker">Opprett arrangement</NavLink>
           <h2>Kommende arrangementer</h2>
           <div ref="kommendeArrangementer"></div>
@@ -1072,11 +1095,11 @@ class KalenderDetaljer extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return(
-      <div ref="arrangementDetaljer">
+      <div className="arrangementside" ref="arrangementDetaljer">
         <NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Tilbake</NavLink>
         <div ref="arrangementDiv" className="arrangementDetaljerDiv">
           <h2>Arrangement</h2>
-          <p ref="arrTittel">
+          <p id="arrnavn" ref="arrTittel">
             <span ref="arrNavn"></span>
             <span ref="arrBeskrivelse"></span>
           </p>
@@ -1448,7 +1471,7 @@ class KalenderAdmin extends React.Component {
 
   render() {
     return(
-      <div>
+      <div id="opprettArrangement">
         <div id="opprettArrangementDiv" ref="opprettArrangementDiv">
           <h2>Arrangement</h2>
           Navn: <input type="text" ref="arrNavn" placeholder="Arrangementnavn" /> <br />

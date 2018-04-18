@@ -23,48 +23,45 @@ ul {
   margin-right: auto;
 }
 
+
+
 #nyheter {
-  /* position: relative; */
+  position: relative;
   color: white;
   font-size: 1.125em;
-  margin-top: 15%;
-  padding-top: 1em;
-  padding-bottom: 1em;
-  width: 100%;
-  length: 50%;
+  margin-top: 10%;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
   background-color: #d42b1e;
-  /* text-align: center; */
-  zoom: 150%;
+  text-align: center;
+  /* zoom: 150%; */
 }
 
-#nyhetercol1 {
-  list-style-type: none;
+#nyhetercol {
+  /* list-style-type: none;
   margin-top: 6px;
   margin-bottom: 6px;
   margin-left: 0;
-  margin-right: 36px;
+  margin-right: 6px;
   display: list-item;
-  text-align: -webkit-match-parent;
+  text-align: -webkit-match-parent; */
+
 }
 
 strong {
-  min-width: 180px;
-  margin-right: 72px;
+  float: left;
+  margin-left: 26px;
+  margin-right: 26px;
 }
-
-/* #nyhetercol2 {
-  margin-top: 6px;
-  margin-right: 5%;
-} */
 
 .underline {
   border-bottom: 0.25px white solid;
   position: relative;
-  /* left: auto;
+  left: auto;
   right: auto;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center; */
+  margin-left: 26px;
+  margin-right: 26px;
+  text-align: center;
 }
 
 .navbar {
@@ -85,12 +82,12 @@ strong {
   text-decoration: none;
 }
 
-.linker:hover {
+/* .linker:hover {
   font-weight: bold;
   text-decoration: none;
-}
+} */
 
-#registrerbox, #loginbox, #forsidetekst, #hjelptekst, #profilinfo {
+#registrerbox, #loginbox, #forsidetekst, #hjelptekst, #profilinfo, #glemtpassord {
   position: relative;
   zoom: 150%;
   text-align: center;
@@ -109,13 +106,17 @@ strong {
   font-size: 9px;
 }
 
+#loggInnKnapp {
+  text-decoration: none;
+}
+
 #profilinfo {
   list-style-type: none;
   margin-left: auto;
   margin-right: auto;
   width: 50%;
   background-color: #f8f8f9;
-  border-style: outset;
+  border-style: groove;
 }
 
 #profil {
@@ -140,21 +141,27 @@ strong {
   margin-right: auto;
   width: 50%;
   background-color: #f8f8f9;
-  border-style: outset;
+  border-style: groove;
   font-size: 1.25em;
 }
 
-#oppdaterFornavnInput, #oppdaterEtternavnInput, #oppdaterTlfInput, #oppdaterAdrInput, #oppdaterPostnrInput {
+/* #oppdaterFornavnInput, #oppdaterEtternavnInput, #oppdaterTlfInput, #oppdaterAdrInput, #oppdaterPostnrInput {
   margin-top: 6px;
-}
+} */
+
 
 #oppdaterPostnrInput {
   width: 7.5%;
 }
 
-#oppdaterProfilKnapp {
+button {
   margin-bottom: 6px;
   margin-right: 6px;
+}
+
+input {
+  margin-top: 3px;
+  margin-bottom: 3px;
 }
 
 #soktest {
@@ -196,17 +203,33 @@ strong {
   cursor: pointer;
 }
 
-.arrangementDiv {
-  border-style: inset;
+.arrangementside {
+  position: relative;
+  zoom: 100%;
+  text-align: center;
+  margin-top: 1.5em;
+}
+
+.arrangementDiv, #opprettArrangement, #redigerArrDiv, .arrangementDetaljerDiv {
+  border-style: groove;
+  width: 50%;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 6px;
 }
 
 .arrangementDiv:hover {
-  border-style: outset;
+  border-style: groove;
   cursor: pointer;
 }
 
 .arrangementDetaljerDiv {
-  border-style: outset;
+  border-style: groove;
+}
+
+#arrnavn {
+  font-weight: bolder;
 }
 
 #sjulKontaktperson {
@@ -222,8 +245,10 @@ strong {
   font-size: 65%;
 }
 
-.logginninput {
+.logginninput, .glemtpassordinput {
   margin-bottom: 1em;
+  margin-left: 1em;
+  maxLength: 10px;
 }
 
 #registrerbox {
@@ -231,7 +256,7 @@ strong {
   margin-right: auto;
   width: 50%;
   background-color: #f8f8f9;
-  border-style: outset;
+  border-style: groove;
 }
 
 .rad:after {
@@ -262,6 +287,6 @@ strong {
   margin-top: 6px;
 }
 
-#registrerknapp {
+#registrerKnapp {
   margin-bottom: 6px;
 }

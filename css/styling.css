@@ -116,6 +116,10 @@ strong {
   text-decoration: none;
 }
 
+#loggUtKnapp {
+  font-size: 1.25em
+}
+
 #profilinfo {
   list-style-type: none;
   margin-left: auto;
@@ -172,8 +176,9 @@ strong {
   width: 7.5%;
 }
 
+/* Trenger vi denne? kommentert ut margin bottom*/
 button {
-  margin-bottom: 6px;
+  /* margin-bottom: 6px; */
   margin-right: 6px;
 }
 

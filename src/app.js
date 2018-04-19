@@ -494,7 +494,7 @@ class Profil extends React.Component {
             <ul ref="profilRolle"></ul>
           </div>
         </div>
-        <div id="profilvisning2" ref="kalenderDiv">  
+        <div id="profilvisning2" ref="kalenderDiv">
           <p id="kommendearr"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Kommende arrangementer</NavLink></p>
           <BigCalendar
             style={{ height: 500}}
@@ -719,6 +719,53 @@ class BrukerSok extends React.Component {
 
   componentDidMount() {
     this.refs.inn.oninput = () => {
+      this.refs.sokeResultat.innerText = "";
+      let input = this.refs.inn.value;
+
+      if (erTom(input)) {
+        this.refs.sokeResultat.innerText = "Du må ha et søkeord"
+      } else {
+        bruker.sokBruker(input, (result) => {
+          let sokeliste = document.createElement("ul");
+          sokeliste.id="sokeliste"
+
+          for(let medlem of result){
+            let navn = document.createElement("li");
+            navn.className="sokenavn"
+
+            //Legger farge på brukere her(eller i CSS-en da..., dette gir dem bare en klasse)
+            //Rød hvis ikke aktivert, grå hvis deaktivert
+            if (medlem.Aktivert == 0) {
+              navn.className="aktiver"
+            }
+            if (medlem.Aktivert == 2){
+              navn.className="deaktiver";
+            }
+
+            //Skriver ut navnene på resultatene og om de er administratorer
+            navn.innerText = medlem.Fornavn + ' ' + medlem.Etternavn;
+            if (medlem.Adminlvl >= 1) {
+              navn.innerText += ", (Administrator)"
+            }
+            navn.onclick = () => {
+              history.push("/bruker/{this.innloggetBruker.Medlemsnr}/sok/{medlem.Medlemsnr}");
+              sokMedlemsnr = medlem.Medlemsnr;
+              return sokMedlemsnr;
+            }
+
+            sokeliste.appendChild(navn);
+          }
+          this.refs.sokeResultat.appendChild(sokeliste);
+
+          if (result.length == 0) {
+            this.refs.sokeResultat.innerText = "Ingen treff";
+          }
+        });
+      }
+    }
+
+    //mulig å lage en funksjon for dette? atm så er det samme kodeblokk som i inn.oninput
+    this.refs.sokKnapp.onclick = () => {
       this.refs.sokeResultat.innerText = "";
       let input = this.refs.inn.value;
 

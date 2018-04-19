@@ -77,6 +77,15 @@ class Bruker {
     });
   }
 
+  //Gjør at bruker må bytte passord etter å ha glemt det
+  brukerByttePassord(epost, callback) {
+    connection.query("UPDATE Medlem SET PassordByttes = 1 WHERE Epost = ?", [epost], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
   //Henter poststed ut ifra postnummer
   hentPoststed(postnr, callback) {
     connection.query("SELECT Poststed FROM Sted WHERE Postnr = ?", [postnr], (error, result) => {
@@ -275,8 +284,8 @@ class Arrangement {
   }
 
   //Oppretter et arrangement med noen få detaljer
-  opprettArrangement(arrnavn, beskrivelse, dato, sted, callback) {
-    connection.query("INSERT INTO Arrangement (arrnavn, beskrivelse, startdato, oppmøtested) VALUES (?, ?, ?, ?)", [arrnavn, beskrivelse, dato, sted], (error, result) => {
+  opprettArrangement(arrnavn, beskrivelse, dato, sted, medlemsnr, callback) {
+    connection.query("INSERT INTO Arrangement (arrnavn, beskrivelse, startdato, oppmøtested, opprettet_av) VALUES (?, ?, ?, ?, ?)", [arrnavn, beskrivelse, dato, sted, medlemsnr], (error, result) => {
       if (error) throw error;
 
       callback();

@@ -58,10 +58,10 @@ class Hjem extends React.Component {
           <div className="navbar">
             <hr />
             <span className="spanbar"><NavLink exact to="/hjem" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Hjem</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/hjelp" className="menyLinker" activeStyle={{color : 'red', fontWeight : 'bold'}} replace>Hjelp</NavLink> </span>
             <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Arrangementer</NavLink> </span>
             <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Profil</NavLink> </span>
             <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/sok" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Søk</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/hjelp" className="menyLinker" activeStyle={{color : 'red', fontWeight : 'bold'}} replace>Hjelp</NavLink> </span>
             <span className="spanbar"><button ref="loggUtKnapp" id="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
               this.forceUpdate(),
               history.push("/hjem/"),
@@ -221,6 +221,9 @@ class GlemtPassord extends React.Component {
       } else {
         bruker.hentBrukerPassord(fornavn, etternavn, epost, (result) => {
           if (result != undefined) {
+            bruker.brukerByttePassord(epost, (result) => {
+              console.log("Passordet må byttes");
+            });
             alert("Passordet ditt er: "+result.Passord);
           } else if (result == undefined) {
             alert("Du skrev inn feil informasjon");
@@ -529,9 +532,8 @@ class Profil extends React.Component {
     }
     if (this.refs.kalenderDiv){
       arrangement.hentArrKal((result) => {
-        console.log(result);
-          this.setState({ events: result });
-      })
+        this.setState({ events: result });
+      });
     }
   }
 }
@@ -1002,8 +1004,6 @@ class Kalender extends React.Component {
         <div className="arrangementside">
           <h2>Kommende arrangementer</h2>
           <div ref="kommendeArrangementer"></div>
-          <h2>Ferdige arrangementer</h2>
-          <div ref="ferdigeArrangementer"></div>
           <h2>Tidligere arrangementer</h2>
           <div ref="tidligereArrangementer"></div>
         </div>
@@ -1073,12 +1073,20 @@ class Kalender extends React.Component {
 
         arrDiv.appendChild(arrTittel);
 
-        if (this.refs.kommendeArrangementer && arr.ferdig == 0 && arr.startdato >= iDag) {
-          this.refs.kommendeArrangementer.appendChild(arrDiv);
-        } else if (this.refs.tidligereArrangementer && arr.startdato < iDag && arr.ferdig == 0) {
-          this.refs.ferdigeArrangementer.appendChild(arrDiv);
-        } else if (this.refs.tidligereArrangementer && arr.ferdig >= 1) {
-          this.refs.tidligereArrangementer.appendChild(arrDiv);
+        if (this.innloggetBruker.Adminlvl >= 1) {
+          if (this.refs.kommendeArrangementer && arr.ferdig == 0 && arr.startdato >= iDag) {
+            this.refs.kommendeArrangementer.appendChild(arrDiv);
+          } else if (this.refs.tidligereArrangementer && arr.startdato < iDag && arr.ferdig == 0) {
+            this.refs.ferdigeArrangementer.appendChild(arrDiv);
+          } else if (this.refs.tidligereArrangementer && arr.ferdig >= 1) {
+            this.refs.tidligereArrangementer.appendChild(arrDiv);
+          }
+        } else if (this.innloggetBruker.Adminlvl <= 0) {
+          if (this.refs.kommendeArrangementer && arr.ferdig == 0 && arr.startdato >= iDag) {
+            this.refs.kommendeArrangementer.appendChild(arrDiv);
+          } else if (this.refs.tidligereArrangementer && arr.startdato < iDag || this.refs.tidligereArrangementer && arr.ferdig == 1) {
+            this.refs.tidligereArrangementer.appendChild(arrDiv);
+          }
         }
       }
     });
@@ -1133,6 +1141,15 @@ class KalenderDetaljer extends React.Component {
             <span ref="arrInteresserte"></span>
             <span ref="arrInteresseListe"></span>
             <span ref="arrMannskapRoller"></span>
+          </p>
+        </div>
+        <div ref="rodeKorsKontaktDiv" className="arrangementDetaljerDiv">
+          <h2>Røde kors kontaktperson</h2>
+          <p ref="rodeKorsKontaktDetaljer">
+            <span ref="rodeKorsKontaktFornavn"></span>
+            <span ref="rodeKorsKontaktEtternavn"></span>
+            <span ref="rodeKorsKontaktTlf"></span>
+            <span ref="rodeKorsKontaktEpost"></span>
           </p>
         </div>
         <div ref="arrangementKontaktDiv" className="arrangementDetaljerDiv">
@@ -1261,7 +1278,7 @@ class KalenderDetaljer extends React.Component {
                         vaktMedlemP.innerText += result.Fornavn+" "+result.Etternavn+", Rolle: ";
 
                         //Lager knapp for å at admin eller du skal kunne melde deg av vakt
-                        if (this.arrangement.startdato >= iDag && this.innloggetBruker.Medlemsnr == result.Medlemsnr || this.arrangement.startdato >= iDag && this.innloggetBruker.Adminlvl >= 1) {
+                        if (this.arrangement.startdato >= iDag && this.innloggetBruker.Adminlvl >= 1) {
                           let vaktKnappSpan = document.createElement("span");
                           let vaktKnapp = document.createElement("button");
                           vaktKnapp.innerText = "Meld av vakt";
@@ -1451,6 +1468,14 @@ class KalenderDetaljer extends React.Component {
     if (arrid) {
       arrangement.hentArrangement(arrid, (result) => {
         if (this.refs.arrangementDiv) {
+          bruker.hentSokBruker(result.opprettet_av, (result) => {
+            if (this.refs.rodeKorsKontaktDiv) {
+              this.refs.rodeKorsKontaktFornavn.innerText = "Navn: "+result.Fornavn+" ";
+              this.refs.rodeKorsKontaktEtternavn.innerText = result.Etternavn+"\n";
+              this.refs.rodeKorsKontaktTlf.innerText = "Telefon: "+result.Telefon+"\n";
+              this.refs.rodeKorsKontaktEpost.innerText = "Epost: "+result.Epost;
+            }
+          });
           if (this.innloggetBruker.Adminlvl >= 1) {
             arrangement.hentArrangementKontakt(result.Kontakt_id, (result) => {
               if (this.refs.arrangementKontaktDiv) {
@@ -1551,7 +1576,7 @@ class KalenderAdmin extends React.Component {
       if (erTom(arrNavn) || erTom(arrBeskrivelse) || erTom(arrDato) || erTom(arrSted) || erTom(kontaktFornavn) || erTom(kontaktEtternavn) || erTom(kontaktTlf) || erTom(kontaktEpost)) {
         this.refs.opprettArrangementAdvarsel.innerText = "Fyll inn alle felter!";
       } else {
-        arrangement.opprettArrangement(arrNavn, arrBeskrivelse, arrDato, arrSted, (result) => {
+        arrangement.opprettArrangement(arrNavn, arrBeskrivelse, arrDato, arrSted, this.innloggetBruker.Medlemsnr, (result) => {
           console.log("Arrangement opprettet");
           arrangement.hentArrangementId(arrNavn, arrDato, arrSted, (result) => {
             console.log("Hentet arrid: "+result.arrid);

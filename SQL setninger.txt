@@ -73,3 +73,10 @@ FROM  Kompetanse k, Bruker_kompetanse bk, Medlem m
 WHERE m.Medlemsnr = ?
 AND m.Medlemsnr = bk.Medlemsnr
 AND bk.Kompetanse_id = k.Kompetanse_id
+__________________________________________
+->Henter kompetanse som brukeren ikke har (fungerer ikke ordentlig)
+SELECT Kompetanse.Kompetanse_navn, Kompetanse.Kompetanse_id 
+FROM Kompetanse, Bruker_kompetanse 
+WHERE Bruker_kompetanse.Kompetanse_id != Kompetanse.Kompetanse_id 
+AND Bruker_kompetanse.Medlemsnr = ? 
+_____________________________________________

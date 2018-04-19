@@ -170,18 +170,71 @@ class Bruker {
     });
   }
 
-  //Deaktiverer en bruker som har sluttet
-  deaktiverBruker(medlemsnr, callback) {
-    connection.query("UPDATE Medlem SET Aktivert = ? WHERE Medlemsnr = ?", [2, medlemsnr], (error, result) => {
+  //Gjør en bruker til admin
+  adminBruker(medlemsnr, adminlvl, callback) {
+    connection.query("UPDATE Medlem SET Adminlvl = ? WHERE Medlemsnr = ?", [adminlvl, medlemsnr], (error, result) => {
       if (error) throw error;
 
       callback();
     });
   }
 
-  //Gjør en bruker til admin
-  adminBruker(medlemsnr, adminlvl, callback) {
-    connection.query("UPDATE Medlem SET Adminlvl = ? WHERE Medlemsnr = ?", [adminlvl, medlemsnr], (error, result) => {
+  //Henter kompetansene til brukeren
+  hentBrukerKompetanse(medlemsnr, callback) {
+    connection.query("SELECT Kompetanse.Kompetanse_navn FROM Kompetanse, Bruker_kompetanse WHERE Kompetanse.Kompetanse_id = Bruker_kompetanse.Kompetanse_id AND Bruker_kompetanse.Medlemsnr = ?", [medlemsnr], (error, result) => {
+      if (error) throw error;
+
+      callback(result);
+    });
+  }
+
+  //Henter kompetanse som brukeren ikke har
+  hentBrukerIkkeKompetanse(medlemsnr, iDag, callback) {
+    connection.query("SELECT Kompetanse.Kompetanse_navn, Kompetanse.Kompetanse_id FROM Kompetanse, Bruker_kompetanse WHERE Kompetanse.Kompetanse_id = Bruker_kompetanse.Kompetanse_id AND Bruker_kompetanse.Medlemsnr != ? AND (Bruker_kompetanse.Varighet_slutt > ? AND Bruker_kompetanse.Medlemsnr = ?)", [medlemsnr, iDag], (error, result) => {
+      if (error) throw error;
+
+      callback(result);
+    });
+  }
+
+  //Henter rollene til brukeren
+  hentBrukerRoller(medlemsnr, callback) {
+    connection.query("SELECT Rolle.Rolle_navn FROM Rolle, Bruker_rolle WHERE Rolle.Rolle_id = Bruker_rolle.Rolle_id AND Bruker_rolle.Medlemsnr = ?", [medlemsnr], (error, result) => {
+      if (error) throw error;
+
+      callback(result);
+    });
+  }
+
+  //Henter
+
+  hentBrukerKompetanseRolle(medlemsnr, callback) {
+    connection.query("SELECT k.Kompetanse_navn, bk.Varighet_slutt, r.Rolle_navn FROM  Kompetanse k, Bruker_kompetanse bk, Medlem m, Bruker_rolle br, Rolle r, Rolle_kompetanse rk WHERE m.Medlemsnr = ? AND m.Medlemsnr = bk.Medlemsnr AND bk.Kompetanse_id = k.Kompetanse_id AND m.Medlemsnr = br.Medlemsnr AND br.Rolle_id = r.Rolle_id AND r.Rolle_id = rk.Rolle_id AND rk.Kompetanse_id = k.Kompetanse_id ORDER BY r.Rolle_id ASC;", [medlemsnr], (error, result) => {
+      if (error) throw error;
+
+      callback(result);
+    });
+  }
+
+  hentKompetanse(callback) {
+    connection.query("SELECT * FROM Kompetanse", (error, result) => {
+      if (error) throw error;
+
+      callback(result);
+    });
+  }
+
+  hentRoller(callback) {
+    connection.query("SELECT * FROM Rolle", (error, result) => {
+      if (error) throw error;
+
+      callback(result);
+    });
+  }
+
+  //Deaktiverer en bruker som har sluttet
+  deaktiverBruker(medlemsnr, callback) {
+    connection.query("UPDATE Medlem SET Aktivert = ? WHERE Medlemsnr = ?", [2, medlemsnr], (error, result) => {
       if (error) throw error;
 
       callback();

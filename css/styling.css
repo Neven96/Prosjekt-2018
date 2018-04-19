@@ -234,6 +234,10 @@ input {
   cursor: pointer;
 }
 
+.egenVakt {
+  text-decoration: underline overline;
+}
+
 #arrnavn {
   font-weight: bolder;
 }

@@ -485,6 +485,14 @@ class Profil extends React.Component {
           <li ref="profilMedlemsnr"></li>
           <li ref="profilVaktpoeng"></li>
         </ul>
+        <div ref="profilKompetanseDiv" id="profilKompetanseDiv">
+          <h3>Kompetanser:</h3>
+          <ul ref="profilKompetanse"></ul>
+        </div>
+        <div ref="profilRolleDiv" id="profilRolleDiv">
+          <h3>Roller:</h3>
+          <ul ref="profilRolle"></ul>
+        </div>
         <p id="kommendearr"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Kommende arrangementer</NavLink></p>
       </div>
       <div id="profilvisning2" ref="kalenderDiv">
@@ -522,13 +530,34 @@ class Profil extends React.Component {
   }
 
   update() {
+    //Kaller på hentbruker to ganger fordi hvorfor ikke :P
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+
     if (this.refs.profilDiv) {
       this.refs.profilNavn.innerText = "Navn: "+this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn;
       this.refs.profilAdresse.innerText = "Adresse: "+this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed;
       this.refs.profilNummer.innerText = "Telefonnummer: "+this.innloggetBruker.Telefon;
-      this.refs.profilEpost.innerText = "Epost: "+this.innloggetBruker.Epost
-      this.refs.profilMedlemsnr.innerText = "Medlemsnummer: "+this.innloggetBruker.Medlemsnr
-      this.refs.profilVaktpoeng.innerText = "Vaktpoeng: "+this.innloggetBruker.Vaktpoeng
+      this.refs.profilEpost.innerText = "Epost: "+this.innloggetBruker.Epost;
+      this.refs.profilMedlemsnr.innerText = "Medlemsnummer: "+this.innloggetBruker.Medlemsnr;
+      this.refs.profilVaktpoeng.innerText = "Vaktpoeng: "+this.innloggetBruker.Vaktpoeng;
+
+      bruker.hentBrukerKompetanse(this.innloggetBruker.Medlemsnr, (result) => {
+        for (let kompetanse of result) {
+          let liKomp = document.createElement("li");
+          liKomp.innerText = kompetanse.Kompetanse_navn;
+
+          this.refs.profilKompetanse.appendChild(liKomp);
+        }
+      });
+      bruker.hentBrukerRoller(this.innloggetBruker.Medlemsnr, (result) => {
+        for (let rolle of result) {
+          let liRolle = document.createElement("li");
+          liRolle.innerText = rolle.Rolle_navn;
+
+          this.refs.profilRolle.appendChild(liRolle)
+        }
+      });
     }
     if (this.refs.kalenderDiv){
       arrangement.hentArrKal((result) => {
@@ -617,7 +646,6 @@ class RedigerProfil extends React.Component {
         this.refs.feilOppdatering.innerText = "Telefon eller postnummer er feil lengde";
       } else {
         bruker.eksistererStedPostnr(oppPostnr, (result) => {
-          console.log(result);
           if (result != undefined) {
             console.log("Postnummeroppdater funker");
             bruker.eksistererBrukerTlfOppdater(this.innloggetBruker.Medlemsnr, oppTlf, (result) => {
@@ -626,6 +654,7 @@ class RedigerProfil extends React.Component {
                 bruker.oppdaterBruker(this.innloggetBruker.Medlemsnr, oppFnavn, oppEnavn, oppTlf, oppAdr, oppPostnr, (result) => {
                   console.log("Oppdatering funker");
                   history.push("/bruker/${this.innloggetBruker.Medlemsnr}");
+                  this.forceUpdate();
                 });
               }
               else {
@@ -767,7 +796,19 @@ class BrukerSokDetaljer extends React.Component {
             <button ref="aktiveringsKnapp" id="aktiveringsKnapp" className="knapper"></button> <br />
             <select ref="adminLevelSelect"></select>
             <button ref="adminKnapp" id="adminKnapp" className="knapper">Gjør admin</button> <br />
-            <button ref="redigerSokBrukerKnapp" id="redigerSokBrukerKnapp" className="knapper">Rediger</button>
+            <button ref="redigerSokBrukerKnapp" id="redigerSokBrukerKnapp" className="knapper">Rediger</button> <br />
+            <select ref="brukerKompetanse"></select>
+            <button ref="brukerKompetanseKnapp">Gi kompetanse</button> <br />
+            <select ref="brukerRolle"></select>
+            <button ref="brukerRolleKnapp">Gi rolle</button>
+          </div>
+          <div ref="sokBrukerKompetanseDiv" id="sokBrukerKompetanseDiv">
+            <h3>Kompetanser:</h3>
+            <ul ref="sokBrukerKompetanse"></ul>
+          </div>
+          <div ref="sokBrukerRolleDiv" id="sokBrukerRolleDiv">
+            <h3>Roller:</h3>
+            <ul ref="sokBrukerRolle"></ul>
           </div>
         </div>
       );
@@ -776,6 +817,7 @@ class BrukerSokDetaljer extends React.Component {
 
   componentDidMount() {
     this.update();
+    this.knapperKompetanseRollerUpdate();
   }
 
   update() {
@@ -806,6 +848,25 @@ class BrukerSokDetaljer extends React.Component {
           });
         }
 
+        //Fjerner epost og telefon og adresse og liknende hvis bruker er deaktivert
+        if (this.sokBruker.Aktivert == 2) {
+          this.sokBruker.Epost = "Deaktivert";
+          this.sokBruker.Telefon = "Deaktivert";
+          this.sokBruker.Adresse = "Deaktivert";
+          this.sokBruker.Postnr = "Deaktivert";
+        }
+      }
+    });
+  }
+
+  knapperKompetanseRollerUpdate() {
+    //Kaller på hentbruker to ganger fordi hvorfor ikke :P
+    this.innloggetBruker = bruker.hentBruker();
+    this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+
+    bruker.hentSokBruker(sokMedlemsnr, (result) => {
+      this.sokBruker = result;
+      if (this.sokBruker) {
         //Lager knapper for å aktivere og deaktivere brukeren hvis den innloggede brukeren er admin
         if (this.innloggetBruker.Adminlvl >= 1) {
           if (this.sokBruker.Aktivert == 0) {
@@ -814,7 +875,7 @@ class BrukerSokDetaljer extends React.Component {
               bruker.aktiverBruker(this.sokBruker.Medlemsnr, (result) => {
                 console.log("Bruker ble aktivert");
                 this.tomSelect();
-                this.update();
+                this.knapperKompetanseRollerUpdate();
               });
             }
           } else if (this.sokBruker.Aktivert == 1 && this.sokBruker.Medlemsnr != this.innloggetBruker.Medlemsnr && this.sokBruker.Adminlvl <= this.innloggetBruker.Adminlvl) {
@@ -823,42 +884,56 @@ class BrukerSokDetaljer extends React.Component {
               bruker.deaktiverBruker(this.sokBruker.Medlemsnr, (result) => {
                 console.log("Bruker ble deaktivert");
                 this.tomSelect();
-                this.update();
+                this.knapperKompetanseRollerUpdate();
               });
             }
             //Fjerner alle knapper og liknende hvis bruker er deaktivert, eller du søker opp den innloggede brukeren, eller hvis brukeren er høyere admin enn den innloggede brukeren
           } else if (this.sokBruker.Aktivert == 2 || this.sokBruker.Medlemsnr == this.innloggetBruker.Medlemsnr || this.sokBruker.Adminlvl > this.innloggetBruker.Adminlvl || this.sokBruker.Medlemsnr == 10017) {
             this.refs.brukerSokDetaljer.removeChild(this.refs.sokBrukerKnappeDiv);
           }
-        }
 
-        //Fjerner epost og telefon og adresse og liknende hvis bruker er deaktivert
-        if (this.sokBruker.Aktivert == 2) {
-          this.sokBruker.Epost = "Deaktivert";
-          this.sokBruker.Telefon = "Deaktivert";
-          this.sokBruker.Adresse = "Deaktivert";
-          this.sokBruker.Postnr = "Deaktivert";
-        }
-
-        //Setter opp dropdownmeny for å gjøre brukeren til admin
-        for (var i = 0; i <= this.innloggetBruker.Adminlvl; i++) {
-          let key = "Adminlvl: "+i;
-          let verdi = i.toString();
-          this.refs.adminLevelSelect.add(new Option(key,verdi));
-        }
-        this.refs.adminKnapp.onclick = () => {
-          bruker.adminBruker(this.sokBruker.Medlemsnr, this.refs.adminLevelSelect.value, (result) =>{
-            console.log("Brukeren ble gjort til Adminlvl: "+this.refs.adminLevelSelect.value);
-            tomSelect();
-            this.update();
-          });
-        }
-        if (this.refs.redigerSokBrukerKnapp) {
-          this.refs.redigerSokBrukerKnapp.onclick = () => {
-            history.push("/bruker/{this.innloggetBruker.Medlemsnr}/sok/{result.Medlemsnr}/rediger");
-            sokMedlemsnr = result.Medlemsnr;
-            return sokMedlemsnr;
+          //Setter opp dropdownmeny for å gjøre brukeren til admin
+          for (var i = 0; i <= this.innloggetBruker.Adminlvl; i++) {
+            let key = "Adminlvl: "+i;
+            let verdi = i.toString();
+            this.refs.adminLevelSelect.add(new Option(key,verdi));
           }
+
+          this.refs.adminKnapp.onclick = () => {
+            bruker.adminBruker(this.sokBruker.Medlemsnr, this.refs.adminLevelSelect.value, (result) =>{
+              console.log("Brukeren ble gjort til Adminlvl: "+this.refs.adminLevelSelect.value);
+              this.tomSelect();
+              this.knapperKompetanseRollerUpdate();
+            });
+          }
+          if (this.refs.redigerSokBrukerKnapp) {
+            this.refs.redigerSokBrukerKnapp.onclick = () => {
+              history.push("/bruker/{this.innloggetBruker.Medlemsnr}/sok/{result.Medlemsnr}/rediger");
+              sokMedlemsnr = result.Medlemsnr;
+              return sokMedlemsnr;
+            }
+          }
+
+          bruker.hentKompetanse((result) => {
+
+          });
+
+          bruker.hentBrukerKompetanse(this.sokBruker.Medlemsnr, (result) => {
+            for (let kompetanse of result) {
+              let liKomp = document.createElement("li");
+              liKomp.innerText = kompetanse.Kompetanse_navn;
+
+              this.refs.sokBrukerKompetanse.appendChild(liKomp);
+            }
+          });
+          bruker.hentBrukerRoller(this.sokBruker.Medlemsnr, (result) => {
+            for (let rolle of result) {
+              let liRolle = document.createElement("li");
+              liRolle.innerText = rolle.Rolle_navn;
+
+              this.refs.sokBrukerRolle.appendChild(liRolle);
+            }
+          });
         }
       }
     });
@@ -1276,6 +1351,10 @@ class KalenderDetaljer extends React.Component {
                       bruker.hentSokBruker(medlem.Medlemsnr, (result) => {
                         let vaktMedlemP = document.createElement("p");
                         vaktMedlemP.innerText += result.Fornavn+" "+result.Etternavn+", Rolle: ";
+
+                        if (result.Medlemsnr == this.innloggetBruker.Medlemsnr) {
+                          vaktMedlemP.className = "egenVakt"
+                        }
 
                         //Lager knapp for å at admin eller du skal kunne melde deg av vakt
                         if (this.arrangement.startdato >= iDag && this.innloggetBruker.Adminlvl >= 1) {

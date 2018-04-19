@@ -1058,7 +1058,7 @@ class Kalender extends React.Component {
         if (string != null) {
           string = string.toString();
           array = string.split(" ");
-          arrDato.innerText = array[2]+" "+array[1]+" "+array[3];
+          arrDato.innerText = array[2]+". "+array[1]+" "+array[3];
         }
 
         arrDiv.onclick = () => {
@@ -1203,7 +1203,7 @@ class KalenderDetaljer extends React.Component {
           if (str != null) {
             string = str.toString();
             array = string.split(" ");
-            this.refs.arrDag.innerText = "Oppmøte: "+array[2]+" "+array[1]+" "+array[3];
+            this.refs.arrDag.innerText = "Oppmøte: "+array[2]+". "+array[1]+" "+array[3];
           } else {
             this.refs.arrDag.innerText = "Oppmøte: Dato kommer senere";
           }

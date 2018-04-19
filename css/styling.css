@@ -120,7 +120,7 @@ strong {
   list-style-type: none;
   margin-left: auto;
   margin-right: auto;
-  width: 75%;
+  width: 50%;
   background-color: #f8f8f9;
   border-style: groove;
 }
@@ -130,15 +130,27 @@ strong {
   width: 100%;
 }
 
-#profilvisning1 {
-  float: left;
+#profilRolleDiv {
   width: 49%;
+  float: left;
+}
+
+#profilKompetanseDiv {
+  width: 49%;
+  float: right;
+}
+
+#profilvisning1 {
+  /* float: left; */
+  /* width: 49%; */
 }
 
 #profilvisning2 {
-  float: right;
-  width: 49%;
-  height: 100%
+  /* float: right; */
+  width: 50%;
+  margin: auto;
+  text-align: center;
+  /* height: 100% */
 }
 
 #redigerprofil {

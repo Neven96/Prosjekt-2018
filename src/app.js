@@ -475,38 +475,38 @@ class Profil extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return (
       <div id="profil" ref="profilDiv">
-      <div id="profilvisning1">
-        <p id="redigerprofilknapp"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</NavLink></p>
-        <ul id="profilinfo">
-          <li ref="profilNavn"></li>
-          <li ref="profilAdresse"></li>
-          <li ref="profilNummer"></li>
-          <li ref="profilEpost"></li>
-          <li ref="profilMedlemsnr"></li>
-          <li ref="profilVaktpoeng"></li>
-        </ul>
-        <div ref="profilKompetanseDiv" id="profilKompetanseDiv">
-          <h3>Kompetanser:</h3>
-          <ul ref="profilKompetanse"></ul>
+        <div id="profilvisning1">
+          <p id="redigerprofilknapp"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</NavLink></p>
+          <ul id="profilinfo">
+            <li ref="profilNavn"></li>
+            <li ref="profilAdresse"></li>
+            <li ref="profilNummer"></li>
+            <li ref="profilEpost"></li>
+            <li ref="profilMedlemsnr"></li>
+            <li ref="profilVaktpoeng"></li>
+          </ul>
+          <div ref="profilKompetanseDiv" id="profilKompetanseDiv">
+            <h3>Kompetanser:</h3>
+            <ul ref="profilKompetanse"></ul>
+          </div>
+          <div ref="profilRolleDiv" id="profilRolleDiv">
+            <h3>Roller:</h3>
+            <ul ref="profilRolle"></ul>
+          </div>
         </div>
-        <div ref="profilRolleDiv" id="profilRolleDiv">
-          <h3>Roller:</h3>
-          <ul ref="profilRolle"></ul>
+        <div id="profilvisning2" ref="kalenderDiv">  
+          <p id="kommendearr"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Kommende arrangementer</NavLink></p>
+          <BigCalendar
+            style={{ height: 500}}
+            events={this.state.events}
+            step={60}
+            ShowMultiDayTimes
+            startAccessor='startDate'
+            endAccessor='startDate'
+            defaultDate={new Date()}
+            onSelectEvent={event => this.setArrinfo(event)}
+          />
         </div>
-        <p id="kommendearr"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Kommende arrangementer</NavLink></p>
-      </div>
-      <div id="profilvisning2" ref="kalenderDiv">
-        <BigCalendar
-          style={{ height: 500}}
-          events={this.state.events}
-          step={60}
-          ShowMultiDayTimes
-          startAccessor='startDate'
-          endAccessor='startDate'
-          defaultDate={new Date()}
-          onSelectEvent={event => this.setArrinfo(event)}
-        />
-      </div>
       </div>
     );
   }
@@ -750,6 +750,7 @@ class BrukerSok extends React.Component {
         });
       }
     }
+
   }
 }
 

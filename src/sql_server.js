@@ -232,6 +232,22 @@ class Bruker {
     });
   }
 
+  giBrukerKompetanse(medlemsnr, kompetanseid, callback) {
+    connection.query("INSERT INTO Bruker_kompetanse (Medlemsnr, Kompetanse_id) VALUES (?, ?)", [medlemsnr, kompetanseid], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  giBrukerRolle(medlemsnr, rolleid, callback) {
+    connection.query("INSERT INTO Bruker_rolle (Medlemsnr, Rolle_id) VALUES (?, ?)", [medlemsnr, rolleid], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
   //Deaktiverer en bruker som har sluttet
   deaktiverBruker(medlemsnr, callback) {
     connection.query("UPDATE Medlem SET Aktivert = ? WHERE Medlemsnr = ?", [2, medlemsnr], (error, result) => {

@@ -798,18 +798,14 @@ class BrukerSokDetaljer extends React.Component {
             <select ref="adminLevelSelect"></select>
             <button ref="adminKnapp" id="adminKnapp" className="knapper">Gjør admin</button> <br />
             <button ref="redigerSokBrukerKnapp" id="redigerSokBrukerKnapp" className="knapper">Rediger</button> <br />
-            <select ref="brukerKompetanse"></select>
+            <select ref="brukerKompetanseSelect"></select>
             <button ref="brukerKompetanseKnapp">Gi kompetanse</button> <br />
-            <select ref="brukerRolle"></select>
+            <select ref="brukerRolleSelect"></select>
             <button ref="brukerRolleKnapp">Gi rolle</button>
           </div>
           <div ref="sokBrukerKompetanseDiv" id="sokBrukerKompetanseDiv">
-            <h3>Kompetanser:</h3>
-            <ul ref="sokBrukerKompetanse"></ul>
           </div>
           <div ref="sokBrukerRolleDiv" id="sokBrukerRolleDiv">
-            <h3>Roller:</h3>
-            <ul ref="sokBrukerRolle"></ul>
           </div>
         </div>
       );
@@ -865,6 +861,9 @@ class BrukerSokDetaljer extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
+    this.refs.sokBrukerKompetanseDiv.innerText = " ";
+    this.refs.sokBrukerRolleDiv.innerText = " ";
+
     bruker.hentSokBruker(sokMedlemsnr, (result) => {
       this.sokBruker = result;
       if (this.sokBruker) {
@@ -916,24 +915,63 @@ class BrukerSokDetaljer extends React.Component {
           }
 
           bruker.hentKompetanse((result) => {
-
+            for (let kompetanse of result) {
+              let key = kompetanse.Kompetanse_navn;
+              let verdi = kompetanse.Kompetanse_id;
+              this.refs.brukerKompetanseSelect.add(new Option(key, verdi));
+            }
           });
 
+          this.refs.brukerKompetanseKnapp.onclick = () => {
+            bruker.giBrukerKompetanse(this.sokBruker.Medlemsnr, this.refs.brukerKompetanseSelect.value, (result) => {
+              this.tomSelect();
+              this.knapperKompetanseRollerUpdate();
+            });
+          }
+
+          bruker.hentRoller((result) => {
+            for (let rolle of result) {
+              let key = rolle.Rolle_navn;
+              let verdi = rolle.Rolle_id;
+              this.refs.brukerRolleSelect.add(new Option(key, verdi));
+            }
+          });
+
+          this.refs.brukerRolleKnapp.onclick = () => {
+            bruker.giBrukerRolle(this.sokBruker.Medlemsnr, this.refs.brukerRolleSelect.value, (result) => {
+              this.tomSelect();
+              this.knapperKompetanseRollerUpdate();
+            });
+          }
+
           bruker.hentBrukerKompetanse(this.sokBruker.Medlemsnr, (result) => {
+            let kompOverskrift = document.createElement("h3");
+            kompOverskrift.innerText = "Kompetanser:"
+            this.refs.sokBrukerKompetanseDiv.appendChild(kompOverskrift);
+
+            let ulKomp = document.createElement("ul");
             for (let kompetanse of result) {
               let liKomp = document.createElement("li");
               liKomp.innerText = kompetanse.Kompetanse_navn;
 
-              this.refs.sokBrukerKompetanse.appendChild(liKomp);
+              ulKomp.appendChild(liKomp)
             }
+            this.refs.sokBrukerKompetanseDiv.appendChild(ulKomp);
           });
+
           bruker.hentBrukerRoller(this.sokBruker.Medlemsnr, (result) => {
+            let rolleOverskrift = document.createElement("h3");
+            rolleOverskrift.innerText = "Roller:"
+            this.refs.sokBrukerRolleDiv.appendChild(rolleOverskrift);
+
+            let ulRolle = document.createElement("ul");
             for (let rolle of result) {
               let liRolle = document.createElement("li");
               liRolle.innerText = rolle.Rolle_navn;
 
-              this.refs.sokBrukerRolle.appendChild(liRolle);
+              ulRolle.appendChild(liRolle);
             }
+            this.refs.sokBrukerRolleDiv.appendChild(ulRolle);
           });
         }
       }
@@ -944,6 +982,12 @@ class BrukerSokDetaljer extends React.Component {
   tomSelect() {
     for (var i = this.refs.adminLevelSelect.length - 1; i >= 0; i--) {
       this.refs.adminLevelSelect.remove(i);
+    }
+    for (var i = this.refs.brukerKompetanseSelect.length - 1; i >= 0; i--) {
+      this.refs.brukerKompetanseSelect.remove(i);
+    }
+    for (var i = this.refs.brukerRolleSelect.length - 1; i >= 0; i--) {
+      this.refs.brukerRolleSelect.remove(i);
     }
   }
 }

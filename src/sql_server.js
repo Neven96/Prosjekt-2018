@@ -152,6 +152,22 @@ class Bruker {
     });
   }
 
+  hentBrukerAktivering(callback) {
+    connection.query("SELECT * FROM Medlem WHERE Aktivert = ? ORDER BY Fornavn ASC", [0], (error, result) => {
+      if (error) throw error;
+
+      callback(result);
+    });
+  }
+
+  hentBrukerDeaktivert(callback) {
+    connection.query("SELECT * FROM Medlem WHERE Aktivert = ? ORDER BY Fornavn ASC", [2], (error, result) => {
+      if (error) throw error;
+
+      callback(result);
+    });
+  }
+
   //Henter ut informasjonen til brukeren som ble søkt opp
   hentSokBruker(medlemsnr, callback) {
     connection.query("SELECT * FROM Medlem WHERE Medlemsnr = ?", [medlemsnr], (error, result) => {

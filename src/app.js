@@ -695,13 +695,26 @@ class BrukerSok extends React.Component {
     //Kaller på hentbruker to ganger fordi hvorfor ikke :P
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
-    return(
-      <div id="soktest">
-        <input ref="inn" type="text" autoFocus/> <button ref="sokKnapp">Søk</button>
-        <div ref="sokeResultat">
+
+    if (this.innloggetBruker.Adminlvl <= 0) {
+      return(
+        <div id="soktest">
+          <input ref="inn" type="text" autoFocus/> <button ref="sokKnapp">Søk</button>
+          <div ref="sokeResultat">
+          </div>
         </div>
-      </div>
-    )
+      )
+    } else if (this.innloggetBruker.Adminlvl >= 1) {
+      return(
+        <div id="soktest">
+          <input ref="inn" type="text" autoFocus/> <button ref="sokKnapp">Søk</button> <button ref="sokAktivering">Krever aktivering</button>
+          <button ref="sokDeaktivert">Deaktivert</button>
+          <div ref="sokeResultat">
+          </div>
+        </div>
+      )
+    }
+
   }
 
   componentDidMount() {
@@ -751,6 +764,65 @@ class BrukerSok extends React.Component {
       }
     }
 
+    if (this.refs.sokAktivering) {
+      this.refs.sokAktivering.onclick = () => {
+        this.refs.sokeResultat.innerText = "";
+        bruker.hentBrukerAktivering((result) => {
+          let sokeliste = document.createElement("ul");
+          sokeliste.id="sokeliste"
+
+          for(let medlem of result){
+            let navn = document.createElement("li");
+            navn.className="aktiver"
+
+            navn.innerText = medlem.Fornavn + ' ' + medlem.Etternavn;
+
+            navn.onclick = () => {
+              history.push("/bruker/{this.innloggetBruker.Medlemsnr}/sok/{medlem.Medlemsnr}");
+              sokMedlemsnr = medlem.Medlemsnr;
+              return sokMedlemsnr;
+            }
+
+            sokeliste.appendChild(navn);
+          }
+          this.refs.sokeResultat.appendChild(sokeliste)
+          if (result.length == 0){
+            this.refs.sokeResultat.innerText = "Ingen brukere mangler aktivering"
+          }
+        });
+      }
+    }
+
+    if (this.refs.sokDeaktivert) {
+      this.refs.sokDeaktivert.onclick = () => {
+        this.refs.sokeResultat.innerText = "";
+        bruker.hentBrukerDeaktivert((result) => {
+          let sokeliste = document.createElement("ul");
+          sokeliste.id="sokeliste"
+
+          for(let medlem of result){
+            let navn = document.createElement("li");
+            navn.className="deaktiver"
+
+            navn.innerText = medlem.Fornavn + ' ' + medlem.Etternavn;
+
+            navn.onclick = () => {
+              history.push("/bruker/{this.innloggetBruker.Medlemsnr}/sok/{medlem.Medlemsnr}");
+              sokMedlemsnr = medlem.Medlemsnr;
+              return sokMedlemsnr;
+            }
+
+            sokeliste.appendChild(navn);
+          }
+          this.refs.sokeResultat.appendChild(sokeliste)
+
+          //denne delen av koden trengs vel egentlig ikke?
+          if (result.length == 0){
+            this.refs.sokeResultat.innerText = "Ingen deaktiverte brukere"
+          }
+        });
+      }
+    }
   }
 }
 

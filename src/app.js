@@ -106,7 +106,7 @@ class Nyheter extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     if (!this.innloggetBruker) {
       return(
-        <div id="forsidetekst">
+        <div className="enboks" id="forsidetekst">
           <p>Nyheter om Røde Kors og andre ting tang</p>
           <h3>Breaking News!!!</h3>
           <p>Røde Kors får nytt vaktsystem</p>
@@ -128,7 +128,7 @@ class Nyheter extends React.Component {
       //Viser dette hvis brukeren er logget inn og aktivert
       if (this.innloggetBruker.Aktivert == 1) {
         return(
-          <div id="forsidetekst">
+          <div className="enboks" id="forsidetekst">
             <p>Nyheter om Røde Kors og andre ting tang</p>
             <h3>Breaking News!!!</h3>
             <p>Røde Kors får nytt vaktsystem</p>
@@ -149,7 +149,7 @@ class Nyheter extends React.Component {
       //Viser dette hvis brukeren er logget inn, men ikke aktivert enda
       else if (this.innloggetBruker.Aktivert == 0) {
         return(
-          <div id="forsidetekst">
+          <div className="enboks" id="forsidetekst">
             <p>Brukeren er ikke aktivert</p>
           </div>
         );
@@ -157,7 +157,7 @@ class Nyheter extends React.Component {
       //Viser dette hvis brukeren ikke er aktivert
       else if (this.innloggetBruker.Aktivert == 2) {
         return(
-          <div id="forsidetekst">
+          <div className="enboks" id="forsidetekst">
             <p>Brukeren er deaktivert</p>
           </div>
         );
@@ -175,7 +175,7 @@ class Hjelp extends React.Component {
   //Side for hjelp med profil og innlogging og andre ting
   render() {
     return(
-      <div id="hjelptekst">
+      <div className="enboks" id="hjelptekst">
         <p>Hei, velkommen til hjelpsiden for Røde Kors, her får du hjelp</p>
       </div>
     );
@@ -186,7 +186,7 @@ class GlemtPassord extends React.Component {
   //Side for å få passordet hvis det er glemt
   render() {
     return(
-      <div id="glemtpassord">
+      <div className="enboks" id="glemtpassord">
         <p>Skriv inn navn og epost for å få passord</p>
         Fornavn: <input className="glemtpassordinput" type="text" ref="glemtPassordFornavn" />
         <br />
@@ -236,7 +236,7 @@ class RegistrerBruker extends React.Component {
   render() {
     //Registrering av bruker med mange div-er for å få det ordentlig lina opp
     return (
-      <div id="registrerbox">
+      <div className="enboks" id="registrerbox">
         <p>
           <span className="loggInnInfo">Fyll inn alle felter</span>
           <br />
@@ -399,7 +399,7 @@ class LoggInn extends React.Component {
 
   render() {
     return (
-      <div id="loginbox">
+      <div className="enboks" id="loginbox">
         <p ref="feilInnlogging" id="feilInnlogging" className="feilMelding"></p>
         Epost: <input type="text" ref="brukernavnInput" className="logginninput" autoFocus /><br />
         Passord: <input type="password" ref="passordInput" className="logginninput" /><br />
@@ -471,7 +471,7 @@ class Profil extends React.Component {
       <div id="profil" ref="profilDiv">
         <div id="profilvisning1">
           <p id="redigerprofilknapp"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</NavLink></p>
-          <ul id="profilinfo">
+          <ul className="enboks" id="profilinfo">
             <li ref="profilNavn"></li>
             <li ref="profilAdresse"></li>
             <li ref="profilNummer"></li>
@@ -580,17 +580,32 @@ class RedigerProfil extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return(
       <div id="redigerprofil">
-        <input type="text" ref="oppdaterFornavnInput" />
-        <br />
-        <input type="text" ref="oppdaterEtternavnInput" />
-        <br />
-        <input type="number" ref="oppdaterTlfInput" maxLength="8" />
-        <br />
-        <input type="text" ref="oppdaterAdrInput" />
-        <br />
-        <input type="number" ref="oppdaterPostnrInput" />
-        <input type="text" ref="oppdaterPoststedInput" readOnly />
-        <br />
+        <h3>Rediger profil</h3>
+        <table id="redigerprofiltable">
+        <tbody>
+        <tr>
+        <td>Fornavn: </td>
+        <td><input type="text" ref="oppdaterFornavnInput" /></td>
+        </tr>
+        <tr>
+        <td>Etternavn: </td>
+        <td><input type="text" ref="oppdaterEtternavnInput" /></td>
+        </tr>
+        <tr>
+        <td>Telefonnummer: </td>
+        <td><input type="number" ref="oppdaterTlfInput" maxLength="8" /></td>
+        </tr>
+        <tr>
+        <td>Adresse: </td>
+        <td><input type="text" ref="oppdaterAdrInput" /></td>
+        </tr>
+        <tr>
+        <td>Postnr: </td>
+        <td><input type="number" id="oppdaterPostnrInput" ref="oppdaterPostnrInput" />
+        <input type="text" id="oppdaterPoststedInput" ref="oppdaterPoststedInput" readOnly /></td>
+        </tr>
+        </tbody>
+        </table>
         <p ref="feilOppdatering" className="feilMelding"></p>
         <button ref="oppdaterBruker">Oppdater</button>
         <button ref="kansellerOppdatering">Lukk</button>

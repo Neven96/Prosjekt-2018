@@ -234,7 +234,7 @@ class RegistrerBruker extends React.Component {
   }
 
   render() {
-    //Registrering av bruker med mange div-er for å få det ordentlig lina opp
+    //Registrering av bruker
     return (
 
       <div className="sentrertboks" id="registrerbox">
@@ -414,7 +414,7 @@ class LoggInn extends React.Component {
         });
       }
     };
-
+    //Kjører funksjonen over når man trykker enter inne i passordInput boksen
     this.refs.passordInput.onkeyup = (event) => {
       event.preventDefault();
       if (event.keyCode === 13) {
@@ -475,6 +475,7 @@ class Profil extends React.Component {
         </div>
         <div id="profilvisning2" ref="kalenderDiv">
           <p id="kommendearr"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Kommende arrangementer</NavLink></p>
+          //react-big-calendar
           <BigCalendar
             style={{ height: 500}}
             events={this.state.events}
@@ -489,7 +490,7 @@ class Profil extends React.Component {
       </div>
     );
   }
-
+  // funksjon som kjøreres dersom ett Arr blir trykker på i kalenderen
   setArrinfo(event) {
     history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangement/"+event.arrid);
     arrid = event.arrid;
@@ -513,7 +514,7 @@ class Profil extends React.Component {
     //Kaller på hentbruker to ganger fordi hvorfor ikke :P
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
-
+    //**
     if (this.refs.profilDiv) {
       this.refs.profilNavn.innerText = "Navn: "+this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn;
       this.refs.profilAdresse.innerText = "Adresse: "+this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed;
@@ -545,7 +546,7 @@ class Profil extends React.Component {
       });
     }
   }
-
+  //**
   passivUpdate() {
     let datoStart; let datoSlutt; let arrayStart; let arraySlutt;
     if (this.refs.profilDiv) {
@@ -586,7 +587,7 @@ class Profil extends React.Component {
           this.refs.profilPassivListe.appendChild(passivUl);
         }
       });
-
+      //**
       let startdato; let sluttdato;
       this.refs.profilPassivKnapp.onclick = () => {
         startdato = this.refs.profilPassivStart.value;
@@ -687,7 +688,7 @@ class RedigerProfil extends React.Component {
         }
       });
     };
-
+    //**
     this.refs.oppdaterBruker.onclick = () => {
       oppFnavn = this.refs.oppdaterFornavnInput.value;
       oppEnavn = this.refs.oppdaterEtternavnInput.value;
@@ -758,10 +759,12 @@ class BrukerSok extends React.Component {
           </div>
         </div>
       )
+      //Hvis den innloggede brukeren er admin, så får den se knapper som vil vise
+      //nye brukere som mangler aktivering og deaktiverte brukere
     } else if (this.innloggetBruker.Adminlvl >= 1) {
       return(
         <div id="soktest">
-          <input ref="inn" type="text" autoFocus/> <button ref="sokKnapp">Søk</button> <button ref="sokAktivering">Krever aktivering</button>
+          <input ref="inn" type="text" autoFocus/> <button ref="sokKnapp">Søk</button> <button ref="sokAktivering">Nye brukere</button>
           <button ref="sokDeaktivert">Deaktivert</button>
           <div ref="sokeResultat">
           </div>
@@ -772,7 +775,7 @@ class BrukerSok extends React.Component {
   }
 
   componentDidMount() {
-    //mulig å lage en funksjon for dette? atm så er det samme kodeblokk som i inn.oninput
+    //skriver ut brukere som finnes i databasen
     this.refs.sokKnapp.onclick = () => {
       this.refs.sokeResultat.innerText = "";
       let input = this.refs.inn.value;
@@ -789,7 +792,7 @@ class BrukerSok extends React.Component {
     this.refs.inn.oninput = () => {
       this.refs.sokKnapp.click();
     }
-
+    //henter alle brukerer som mangler aktivering
     if (this.refs.sokAktivering) {
       this.refs.sokAktivering.onclick = () => {
         this.refs.sokeResultat.innerText = "";
@@ -798,7 +801,7 @@ class BrukerSok extends React.Component {
         });
       }
     }
-
+    //henter alle brukere som er deaktiverte
     if (this.refs.sokDeaktivert) {
       this.refs.sokDeaktivert.onclick = () => {
         this.refs.sokeResultat.innerText = "";
@@ -900,7 +903,7 @@ class BrukerSokDetaljer extends React.Component {
             this.forceUpdate();
           });
         }
-
+        //funker ikke
         //Fjerner epost og telefon og adresse og liknende hvis bruker er deaktivert
         if (this.sokBruker.Aktivert == 2) {
           this.sokBruker.Epost = "Deaktivert";
@@ -968,7 +971,7 @@ class BrukerSokDetaljer extends React.Component {
               return sokMedlemsnr;
             }
           }
-
+          //**
           bruker.hentKompetanse((result) => {
             for (let kompetanse of result) {
               let key = kompetanse.Kompetanse_navn;
@@ -1141,7 +1144,7 @@ class BrukerSokRediger extends React.Component {
           }
         });
       };
-
+      //**
       this.refs.oppdaterBruker.onclick = () => {
         oppFnavn = this.refs.oppdaterFornavnInput.value;
         oppEnavn = this.refs.oppdaterEtternavnInput.value;
@@ -1203,6 +1206,7 @@ class Kalender extends React.Component {
     //Kaller på hentbruker to ganger fordi hvorfor ikke :P
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+
     if (this.innloggetBruker.Adminlvl <= 0) {
       return(
         <div className="arrangementside">
@@ -1212,6 +1216,9 @@ class Kalender extends React.Component {
           <div ref="tidligereArrangementer"></div>
         </div>
       );
+      //Hvis den innloggede brukeren er admin, så får den se ferdige arr
+      //her har admin mulighet til å ferdigstille arr og checke av hvilke
+      //brukere som var med på arr
     } else if (this.innloggetBruker.Adminlvl >= 1) {
       return(
         <div className="arrangementside">
@@ -1309,6 +1316,7 @@ class KalenderDetaljer extends React.Component {
     //Kaller på hentbruker to ganger fordi hvorfor ikke :P
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
+
     return(
       <div className="arrangementside" ref="arrangementDetaljer">
         <NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Tilbake</NavLink>
@@ -1516,7 +1524,7 @@ class KalenderDetaljer extends React.Component {
 
               arrangement.hentInteresserte(this.arrangement.arrid, (result) => {
                 this.refs.arrInteresseListe.innerText = " "
-
+                //Dersom brukeren er admin, hentes ut antall interesserte
                 if (this.innloggetBruker.Adminlvl >= 1 && result.length >= 1) {
                   this.refs.arrInteresserte.innerText = "Antall interesserte: "+result.length+"\n";
 
@@ -1555,6 +1563,7 @@ class KalenderDetaljer extends React.Component {
             if (result.roller == null) {
               this.refs.arrMannskapRoller.innerText = "Ingen roller er satt opp enda";
             } else if (result.roller != null) {
+              //** ønske om implementering av roller fra databasen
               this.refs.arrMannskapRoller.innerText = "Roller: "+result.roller;
             }
 
@@ -1591,7 +1600,7 @@ class KalenderDetaljer extends React.Component {
               }
             });
           });
-
+          //**
           if (this.innloggetBruker.Adminlvl >= 1) {
             let redigerArrKnapp = document.createElement("button");
             let slettArrKnapp = document.createElement("button");
@@ -1601,7 +1610,7 @@ class KalenderDetaljer extends React.Component {
               arrid = this.arrangement.arrid;
               return arrid;
             }
-
+            //sletter arr og spørr om du er sikker
             slettArrKnapp.onclick = () => {
               let slett = confirm("Er du sikker på du vil slette arrangement\n"+this.arrangement.arrnavn+"?")
               if (slett) {
@@ -1623,7 +1632,7 @@ class KalenderDetaljer extends React.Component {
                 });
               }
             }
-
+            //**
             if (this.arrangement.ferdig == 0 && this.arrangement.startdato >= iDag) {
               redigerArrKnapp.innerText = "Rediger";
               slettArrKnapp.innerText = "Slett";
@@ -1711,7 +1720,7 @@ class KalenderDetaljer extends React.Component {
             this.refs.ferdigstillArrangementKnapp.id = "skjulFerdigstillArrangementKnapp";
           }
         }
-
+        // Admin blir spurt om å ferdigstille arr dersom arr er over
         if (this.innloggetBruker.Adminlvl >= 1) {
           setTimeout(function(){
             arrangement.hentArrangement(arrid, (result) => {
@@ -1725,7 +1734,7 @@ class KalenderDetaljer extends React.Component {
               }
             });
           }, 500)
-
+          //ferdigstiller arr
           if (result.ferdig == 0) {
             this.refs.ferdigstillArrangementKnapp.onclick = () => {
               history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangement/{arrid}/avslutt");
@@ -1744,7 +1753,7 @@ class KalenderDetaljer extends React.Component {
     //Kaller på hentbruker to ganger fordi hvorfor ikke :P
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
-
+    //**
     if (arrid) {
       arrangement.hentArrangement(arrid, (result) => {
         if (this.refs.arrangementDiv) {
@@ -1841,7 +1850,7 @@ class KalenderAdmin extends React.Component {
     //Kaller på hentbruker to ganger fordi hvorfor ikke :P
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
-
+    //**
     let arrNavn; let arrBeskrivelse; let arrDato; let arrSted; let kontaktFornavn; let kontaktEtternavn; let kontaktTlf; let kontaktEpost;
     this.refs.opprettArrangement.onclick = () => {
       arrNavn = this.refs.arrNavn.value;
@@ -1852,7 +1861,7 @@ class KalenderAdmin extends React.Component {
       kontaktEtternavn = this.refs.kontaktEtternavn.value;
       kontaktTlf = this.refs.kontaktTlf.value;
       kontaktEpost = this.refs.kontaktEpost.value;
-
+      //**
       if (erTom(arrNavn) || erTom(arrBeskrivelse) || erTom(arrDato) || erTom(arrSted) || erTom(kontaktFornavn) || erTom(kontaktEtternavn) || erTom(kontaktTlf) || erTom(kontaktEpost)) {
         this.refs.opprettArrangementAdvarsel.innerText = "Fyll inn alle felter!";
       } else {
@@ -1984,7 +1993,8 @@ class RedigerArrangement extends React.Component {
     if (arrid) {
       arrangement.hentArrangement(arrid, (result) => {
         this.arrangement = result;
-
+        //Vår første ide på å løse problemet med dato
+        //
         // str = result.startdato;
         // if (str != null) {
         //   string = str.toString();
@@ -2048,7 +2058,7 @@ class RedigerArrangement extends React.Component {
             }
           });
         };
-
+        //**
         this.refs.redigerArrangementKnapp.onclick = () => {
           arrnavn = this.refs.oppdaterArrNavn.value
           beskrivelse = this.refs.oppdaterArrBeskrivelse.value
@@ -2125,7 +2135,7 @@ class AvsluttArrangement extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
     let string; let array;
-
+    //**
     if (arrid) {
       arrangement.hentArrangement(arrid, (result) => {
         this.arrangement = result;
@@ -2142,7 +2152,7 @@ class AvsluttArrangement extends React.Component {
             this.refs.arrangementAvsluttDato.innerText = "Oppmøte: "+array[2]+" "+array[1]+" "+array[3];
           }
         }
-
+        //**
         arrangement.hentMannskapsliste(this.arrangement.arrid, (result) => {
           arrangement.hentMannskapsVakter(result.listeid, (result) => {
             for (let medlem of result) {

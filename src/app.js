@@ -239,7 +239,7 @@ class RegistrerBruker extends React.Component {
 
       <div className="sentrertboks" id="registrerbox">
       <h3>Fyll inn alle felter</h3>
-      <h4>(og ikke bruk ditt ekte passord)</h4>
+      <h4 id="registrerPassordNotice">(og ikke bruk ditt ekte passord)</h4>
       <table id="registrertable">
       <tbody>
       <tr>
@@ -2194,6 +2194,7 @@ function erTom(str) {
   return (!str || 0 === str.length);
 }
 
+//Søkefunksjon for personer med valgbare personer
 function sok(result, ref, feilmelding) {
   let sokeliste = document.createElement("ul");
   sokeliste.id="sokeliste"

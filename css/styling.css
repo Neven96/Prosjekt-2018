@@ -110,6 +110,10 @@ strong {
   font-size: 9px;
 }
 
+#registrerPassordNotice {
+  font-size: 8px;
+}
+
 #loggInnKnapp {
   text-decoration: none;
 }

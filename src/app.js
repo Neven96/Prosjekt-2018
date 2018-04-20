@@ -45,9 +45,6 @@ class Hjem extends React.Component {
             <span className="spanbar"><NavLink exact to="/logginn" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Logg inn</NavLink></span>
             <hr />
           </div>
-          <div>
-            <p></p>
-          </div>
         </div>
       );
     }
@@ -67,9 +64,6 @@ class Hjem extends React.Component {
               history.push("/hjem/"),
               console.log("Logget ut")}}>Logg ut</button></span>
             <hr />
-          </div>
-          <div>
-            <p></p>
           </div>
         </div>
       );
@@ -462,6 +456,13 @@ class Profil extends React.Component {
             <li ref="profilMedlemsnr"></li>
             <li ref="profilVaktpoeng"></li>
           </ul>
+          <div ref="profilPassivDiv" id="profilPassivDiv">
+            <input type="date" ref="profilPassivStart" />
+            <input type="date" ref="profilPassivSlutt"/> <br />
+            <button ref="profilPassivKnapp">Sett passiv</button>
+            <h3>Passiv:</h3>
+            <div ref="profilPassivListe"></div>
+          </div>
           <div ref="profilKompetanseDiv" id="profilKompetanseDiv">
             <h3>Kompetanser:</h3>
             <ul id="profilKompetanseDivli" ref="profilKompetanse"></ul>
@@ -504,6 +505,7 @@ class Profil extends React.Component {
       this.brukerSted = result;
       this.update();
     });
+    this.passivUpdate();
   }
 
   update() {
@@ -540,6 +542,65 @@ class Profil extends React.Component {
       arrangement.hentArrKal((result) => {
         this.setState({ events: result });
       });
+    }
+  }
+
+  passivUpdate() {
+    let datoStart; let datoSlutt; let arrayStart; let arraySlutt;
+    if (this.refs.profilDiv) {
+      this.refs.profilPassivListe.innerText = " ";
+      let iDag = new Date();
+
+      bruker.hentBrukerPassiv(this.innloggetBruker.Medlemsnr, (result) => {
+        let passivUl = document.createElement("ul");
+
+        for (let passiv of result) {
+          let passivLi = document.createElement("li");
+
+          datoStart = new Date();
+          datoStart.setDate(passiv.Start_dato.getDate());
+          datoStart.setMonth(passiv.Start_dato.getMonth());
+          datoStart.setYear(passiv.Start_dato.getFullYear());
+          if (datoStart != null) {
+            datoStart = datoStart.toString();
+            arrayStart = datoStart.split(" ");
+          }
+
+          datoSlutt = new Date();
+          datoSlutt.setDate(passiv.Slutt_dato.getDate());
+          datoSlutt.setMonth(passiv.Slutt_dato.getMonth());
+          datoSlutt.setYear(passiv.Slutt_dato.getFullYear());
+
+          if (datoSlutt != null) {
+            datoSlutt = datoSlutt.toString();
+            arraySlutt = datoSlutt.split(" ");
+          }
+
+          if (passiv.Slutt_dato >= iDag) {
+            passivLi.innerText = arrayStart[2]+"."+arrayStart[1]+"."+arrayStart[3]+" - "+arraySlutt[2]+"."+arraySlutt[1]+"."+arraySlutt[3];
+            passivUl.appendChild(passivLi)
+          }
+        }
+        if (this.refs.profilPassivListe) {
+          this.refs.profilPassivListe.appendChild(passivUl);
+        }
+      });
+
+      let startdato; let sluttdato;
+      this.refs.profilPassivKnapp.onclick = () => {
+        startdato = this.refs.profilPassivStart.value;
+        sluttdato = this.refs.profilPassivSlutt.value;
+        if (erTom(startdato) || erTom(sluttdato)) {
+          console.log("Tom");
+        } else {
+          bruker.brukerSettPassiv(this.innloggetBruker.Medlemsnr, startdato, sluttdato, (result) => {
+            console.log("Ny passivtid");
+            // this.refs.profilPassivStart.value
+            // this.refs.profilPassivSlutt.value
+            this.passivUpdate();
+          });
+        }
+      }
     }
   }
 }
@@ -719,11 +780,7 @@ class BrukerSok extends React.Component {
         this.refs.sokeResultat.innerText = "Du må ha et søkeord"
       } else {
         bruker.sokBruker(input, (result) => {
-          this.sok(result);
-
-          if (result.length == 0) {
-            this.refs.sokeResultat.innerText = "Ingen treff";
-          }
+          sok(result, this.refs.sokeResultat, "Ingen treff")
         });
       }
     }
@@ -736,11 +793,7 @@ class BrukerSok extends React.Component {
       this.refs.sokAktivering.onclick = () => {
         this.refs.sokeResultat.innerText = "";
         bruker.hentBrukerAktivering((result) => {
-          this.sok(result);
-
-          if (result.length == 0){
-            this.refs.sokeResultat.innerText = "Ingen brukere mangler aktivering"
-          }
+          sok(result, this.refs.sokeResultat, "Ingen brukere mangler aktivering");
         });
       }
     }
@@ -749,48 +802,10 @@ class BrukerSok extends React.Component {
       this.refs.sokDeaktivert.onclick = () => {
         this.refs.sokeResultat.innerText = "";
         bruker.hentBrukerDeaktivert((result) => {
-          this.sok(result);
-
-          //denne delen av koden trengs vel egentlig ikke?
-          if (result.length == 0){
-            this.refs.sokeResultat.innerText = "Ingen deaktiverte brukere"
-          }
+          sok(result, this.refs.sokeResultat, "Ingen deaktiverte brukere");
         });
       }
     }
-  }
-
-  sok(result) {
-    let sokeliste = document.createElement("ul");
-    sokeliste.id="sokeliste"
-
-    for(let medlem of result){
-      let navn = document.createElement("li");
-      navn.className="sokenavn"
-
-      //Legger farge på brukere her(eller i CSS-en da..., dette gir dem bare en klasse)
-      //Rød hvis ikke aktivert, grå hvis deaktivert
-      if (medlem.Aktivert == 0) {
-        navn.className="aktiver"
-      }
-      if (medlem.Aktivert == 2){
-        navn.className="deaktiver";
-      }
-
-      //Skriver ut navnene på resultatene og om de er administratorer
-      navn.innerText = medlem.Fornavn + ' ' + medlem.Etternavn;
-      if (medlem.Adminlvl >= 1) {
-        navn.innerText += ", (Administrator)"
-      }
-      navn.onclick = () => {
-        history.push("/bruker/{this.innloggetBruker.Medlemsnr}/sok/{medlem.Medlemsnr}");
-        sokMedlemsnr = medlem.Medlemsnr;
-        return sokMedlemsnr;
-      }
-
-      sokeliste.appendChild(navn);
-    }
-    this.refs.sokeResultat.appendChild(sokeliste);
   }
 }
 
@@ -838,15 +853,15 @@ class BrukerSokDetaljer extends React.Component {
             <select ref="adminLevelSelect"></select>
             <button ref="adminKnapp" id="adminKnapp" className="knapper">Gjør admin</button> <br />
             <button ref="redigerSokBrukerKnapp" id="redigerSokBrukerKnapp" className="knapper">Rediger</button> <br />
-            <select ref="brukerKompetanseSelect"></select>
-            <button ref="brukerKompetanseKnapp">Gi kompetanse</button> <br />
-            <select ref="brukerRolleSelect"></select>
-            <button ref="brukerRolleKnapp">Gi rolle</button>
           </div>
-          <div ref="sokBrukerKompetanseDiv" id="sokBrukerKompetanseDiv">
-          </div>
-          <div ref="sokBrukerRolleDiv" id="sokBrukerRolleDiv">
-          </div>
+          <h3>Kompetanser:</h3>
+          <select ref="brukerKompetanseSelect"></select>
+          <button ref="brukerKompetanseKnapp">Gi kompetanse</button> <br />
+          <div ref="sokBrukerKompetanseDiv" id="sokBrukerKompetanseDiv"></div>
+          <h3>Roller:</h3>
+          <select ref="brukerRolleSelect"></select>
+          <button ref="brukerRolleKnapp">Gi rolle</button>
+          <div ref="sokBrukerRolleDiv" id="sokBrukerRolleDiv"></div>
         </div>
       );
     }
@@ -901,14 +916,13 @@ class BrukerSokDetaljer extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
-    this.refs.sokBrukerKompetanseDiv.innerText = " ";
-    this.refs.sokBrukerRolleDiv.innerText = " ";
-
     bruker.hentSokBruker(sokMedlemsnr, (result) => {
       this.sokBruker = result;
       if (this.sokBruker) {
         //Lager knapper for å aktivere og deaktivere brukeren hvis den innloggede brukeren er admin
         if (this.innloggetBruker.Adminlvl >= 1) {
+          this.refs.sokBrukerKompetanseDiv.innerText = " ";
+          this.refs.sokBrukerRolleDiv.innerText = " ";
           if (this.sokBruker.Aktivert == 0) {
             this.refs.aktiveringsKnapp.innerText = "Aktiver";
             this.refs.aktiveringsKnapp.onclick = () => {
@@ -985,30 +999,44 @@ class BrukerSokDetaljer extends React.Component {
           }
 
           bruker.hentBrukerKompetanse(this.sokBruker.Medlemsnr, (result) => {
-            let kompOverskrift = document.createElement("h3");
-            kompOverskrift.innerText = "Kompetanser:"
-            this.refs.sokBrukerKompetanseDiv.appendChild(kompOverskrift);
 
             let ulKomp = document.createElement("ul");
             for (let kompetanse of result) {
               let liKomp = document.createElement("li");
               liKomp.innerText = kompetanse.Kompetanse_navn;
+              let fjernKompKnapp = document.createElement("button");
+              fjernKompKnapp.innerText = "Fjern";
 
-              ulKomp.appendChild(liKomp)
+              fjernKompKnapp.onclick = () => {
+                bruker.fjernBrukerKompetanse(this.sokBruker.Medlemsnr, kompetanse.Kompetanse_id, (result) => {
+                  console.log("Fjernet kompetanse fra bruker");
+                  this.knapperKompetanseRollerUpdate();
+                });
+              }
+
+              liKomp.appendChild(fjernKompKnapp);
+              ulKomp.appendChild(liKomp);
             }
             this.refs.sokBrukerKompetanseDiv.appendChild(ulKomp);
           });
 
           bruker.hentBrukerRoller(this.sokBruker.Medlemsnr, (result) => {
-            let rolleOverskrift = document.createElement("h3");
-            rolleOverskrift.innerText = "Roller:"
-            this.refs.sokBrukerRolleDiv.appendChild(rolleOverskrift);
 
             let ulRolle = document.createElement("ul");
             for (let rolle of result) {
               let liRolle = document.createElement("li");
               liRolle.innerText = rolle.Rolle_navn;
+              let fjernRolleKnapp = document.createElement("button");
+              fjernRolleKnapp.innerText = "Fjern";
 
+              fjernRolleKnapp.onclick = () => {
+                bruker.fjernBrukerRolle(this.sokBruker.Medlemsnr, rolle.Rolle_id, (result) => {
+                  console.log("Fjernet rolle fra bruker");
+                  this.knapperKompetanseRollerUpdate();
+                });
+              }
+
+              liRolle.appendChild(fjernRolleKnapp);
               ulRolle.appendChild(liRolle);
             }
             this.refs.sokBrukerRolleDiv.appendChild(ulRolle);
@@ -1909,10 +1937,13 @@ class RedigerArrangement extends React.Component {
         //Må sette datoen selv, fordi JS begynner dato på 0
         dato = new Date();
         dato.setDate(this.arrangement.startdato.getDate());
+        dato.setMonth(this.arrangement.startdato.getMonth());
+        dato.setYear(this.arrangement.startdato.getFullYear());
 
         this.refs.oppdaterArrNavn.value = this.arrangement.arrnavn;
         this.refs.oppdaterArrBeskrivelse.value = this.arrangement.beskrivelse;
         this.refs.oppdaterDato.valueAsNumber = dato;
+        //Dette gir datoen-1, fordi vi er i GMT+2 og den regner fra GMT og klokka er 00:00:00
         // this.refs.oppdaterDato.valueAsNumber = this.arrangement.startdato;
         this.refs.oppdaterOppmote.value = this.arrangement.oppmøtetid;
         this.refs.oppdaterSted.value = this.arrangement.oppmøtested;
@@ -2088,6 +2119,42 @@ class AvsluttArrangement extends React.Component {
 
 function erTom(str) {
   return (!str || 0 === str.length);
+}
+
+function sok(result, ref, feilmelding) {
+  let sokeliste = document.createElement("ul");
+  sokeliste.id="sokeliste"
+
+  for(let medlem of result){
+    let navn = document.createElement("li");
+    navn.className="sokenavn"
+
+    //Legger farge på brukere her(eller i CSS-en da..., dette gir dem bare en klasse)
+    //Rød hvis ikke aktivert, grå hvis deaktivert
+    if (medlem.Aktivert == 0) {
+      navn.className="aktiver"
+    }
+    if (medlem.Aktivert == 2){
+      navn.className="deaktiver";
+    }
+
+    //Skriver ut navnene på resultatene og om de er administratorer
+    navn.innerText = medlem.Fornavn + ' ' + medlem.Etternavn;
+    if (medlem.Adminlvl >= 1) {
+      navn.innerText += ", (Administrator)"
+    }
+    navn.onclick = () => {
+      history.push("/bruker/{this.innloggetBruker.Medlemsnr}/sok/{medlem.Medlemsnr}");
+      sokMedlemsnr = medlem.Medlemsnr;
+      return sokMedlemsnr;
+    }
+
+    sokeliste.appendChild(navn);
+  }
+  ref.appendChild(sokeliste);
+  if (result.length == 0) {
+    ref.innerText = feilmelding;
+  }
 }
 
 ReactDOM.render((

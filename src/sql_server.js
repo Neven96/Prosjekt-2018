@@ -195,9 +195,13 @@ class Bruker {
     });
   }
 
+  brukerSettPassiv(medlemsnr, startdato, sluttdato, callback) {
+    connection.query("INSERT INTO ")
+  }
+
   //Henter kompetansene til brukeren
   hentBrukerKompetanse(medlemsnr, callback) {
-    connection.query("SELECT Kompetanse.Kompetanse_navn FROM Kompetanse, Bruker_kompetanse WHERE Kompetanse.Kompetanse_id = Bruker_kompetanse.Kompetanse_id AND Bruker_kompetanse.Medlemsnr = ?", [medlemsnr], (error, result) => {
+    connection.query("SELECT * FROM Kompetanse, Bruker_kompetanse WHERE Kompetanse.Kompetanse_id = Bruker_kompetanse.Kompetanse_id AND Bruker_kompetanse.Medlemsnr = ?", [medlemsnr], (error, result) => {
       if (error) throw error;
 
       callback(result);
@@ -215,7 +219,7 @@ class Bruker {
 
   //Henter rollene til brukeren
   hentBrukerRoller(medlemsnr, callback) {
-    connection.query("SELECT Rolle.Rolle_navn FROM Rolle, Bruker_rolle WHERE Rolle.Rolle_id = Bruker_rolle.Rolle_id AND Bruker_rolle.Medlemsnr = ?", [medlemsnr], (error, result) => {
+    connection.query("SELECT * FROM Rolle, Bruker_rolle WHERE Rolle.Rolle_id = Bruker_rolle.Rolle_id AND Bruker_rolle.Medlemsnr = ?", [medlemsnr], (error, result) => {
       if (error) throw error;
 
       callback(result);
@@ -258,6 +262,22 @@ class Bruker {
 
   giBrukerRolle(medlemsnr, rolleid, callback) {
     connection.query("INSERT INTO Bruker_rolle (Medlemsnr, Rolle_id) VALUES (?, ?)", [medlemsnr, rolleid], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  fjernBrukerKompetanse(medlemsnr, kompetanseid, callback) {
+    connection.query("DELETE FROM Bruker_kompetanse WHERE Medlemsnr = ? AND Kompetanse_id = ?", [medlemsnr, kompetanseid], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  fjernBrukerRolle(medlemsnr, rolleid, callback) {
+    connection.query("DELETE FROM Bruker_rolle WHERE Medlemsnr = ? AND Rolle_id = ?", [medlemsnr, rolleid], (error, result) => {
       if (error) throw error;
 
       callback();

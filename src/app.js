@@ -481,8 +481,10 @@ class Profil extends React.Component {
           </ul>
           <div ref="profilPassivDiv" id="profilPassivDiv">
             <input type="date" ref="profilPassivStart" />
-            <input type="date" ref="profilPassiv"/> <br />
+            <input type="date" ref="profilPassivSlutt"/> <br />
             <button ref="profilPassivKnapp">Sett passiv</button>
+            <h3>Passiv:</h3>
+            <div ref="profilPassivListe"></div>
           </div>
           <div ref="profilKompetanseDiv" id="profilKompetanseDiv">
             <h3>Kompetanser:</h3>
@@ -526,6 +528,7 @@ class Profil extends React.Component {
       this.brukerSted = result;
       this.update();
     });
+    this.passivUpdate();
   }
 
   update() {
@@ -562,6 +565,65 @@ class Profil extends React.Component {
       arrangement.hentArrKal((result) => {
         this.setState({ events: result });
       });
+    }
+  }
+
+  passivUpdate() {
+    let datoStart; let datoSlutt; let arrayStart; let arraySlutt;
+    if (this.refs.profilDiv) {
+      this.refs.profilPassivListe.innerText = " ";
+      let iDag = new Date();
+
+      bruker.hentBrukerPassiv(this.innloggetBruker.Medlemsnr, (result) => {
+        let passivUl = document.createElement("ul");
+
+        for (let passiv of result) {
+          let passivLi = document.createElement("li");
+
+          datoStart = new Date();
+          datoStart.setDate(passiv.Start_dato.getDate());
+          datoStart.setMonth(passiv.Start_dato.getMonth());
+          datoStart.setYear(passiv.Start_dato.getFullYear());
+          if (datoStart != null) {
+            datoStart = datoStart.toString();
+            arrayStart = datoStart.split(" ");
+          }
+
+          datoSlutt = new Date();
+          datoSlutt.setDate(passiv.Slutt_dato.getDate());
+          datoSlutt.setMonth(passiv.Slutt_dato.getMonth());
+          datoSlutt.setYear(passiv.Slutt_dato.getFullYear());
+
+          if (datoSlutt != null) {
+            datoSlutt = datoSlutt.toString();
+            arraySlutt = datoSlutt.split(" ");
+          }
+
+          if (passiv.Slutt_dato >= iDag) {
+            passivLi.innerText = arrayStart[2]+"."+arrayStart[1]+"."+arrayStart[3]+" - "+arraySlutt[2]+"."+arraySlutt[1]+"."+arraySlutt[3];
+            passivUl.appendChild(passivLi)
+          }
+        }
+        if (this.refs.profilPassivListe) {
+          this.refs.profilPassivListe.appendChild(passivUl);
+        }
+      });
+
+      let startdato; let sluttdato;
+      this.refs.profilPassivKnapp.onclick = () => {
+        startdato = this.refs.profilPassivStart.value;
+        sluttdato = this.refs.profilPassivSlutt.value;
+        if (erTom(startdato) || erTom(sluttdato)) {
+          console.log("Tom");
+        } else {
+          bruker.brukerSettPassiv(this.innloggetBruker.Medlemsnr, startdato, sluttdato, (result) => {
+            console.log("Ny passivtid");
+            // this.refs.profilPassivStart.value
+            // this.refs.profilPassivSlutt.value
+            this.passivUpdate();
+          });
+        }
+      }
     }
   }
 }
@@ -877,14 +939,13 @@ class BrukerSokDetaljer extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
-    this.refs.sokBrukerKompetanseDiv.innerText = " ";
-    this.refs.sokBrukerRolleDiv.innerText = " ";
-
     bruker.hentSokBruker(sokMedlemsnr, (result) => {
       this.sokBruker = result;
       if (this.sokBruker) {
         //Lager knapper for å aktivere og deaktivere brukeren hvis den innloggede brukeren er admin
         if (this.innloggetBruker.Adminlvl >= 1) {
+          this.refs.sokBrukerKompetanseDiv.innerText = " ";
+          this.refs.sokBrukerRolleDiv.innerText = " ";
           if (this.sokBruker.Aktivert == 0) {
             this.refs.aktiveringsKnapp.innerText = "Aktiver";
             this.refs.aktiveringsKnapp.onclick = () => {
@@ -1884,10 +1945,13 @@ class RedigerArrangement extends React.Component {
         //Må sette datoen selv, fordi JS begynner dato på 0
         dato = new Date();
         dato.setDate(this.arrangement.startdato.getDate());
+        dato.setMonth(this.arrangement.startdato.getMonth());
+        dato.setYear(this.arrangement.startdato.getFullYear());
 
         this.refs.oppdaterArrNavn.value = this.arrangement.arrnavn;
         this.refs.oppdaterArrBeskrivelse.value = this.arrangement.beskrivelse;
         this.refs.oppdaterDato.valueAsNumber = dato;
+        //Dette gir datoen-1, fordi vi er i GMT+2 og den regner fra GMT og klokka er 00:00:00
         // this.refs.oppdaterDato.valueAsNumber = this.arrangement.startdato;
         this.refs.oppdaterOppmote.value = this.arrangement.oppmøtetid;
         this.refs.oppdaterSted.value = this.arrangement.oppmøtested;

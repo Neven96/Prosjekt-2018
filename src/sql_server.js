@@ -196,7 +196,19 @@ class Bruker {
   }
 
   brukerSettPassiv(medlemsnr, startdato, sluttdato, callback) {
-    connection.query("INSERT INTO ")
+    connection.query("INSERT INTO Passiv (Medlemsnr, Start_dato, Slutt_dato) VALUES (?, ?, ?)", [medlemsnr, startdato, sluttdato], (error, result) => {
+      if (error) throw error;
+
+      callback();
+    });
+  }
+
+  hentBrukerPassiv(medlemsnr, callback) {
+    connection.query("SELECT * FROM Passiv WHERE Medlemsnr = ?", [medlemsnr], (error, result) => {
+      if (error) throw error;
+
+      callback(result);
+    });
   }
 
   //Henter kompetansene til brukeren

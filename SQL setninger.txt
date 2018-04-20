@@ -81,4 +81,8 @@ WHERE Kompetanse_id NOT IN(SELECT Kompetanse_id
                        FROM Bruker_kompetanse bk
                        WHERE bk.Medlemsnr = 10007)
 _____________________________________________
-
+SELECT * FROM Medlem, Passiv 
+WHERE Medlem.Medlemsnr = Passiv.Medlemsnr 
+AND Passiv.Slutt_dato < "2018-04-22" 
+OR Passiv.Start_dato > "2018-04-22" 
+ORDER BY Medlem.Vaktpoeng ASC 

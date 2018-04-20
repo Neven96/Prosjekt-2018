@@ -827,7 +827,7 @@ class BrukerSokDetaljer extends React.Component {
     //og har mulighet til å aktiver, deaktivere og gjøre brukeren til admin
     if (this.innloggetBruker.Adminlvl <= 0) {
       return(
-        <div ref="brukerSokDetaljer">
+        <div className="sentrertboks" ref="brukerSokDetaljer">
           <ul>
             <NavLink exact to="/bruker/{this.innloggetBruker.Medlemsnr}/sok" className="linker" >Tilbake</NavLink>
             <li>Navn: {this.sokBruker.Fornavn} {this.sokBruker.Etternavn}</li>
@@ -2022,7 +2022,7 @@ class AvsluttArrangement extends React.Component {
 
   render() {
     return(
-      <div ref="arrangementAvslutt">
+      <div className="sentrertboks" ref="arrangementAvslutt">
         <NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Tilbake</NavLink>
         <h2>Ferdigstilling av arrangement</h2>
         <div ref="arrangementAvsluttDetaljer">

@@ -134,13 +134,18 @@ strong {
 }
 
 #profilRolleDiv {
-  width: 49%;
+  position: absolute;
+  width: 100%;
   float: left;
+  text-align: left;
+  margin-left: 25%;
 }
 
 #profilKompetanseDiv {
-  width: 49%;
+  width: 100%;
   float: right;
+  text-align: right;
+  margin-right: 25%;
 }
 
 

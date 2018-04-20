@@ -45,7 +45,6 @@ ul {
   margin-right: 6px;
   display: list-item;
   text-align: -webkit-match-parent; */
-
 }
 
 strong {
@@ -61,7 +60,6 @@ strong {
   right: auto;
   margin-left: 26px;
   margin-right: 26px;
-  /* text-align: center; */
 }
 
 .navbar {
@@ -93,14 +91,7 @@ strong {
   text-decoration: none;
 }
 
-/* #registrerbox, #loginbox, #forsidetekst, #hjelptekst, #profilinfo, #glemtpassord {
-  position: relative;
-  zoom: 150%;
-  text-align: center;
-  margin-top: 1.5em;
-} */
-
-.enboks {
+.sentrertboks {
   position: relative;
   zoom: 150%;
   text-align: center;
@@ -152,13 +143,13 @@ strong {
   float: right;
 }
 
+
 #profilvisning1 {
   /* float: left; */
   /* width: 49%; */
 }
 
 #profilvisning2 {
-  /* float: right; */
   width: 50%;
   margin: auto;
   text-align: center;
@@ -175,7 +166,7 @@ strong {
   font-size: 1.25em;
 }
 
-#redigerprofiltable {
+#redigerprofiltable, #registrertable {
   text-align: center;
   margin-left: auto;
   margin-right: auto;
@@ -183,20 +174,22 @@ strong {
   font-size: 1.25em;
 }
 
-/* #oppdaterFornavnInput, #oppdaterEtternavnInput, #oppdaterTlfInput, #oppdaterAdrInput, #oppdaterPostnrInput {
-  margin-top: 6px;
-} */
+#registrerPostnrInput {
+  width: 30%;
+}
 
+#registrerPoststedInput {
+  width: 65%;
+}
 
 #oppdaterPostnrInput {
   width: 20%;
 }
 
 #oppdaterPoststedInput {
-  width: 42.5%;
+  width: 43.5%;
 }
 
-/* Trenger vi denne? kommentert ut margin bottom*/
 button {
   margin-bottom: 6px;
   margin-right: 6px;
@@ -259,7 +252,7 @@ input {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
-  width: 65%;
+  width: 55%;
 }
 
 .arrNavn {
@@ -272,7 +265,7 @@ input {
 }
 
 .egenVakt {
-  text-decoration: underline overline;
+  font-weight: bolder;
 }
 
 #arrnavn {
@@ -304,34 +297,6 @@ input {
   width: 50%;
   background-color: #f8f8f9;
   border-style: groove;
-}
-
-.rad:after {
-  clear: both;
-  content: "";
-  display: table;
-}
-
-.registrer {
-  float: left;
-  margin-top: 6px;
-  width: 75%;
-}
-
-#registrerPostnrInput {
-  width: 10%;
-  margin-top: 6px;
-}
-
-#registrerPoststedInput {
-  width: 25.75%;
-  margin-top: 6px;
-}
-
-#FornavnReg, #EtternavnReg, #TelefonReg, #AdresseReg, #PostnrReg, #EpostReg, #PassordReg {
-  float: left;
-  width: 25%;
-  margin-top: 6px;
 }
 
 #registrerKnapp {

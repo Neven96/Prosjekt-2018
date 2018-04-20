@@ -112,7 +112,7 @@ class Nyheter extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     if (!this.innloggetBruker) {
       return(
-        <div className="enboks" id="forsidetekst">
+        <div className="sentrertboks" id="forsidetekst">
           <p>Nyheter om Røde Kors og andre ting tang</p>
           <h3>Breaking News!!!</h3>
           <p>Røde Kors får nytt vaktsystem</p>
@@ -134,7 +134,7 @@ class Nyheter extends React.Component {
       //Viser dette hvis brukeren er logget inn og aktivert
       if (this.innloggetBruker.Aktivert == 1) {
         return(
-          <div className="enboks" id="forsidetekst">
+          <div className="sentrertboks" id="forsidetekst">
             <p>Nyheter om Røde Kors og andre ting tang</p>
             <h3>Breaking News!!!</h3>
             <p>Røde Kors får nytt vaktsystem</p>
@@ -155,7 +155,7 @@ class Nyheter extends React.Component {
       //Viser dette hvis brukeren er logget inn, men ikke aktivert enda
       else if (this.innloggetBruker.Aktivert == 0) {
         return(
-          <div className="enboks" id="forsidetekst">
+          <div className="sentrertboks" id="forsidetekst">
             <p>Brukeren er ikke aktivert</p>
           </div>
         );
@@ -163,7 +163,7 @@ class Nyheter extends React.Component {
       //Viser dette hvis brukeren ikke er aktivert
       else if (this.innloggetBruker.Aktivert == 2) {
         return(
-          <div className="enboks" id="forsidetekst">
+          <div className="sentrertboks" id="forsidetekst">
             <p>Brukeren er deaktivert</p>
           </div>
         );
@@ -181,7 +181,7 @@ class Hjelp extends React.Component {
   //Side for hjelp med profil og innlogging og andre ting
   render() {
     return(
-      <div className="enboks" id="hjelptekst">
+      <div className="sentrertboks" id="hjelptekst">
         <p>Hei, velkommen til hjelpsiden for Røde Kors, her får du hjelp</p>
       </div>
     );
@@ -192,7 +192,7 @@ class GlemtPassord extends React.Component {
   //Side for å få passordet hvis det er glemt
   render() {
     return(
-      <div className="enboks" id="glemtpassord">
+      <div className="sentrertboks" id="glemtpassord">
         <p>Skriv inn navn og epost for å få passord</p>
         Fornavn: <input className="glemtpassordinput" type="text" ref="glemtPassordFornavn" />
         <br />
@@ -242,71 +242,48 @@ class RegistrerBruker extends React.Component {
   render() {
     //Registrering av bruker med mange div-er for å få det ordentlig lina opp
     return (
-      <div className="enboks" id="registrerbox">
-        <p>
-          <span className="loggInnInfo">Fyll inn alle felter</span>
-          <br />
-          <span className="loggInnInfo" id="loggInnInfoPassord">(og ikke bruk ditt ekte passord)</span>
-        </p>
-        <div className="rad">
-          <div>
-            <label id="FornavnReg">Fornavn: </label>
-          </div>
-          <div id="registrerFnavnInput">
-            <input type="text" ref="registrerFnavnInput" size="20" />
-          </div>
-        </div>
-        <div className="rad">
-          <div>
-            <label id="EtternavnReg">Etternavn: </label>
-          </div>
-          <div className="registrer" id="registrerEnavnInput">
-            <input type="text" ref="registrerEnavnInput" size="20" />
-          </div>
-        </div>
-        <div className="rad">
-          <div>
-            <label id="TelefonReg">Telefonnummer: </label>
-          </div>
-          <div className="registrer" id="registrerTlfInput">
-            <input type="number" ref="registrerTlfInput" size="20" min="0" />
-          </div>
-        </div>
-        <div className="rad">
-          <div>
-            <label id="AdresseReg">Adresse: </label>
-          </div>
-          <div className="registrer" id="registrerAdrInput">
-            <input type="text" ref="registrerAdrInput" size="20" />
-          </div>
-        </div>
-        <div className="rad">
-          <div>
-            <label id="PostnrReg">Postnr: </label>
-          </div>
-          <div>
-            <input id="registrerPostnrInput" type="number" ref="registrerPostnrInput" maxLength="4" size="4" min="0" />
-            <input id="registrerPoststedInput" type="text" ref="registrerPoststedInput" readOnly />
-          </div>
-        </div>
-        <div className="rad">
-          <div>
-            <label id="EpostReg">Epost: </label>
-          </div>
-          <div className="registrer" id="registrerEpostInput">
-            <input type="text" ref="registrerEpostInput" size="20" />
-          </div>
-        </div>
-        <div className="rad">
-          <div>
-            <label id="PassordReg">Passord: </label>
-          </div>
-          <div className="registrer" id="registrerPassordInput">
-            <input type="password" ref="registrerPassordInput" size="20" />
-          </div>
-        </div>
-        <p id="feilRegistrering" ref="feilRegistrering" className="feilMelding"></p>
-        <button id="registrerKnapp" ref="registrerKnapp" className="knapper">Registrer</button>
+
+      <div className="sentrertboks" id="registrerbox">
+      <h3>Fyll inn alle felter</h3>
+      <h4>(og ikke bruk ditt ekte passord)</h4>
+      <table id="registrertable">
+      <tbody>
+      <tr>
+      <td>Fornavn: </td>
+      <td><input type="text" ref="registrerFnavnInput" size="20" /></td>
+      </tr>
+      <tr>
+      <td>Etternavn: </td>
+      <td><input type="text" ref="registrerEnavnInput" size="20" /></td>
+      </tr>
+      <tr>
+      <td>Telefonnummer: </td>
+      <td><input type="number" ref="registrerTlfInput" size="20" min="0" /></td>
+      </tr>
+      <tr>
+      <td>Adresse: </td>
+      <td><input type="text" ref="registrerAdrInput" size="20" /></td>
+      </tr>
+      <tr>
+      <td>Postnr: </td>
+      <td><input id="registrerPostnrInput" type="number" ref="registrerPostnrInput" maxLength="4" size="4" min="0" />
+          <input id="registrerPoststedInput" type="text" ref="registrerPoststedInput" readOnly /></td>
+      </tr>
+      <tr>
+      <td>Epost: </td>
+      <td><input type="text" ref="registrerEpostInput" size="20" /></td>
+      </tr>
+      <tr>
+      <td>Passord: </td>
+      <td><input type="password" ref="registrerPassordInput" size="20" /></td>
+      </tr>
+      <tr>
+      <td></td>
+      </tr>
+      </tbody>
+      </table>
+      <p id="feilRegistrering" ref="feilRegistrering" className="feilMelding"></p>
+      <button id="registrerKnapp" ref="registrerKnapp" className="knapper">Registrer</button>
       </div>
     );
   }
@@ -405,7 +382,7 @@ class LoggInn extends React.Component {
 
   render() {
     return (
-      <div className="enboks" id="loginbox">
+      <div className="sentrertboks" id="loginbox">
         <p ref="feilInnlogging" id="feilInnlogging" className="feilMelding"></p>
         Epost: <input type="text" ref="brukernavnInput" className="logginninput" autoFocus /><br />
         Passord: <input type="password" ref="passordInput" className="logginninput" /><br />
@@ -477,7 +454,7 @@ class Profil extends React.Component {
       <div id="profil" ref="profilDiv">
         <div id="profilvisning1">
           <p id="redigerprofilknapp"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</NavLink></p>
-          <ul className="enboks" id="profilinfo">
+          <ul className="sentrertboks" id="profilinfo">
             <li ref="profilNavn"></li>
             <li ref="profilAdresse"></li>
             <li ref="profilNummer"></li>
@@ -487,11 +464,11 @@ class Profil extends React.Component {
           </ul>
           <div ref="profilKompetanseDiv" id="profilKompetanseDiv">
             <h3>Kompetanser:</h3>
-            <ul ref="profilKompetanse"></ul>
+            <ul id="profilKompetanseDivli" ref="profilKompetanse"></ul>
           </div>
           <div ref="profilRolleDiv" id="profilRolleDiv">
             <h3>Roller:</h3>
-            <ul ref="profilRolle"></ul>
+            <ul id="profilRolleDivli" ref="profilRolle"></ul>
           </div>
         </div>
         <div id="profilvisning2" ref="kalenderDiv">
@@ -846,7 +823,7 @@ class BrukerSokDetaljer extends React.Component {
       );
     } else if (this.innloggetBruker.Adminlvl >= 1) {
       return(
-        <div ref="brukerSokDetaljer">
+        <div className="sentrertboks" ref="brukerSokDetaljer">
           <NavLink exact to="/bruker/{this.innloggetBruker.Medlemsnr}/sok" className="linker">Tilbake</NavLink>
           <ul>
             <li>Navn: {this.sokBruker.Fornavn} {this.sokBruker.Etternavn}</li>
@@ -1069,18 +1046,33 @@ class BrukerSokRediger extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     return(
       <div id="redigerprofil">
-        <input type="text" ref="oppdaterFornavnInput" />
-        <br />
-        <input type="text" ref="oppdaterEtternavnInput" />
-        <br />
-        <input type="number" ref="oppdaterTlfInput" />
-        <br />
-        <input type="text" ref="oppdaterAdrInput" />
-        <br />
-        <input type="number" ref="oppdaterPostnrInput" />
-        <input type="text" ref="oppdaterPoststedInput" readOnly />
-        <br />
-        <p ref="feilOppdatering"></p>
+        <h3>Rediger profil</h3>
+        <table id="redigerprofiltable">
+        <tbody>
+        <tr>
+        <td>Fornavn: </td>
+        <td><input type="text" ref="oppdaterFornavnInput" /></td>
+        </tr>
+        <tr>
+        <td>Etternavn: </td>
+        <td><input type="text" ref="oppdaterEtternavnInput" /></td>
+        </tr>
+        <tr>
+        <td>Telefonnummer: </td>
+        <td><input type="number" ref="oppdaterTlfInput" maxLength="8" /></td>
+        </tr>
+        <tr>
+        <td>Adresse: </td>
+        <td><input type="text" ref="oppdaterAdrInput" /></td>
+        </tr>
+        <tr>
+        <td>Postnr: </td>
+        <td><input type="number" id="oppdaterPostnrInput" ref="oppdaterPostnrInput" />
+        <input type="text" id="oppdaterPoststedInput" ref="oppdaterPoststedInput" readOnly /></td>
+        </tr>
+        </tbody>
+        </table>
+        <p ref="feilOppdatering" className="feilMelding"></p>
         <button ref="oppdaterBruker">Oppdater</button>
         <button ref="kansellerOppdatering">Lukk</button>
       </div>

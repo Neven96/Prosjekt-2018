@@ -61,6 +61,14 @@ class Bruker {
     return JSON.parse(ting);
   }
 
+  hentBrukereFraVaktpoeng(callback) {
+    connection.query("SELECT * FROM Medlem ORDER BY Vaktpoeng ASC", (error, result) => {
+      if (error) throw error;
+
+      callback(result);
+    });
+  }
+
   //Gjett hva...
   //Tømmer alt lagret i JSON
   loggUtBruker() {
@@ -152,6 +160,14 @@ class Bruker {
     });
   }
 
+  sokBrukerArrangement(dato, callback) {
+    connection.query("SELECT * FROM Medlem, Passiv WHERE Medlem.Medlemsnr = Passiv.Medlemsnr AND Passiv.Slutt_dato < ? OR Passiv.Start_dato > ? ORDER BY Medlem.Vaktpoeng ASC", [dato, dato], (error, result) => {
+      if(error) throw error;
+
+      callback(result);
+    });
+  }
+
   hentBrukerAktivering(callback) {
     connection.query("SELECT * FROM Medlem WHERE Aktivert = ? ORDER BY Fornavn ASC", [0], (error, result) => {
       if (error) throw error;
@@ -211,6 +227,14 @@ class Bruker {
     });
   }
 
+  sjekkBrukerPassiv(medlemsnr, dato, callback) {
+    connection.query("SELECT 1 FROM Passiv WHERE Medlemsnr = ? AND (Start_dato < ? AND Slutt_dato > ?)", [medlemsnr, dato, dato], (error, result) => {
+      if (error) throw error;
+
+      callback(result[0]);
+    });
+  }
+
   //Henter kompetansene til brukeren
   hentBrukerKompetanse(medlemsnr, callback) {
     connection.query("SELECT * FROM Kompetanse, Bruker_kompetanse WHERE Kompetanse.Kompetanse_id = Bruker_kompetanse.Kompetanse_id AND Bruker_kompetanse.Medlemsnr = ?", [medlemsnr], (error, result) => {
@@ -222,7 +246,7 @@ class Bruker {
 
   //Henter kompetanse som brukeren ikke har
   hentBrukerIkkeKompetanse(medlemsnr, iDag, callback) {
-    connection.query("SELECT Kompetanse.Kompetanse_navn, Kompetanse.Kompetanse_id FROM Kompetanse, Bruker_kompetanse WHERE Kompetanse.Kompetanse_id = Bruker_kompetanse.Kompetanse_id AND Bruker_kompetanse.Medlemsnr != ? AND (Bruker_kompetanse.Varighet_slutt > ? AND Bruker_kompetanse.Medlemsnr = ?)", [medlemsnr, iDag], (error, result) => {
+    connection.query("SELECT Kompetanse_id, Kompetanse_navn FROM Kompetanse k WHERE Kompetanse_id NOT IN(SELECT Kompetanse_id FROM Bruker_kompetanse bk WHERE bk.Medlemsnr = ?)", [medlemsnr], (error, result) => {
       if (error) throw error;
 
       callback(result);
@@ -239,7 +263,6 @@ class Bruker {
   }
 
   //Henter
-
   hentBrukerKompetanseRolle(medlemsnr, callback) {
     connection.query("SELECT k.Kompetanse_navn, bk.Varighet_slutt, r.Rolle_navn FROM  Kompetanse k, Bruker_kompetanse bk, Medlem m, Bruker_rolle br, Rolle r, Rolle_kompetanse rk WHERE m.Medlemsnr = ? AND m.Medlemsnr = bk.Medlemsnr AND bk.Kompetanse_id = k.Kompetanse_id AND m.Medlemsnr = br.Medlemsnr AND br.Rolle_id = r.Rolle_id AND r.Rolle_id = rk.Rolle_id AND rk.Kompetanse_id = k.Kompetanse_id ORDER BY r.Rolle_id ASC;", [medlemsnr], (error, result) => {
       if (error) throw error;

@@ -618,8 +618,8 @@ class Profil extends React.Component {
         } else {
           bruker.brukerSettPassiv(this.innloggetBruker.Medlemsnr, startdato, sluttdato, (result) => {
             console.log("Ny passivtid");
-            // this.refs.profilPassivStart.value
-            // this.refs.profilPassivSlutt.value
+            this.refs.profilPassivStart.value = "";
+            this.refs.profilPassivSlutt.value = "";
             this.passivUpdate();
           });
         }
@@ -1354,6 +1354,12 @@ class KalenderDetaljer extends React.Component {
             <span ref="arrMannskapRoller"></span>
           </p>
         </div>
+        <div ref="arrangementMannskapSok" className="arrangementDetaljerDiv">
+          <h2>Søk og legg til bruker</h2>
+          <button ref="arrangementMannskapSokKnapp">Søk</button>
+          <button ref="arrangementMannskapSokTom">Tøm liste</button>
+          <p ref="arrangementMannskapSokListe"></p>
+        </div>
         <div ref="rodeKorsKontaktDiv" className="arrangementDetaljerDiv">
           <h2>Røde kors kontaktperson</h2>
           <p ref="rodeKorsKontaktDetaljer">
@@ -1486,7 +1492,7 @@ class KalenderDetaljer extends React.Component {
                     if (result != undefined) {
                       bruker.hentSokBruker(medlem.Medlemsnr, (result) => {
                         let vaktMedlemP = document.createElement("p");
-                        vaktMedlemP.innerText += result.Fornavn+" "+result.Etternavn+", Rolle: ";
+                        vaktMedlemP.innerText += result.Fornavn+" "+result.Etternavn;
 
                         if (result.Medlemsnr == this.innloggetBruker.Medlemsnr) {
                           vaktMedlemP.className = "egenVakt"
@@ -1520,14 +1526,16 @@ class KalenderDetaljer extends React.Component {
 
                 if (this.innloggetBruker.Adminlvl >= 1 && result.length >= 1) {
                   this.refs.arrInteresserte.innerText = "Antall interesserte: "+result.length+"\n";
-                  this.refs.arrInteresseListe.innerText = "Interesserte:"
+
+                  this.refs.arrInteresseListe.innerText = "Interesserte: \n"
+
                   for (let medlem of result) {
                     //Spørring for å se om allerede er meldt opp til vakt
                     arrangement.eksistererArrangementVakt(medlem.Medlemsnr, listeid, (result) => {
                       if (result == undefined) {
                         bruker.hentSokBruker(medlem.Medlemsnr, (result) => {
                           let interesseMedlemP = document.createElement("p");
-                          interesseMedlemP.innerText += result.Fornavn+" "+result.Etternavn+", Vaktpoeng: "+result.Vaktpoeng+", Rolle: ";
+                          interesseMedlemP.innerText += result.Fornavn+" "+result.Etternavn+", Vaktpoeng: "+result.Vaktpoeng;
 
                           //Lager en knapp for at en admin skal kunne melde opp personer til vakt
                           if (mannskapPlasser - bruktePlasser >= 1 && this.arrangement.startdato >= iDag) {
@@ -1638,12 +1646,76 @@ class KalenderDetaljer extends React.Component {
               }
             }
 
+            let month; let datoString; let datoArray;
+            let datoTing = new Date();
+            datoTing.setDate(this.arrangement.startdato.getDate());
+            datoTing.setMonth(this.arrangement.startdato.getMonth());
+            datoTing.setYear(this.arrangement.startdato.getFullYear());
+            if (datoTing != null) {
+              datoString = datoTing.toString();
+              datoArray = datoString.split(" ");
+              //Kreves for å sette måneden til tall istedet for bokstaver
+              switch(datoArray[1]) {
+                case "Jan":month = "01";break;
+                case "Feb":month = "02";break;
+                case "Mar":month = "03";break;
+                case "Apr":month = "04";break;
+                case "May":month = "05";break;
+                case "Jun":month = "06";break;
+                case "Jul":month = "07";break;
+                case "Aug":month = "08";break;
+                case "Sep":month = "09";break;
+                case "Oct":month = "10";break;
+                case "Nov":month = "11";break;
+                case "Des":month = "12";break;
+              }
+              datoString = datoArray[3]+"-"+month+"-"+datoArray[2];
+            }
+
+            this.refs.arrangementMannskapSokListe.innerText = " ";
+            this.refs.arrangementMannskapSokKnapp.onclick = () => {
+              this.refs.arrangementMannskapSokListe.innerText = " ";
+              bruker.hentBrukereFraVaktpoeng((result) => {
+                let sokListeUl = document.createElement("ul");
+                for (let medlem of result) {
+                  bruker.sjekkBrukerPassiv(medlem.Medlemsnr, datoString, (result) => {
+                    if (result == undefined) {
+                      arrangement.sjekkInteresse(medlem.Medlemsnr, this.arrangement.arrid, (result) => {
+                        if (result == undefined) {
+                          let sokListeLi = document.createElement("li");
+                          sokListeLi.innerText = medlem.Fornavn+" "+medlem.Etternavn+", Vaktpoeng: "+medlem.Vaktpoeng+" ";
+                          let sokListeKnapp = document.createElement("button");
+                          sokListeKnapp.innerText = "Meld interessert";
+                          sokListeKnapp.onclick = () => {
+                            arrangement.meldInteressert(medlem.Medlemsnr, this.arrangement.arrid, (result) => {
+                              console.log("Bruker: "+medlem.Fornavn+" meldt interessert");
+                              this.update();
+                            });
+                          }
+
+                          sokListeLi.appendChild(sokListeKnapp);
+                          sokListeUl.appendChild(sokListeLi);
+                        }
+                      });
+                    }
+                  });
+                }
+                this.refs.arrangementMannskapSokListe.appendChild(sokListeUl);
+              });
+            }
+
+            this.refs.arrangementMannskapSokTom.onclick = () => {
+              this.refs.arrangementMannskapSokListe.innerText = " ";
+            }
+
           } else if (this.innloggetBruker.Adminlvl <= 0) {
             if (this.arrangement.ferdig == 1 || this.arrangement.startdato < iDag) {
               this.refs.arrangementDiv.removeChild(this.refs.arrangementKnappeP);
             }
-            this.refs.arrangementDetaljer.removeChild(this.refs.ferdigstillArrangementKnapp);
-            this.refs.arrangementKontaktDiv.id="sjulKontaktperson"
+
+            this.refs.arrangementMannskapSok.id = "skjulMannskapSok"
+            this.refs.arrangementKontaktDiv.id = "skjulKontaktperson";
+            this.refs.ferdigstillArrangementKnapp.id = "skjulFerdigstillArrangementKnapp";
           }
         }
 

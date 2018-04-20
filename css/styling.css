@@ -273,13 +273,14 @@ input {
 
 .egenVakt {
   text-decoration: underline overline;
+  color: red;
 }
 
 #arrnavn {
   font-weight: bolder;
 }
 
-#sjulKontaktperson {
+#skjulKontaktperson, #skjulFerdigstillArrangementKnapp, #skjulMannskapSok {
   display: none;
 }
 

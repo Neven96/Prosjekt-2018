@@ -377,6 +377,7 @@ class LoggInn extends React.Component {
   render() {
     return (
       <div className="sentrertboks" id="loginbox">
+        <h3>Logg inn på din brukerkonto</h3>
         <p ref="feilInnlogging" id="feilInnlogging" className="feilMelding"></p>
         Epost: <input type="text" ref="brukernavnInput" className="logginninput" autoFocus /><br />
         Passord: <input type="password" ref="passordInput" className="logginninput" /><br />

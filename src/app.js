@@ -1307,7 +1307,7 @@ class Kalender extends React.Component {
     } else if (this.innloggetBruker.Adminlvl >= 1) {
       return(
         <div className="arrangementside">
-          <NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/adminkalender" className="linker">Opprett arrangement</NavLink>
+          <button ref="opprettArrangementKnapp" id="opprettArrangementKnapp">Opprett arrangement</button>
           <h2>Kommende arrangementer</h2>
           <div ref="kommendeArrangementer"></div>
           <h2>Ferdige arrangementer</h2>
@@ -1331,6 +1331,12 @@ class Kalender extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
     let iDag = new Date();
+
+    if (this.innloggetBruker.Adminlvl >= 1) {
+      this.refs.opprettArrangementKnapp.onclick = () => {
+        history.push("/bruker/${this.innloggetBruker.Medlemsnr}/adminkalender");
+      }
+    }
 
     let string; let array;
     arrangement.hentArrangementer((result) => {
@@ -2269,7 +2275,7 @@ class AvsluttArrangement extends React.Component {
                 vaktSjekk.className = "avsluttArrangementSjekkboks";
 
                 let vaktSpan = document.createElement("span");
-                vaktSpan.innerText = result.Fornavn+" "+result.Etternavn+", Rolle: ";
+                vaktSpan.innerText = result.Fornavn+" "+result.Etternavn;
 
                 medlemP.appendChild(vaktSjekk);
                 medlemP.appendChild(vaktSpan);

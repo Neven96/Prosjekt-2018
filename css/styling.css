@@ -122,6 +122,10 @@ strong {
   margin-bottom: -6px;
 }
 
+#opprettArrangementKnapp {
+  font-size: 1.5em;
+}
+
 #profilinfo {
   list-style-type: none;
   margin-left: auto;
@@ -291,7 +295,7 @@ span.arrNavn {
   font-weight: bolder;
 }
 
-#skjulKontaktperson, #skjulFerdigstillArrangementKnapp, #skjulMannskapSok {
+.skjulBrukerKompetanseRolle, .skjulSokBrukerKnapper, #skjulKontaktperson, #skjulFerdigstillArrangementKnapp, #skjulMannskapSok {
   display: none;
 }
 

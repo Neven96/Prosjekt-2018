@@ -14,3 +14,5 @@ Fikse SQL-søkinga så både fornavn og etternavn bli ett
 Kode- og database-error:
 
 Gå gjennom koden og sjekk at alle input bokser er godkjente og har en maks/min verdi og ikke mulighet til å være tom
+
+Even husk fiks kompetanse dropdownen 

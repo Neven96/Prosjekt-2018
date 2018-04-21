@@ -475,7 +475,7 @@ class Profil extends React.Component {
         </div>
         <div id="profilvisning2" ref="kalenderDiv">
           <p id="kommendearr"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Kommende arrangementer</NavLink></p>
-          //react-big-calendar
+          {/* react-big-calendar */}
           <BigCalendar
             style={{ height: 500}}
             events={this.state.events}
@@ -1493,7 +1493,7 @@ class KalenderDetaljer extends React.Component {
                     if (result != undefined) {
                       bruker.hentSokBruker(medlem.Medlemsnr, (result) => {
                         let vaktMedlemP = document.createElement("p");
-                        vaktMedlemP.innerText += result.Fornavn+" "+result.Etternavn;
+                        vaktMedlemP.innerText += result.Fornavn+" "+result.Etternavn+" ";
 
                         if (result.Medlemsnr == this.innloggetBruker.Medlemsnr) {
                           vaktMedlemP.className = "egenVakt"
@@ -1536,7 +1536,7 @@ class KalenderDetaljer extends React.Component {
                       if (result == undefined) {
                         bruker.hentSokBruker(medlem.Medlemsnr, (result) => {
                           let interesseMedlemP = document.createElement("p");
-                          interesseMedlemP.innerText += result.Fornavn+" "+result.Etternavn+", Vaktpoeng: "+result.Vaktpoeng;
+                          interesseMedlemP.innerText += result.Fornavn+" "+result.Etternavn+", Vaktpoeng: "+result.Vaktpoeng+" ";
 
                           //Lager en knapp for at en admin skal kunne melde opp personer til vakt
                           if (mannskapPlasser - bruktePlasser >= 1 && this.arrangement.startdato >= iDag) {

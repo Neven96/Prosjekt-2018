@@ -580,6 +580,10 @@ class Profil extends React.Component {
           if (datoStart != null) {
             datoStart = datoStart.toString();
             arrayStart = datoStart.split(" ");
+            switch(arrayStart[1]) {
+                case "May":arrayStart[1] = "Mai";break;
+                case "Oct":arrayStart[1] = "Okt";break;
+            }
           }
 
           //Setter opp datoen som sjekker om du er passiv i fremtiden
@@ -591,6 +595,10 @@ class Profil extends React.Component {
           if (datoSlutt != null) {
             datoSlutt = datoSlutt.toString();
             arraySlutt = datoSlutt.split(" ");
+            switch(arraySlutt[1]) {
+                case "May":arraySlutt[1] = "Mai";break;
+                case "Oct":arraySlutt[1] = "Okt";break;
+            }
           }
 
           if (passiv.Slutt_dato >= iDag) {
@@ -1346,6 +1354,10 @@ class Kalender extends React.Component {
         if (string != null) {
           string = string.toString();
           array = string.split(" ");
+          switch(array[1]) {
+              case "May":array[1] = "Mai";break;
+              case "Oct":array[1] = "Okt";break;
+          }
           arrDato.innerText = array[2]+". "+array[1]+" "+array[3];
         }
 

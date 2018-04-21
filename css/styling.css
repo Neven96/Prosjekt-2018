@@ -215,7 +215,7 @@ input {
 }
 
 .aktiver {
-  color: red;
+  color: #d42b1e;
   padding: 0;
 }
 
@@ -236,11 +236,13 @@ input {
 }
 
 #deaktiveringsKnapp {
-  color: red;
+  background-color: #d42b1e;
+  color: white;
 }
 
 #aktiveringsKnapp {
-  color: green;
+  background-color: green;
+  color: white;
 }
 
 

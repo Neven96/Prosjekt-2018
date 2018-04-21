@@ -981,7 +981,7 @@ class BrukerSokDetaljer extends React.Component {
           } else if (this.sokBruker.Aktivert == 1 && this.sokBruker.Medlemsnr != this.innloggetBruker.Medlemsnr && this.sokBruker.Adminlvl <= this.innloggetBruker.Adminlvl) {
             this.refs.sokBrukerKnappeDiv.className = "";
             this.refs.aktiveringsKnapp.innerText = "Deaktiver";
-            this.regs.aktiveringsKnapp.id = "deaktiveringsKnapp";
+            this.refs.aktiveringsKnapp.id = "deaktiveringsKnapp";
             this.refs.aktiveringsKnapp.onclick = () => {
               let deaktiver = confirm("Er du sikker på at du vil deaktivere brukeren")
               if (deaktiver) {
@@ -1589,7 +1589,6 @@ class KalenderDetaljer extends React.Component {
               }
 
               arrangement.hentInteresserte(this.arrangement.arrid, (result) => {
-                this.refs.arrInteresserte.innerText = " "
                 this.refs.arrInteresseListe.innerText = " "
                 //Dersom brukeren er admin, hentes ut antall interesserte
                 if (this.innloggetBruker.Adminlvl >= 1 && result.length >= 1) {

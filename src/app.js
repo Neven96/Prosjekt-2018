@@ -54,11 +54,11 @@ class Hjem extends React.Component {
         <div>
           <div className="navbar">
             <hr />
-            <span className="spanbar"><NavLink exact to="/hjem" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Hjem</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Arrangementer</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Profil</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/sok" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Søk</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/hjelp" className="menyLinker" activeStyle={{color : 'red', fontWeight : 'bold'}} replace>Hjelp</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/hjem" className="menyLinker">Hjem</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="menyLinker">Arrangementer</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}" className="menyLinker">Profil</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/sok" className="menyLinker">Søk</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/hjelp" className="menyLinker">Hjelp</NavLink> </span>
             <span className="spanbar"><button ref="loggUtKnapp" id="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
               this.forceUpdate(),
               history.push("/hjem/"),
@@ -260,8 +260,11 @@ class RegistrerBruker extends React.Component {
       </tr>
       <tr>
       <td>Postnr: </td>
-      <td><input id="registrerPostnrInput" type="number" ref="registrerPostnrInput" maxLength="4" size="4" min="0" />
-          <input id="registrerPoststedInput" type="text" ref="registrerPoststedInput" readOnly /></td>
+      <td><input type="number" ref="registrerPostnrInput" maxLength="4" size="4" min="0" /></td>
+      </tr>
+      <tr>
+      <td>Poststed: </td>
+      <td><input type="text" ref="registrerPoststedInput" readOnly /></td>
       </tr>
       <tr>
       <td>Epost: </td>
@@ -379,8 +382,18 @@ class LoggInn extends React.Component {
       <div className="sentrertboks" id="loginbox">
         <h3>Logg inn på din brukerkonto</h3>
         <p ref="feilInnlogging" id="feilInnlogging" className="feilMelding"></p>
-        Epost: <input type="text" ref="brukernavnInput" className="logginninput" autoFocus /><br />
-        Passord: <input type="password" ref="passordInput" className="logginninput" /><br />
+        <table id="logginntable">
+        <tbody>
+        <tr>
+        <td>Epost: </td>
+        <td><input type="text" ref="brukernavnInput" className="logginninput" autoFocus /></td>
+        </tr>
+        <tr>
+        <td>Logg inn: </td>
+        <td><input type="password" ref="passordInput" className="logginninput" /></td>
+        </tr>
+        </tbody>
+        </table>
         <span><button ref="loggInnKnapp" className="logginnknapp">Logg inn</button>
         <NavLink exact to="/glemtpassord" className="glemtpassordknapp">Glemt passord</NavLink></span>
         <p>Har du ikke bruker, registrer deg <span><NavLink exact to="/registrerBruker" className="registrerherknapp">her</NavLink></span></p>
@@ -642,8 +655,11 @@ class RedigerProfil extends React.Component {
         </tr>
         <tr>
         <td>Postnr: </td>
-        <td><input type="number" id="oppdaterPostnrInput" ref="oppdaterPostnrInput" />
-        <input type="text" id="oppdaterPoststedInput" ref="oppdaterPoststedInput" readOnly /></td>
+        <td><input type="number" ref="oppdaterPostnrInput" /></td>
+        </tr>
+        <tr>
+        <td>Poststed: </td>
+        <td><input type="text" ref="oppdaterPoststedInput" readOnly /></td>
         </tr>
         </tbody>
         </table>
@@ -1125,8 +1141,11 @@ class BrukerSokRediger extends React.Component {
         </tr>
         <tr>
         <td>Postnr: </td>
-        <td><input type="number" id="oppdaterPostnrInput" ref="oppdaterPostnrInput" />
-        <input type="text" id="oppdaterPoststedInput" ref="oppdaterPoststedInput" readOnly /></td>
+        <td><input type="number" ref="oppdaterPostnrInput" /></td>
+        </tr>
+        <tr>
+        <td>Poststed: </td>
+        <td><input type="text" ref="oppdaterPoststedInput" readOnly /></td>
         </tr>
         </tbody>
         </table>

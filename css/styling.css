@@ -23,6 +23,10 @@ ul {
   margin-right: auto;
 }
 
+a.menyLinker.active {
+  color: #d42b1e;
+  font-weight: bold;
+}
 
 
 #nyheter {
@@ -80,13 +84,8 @@ strong {
   text-decoration: none;
 }
 
-.menyLinker:hover {
-  font-weight: bold;
-  text-decoration: none;
-}
-
 .linker:hover {
-  color: red;
+  color: #d42b1e;
   font-weight: bold;
   text-decoration: none;
 }
@@ -175,7 +174,7 @@ strong {
   font-size: 1.25em;
 }
 
-#redigerprofiltable, #registrertable {
+#redigerprofiltable, #registrertable{
   text-align: center;
   margin-left: auto;
   margin-right: auto;
@@ -183,20 +182,14 @@ strong {
   font-size: 1.25em;
 }
 
-#registrerPostnrInput {
-  width: 30%;
-}
-
-#registrerPoststedInput {
+#logginntable {
+  border-collapse: collapse;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
   width: 65%;
-}
-
-#oppdaterPostnrInput {
-  width: 20%;
-}
-
-#oppdaterPoststedInput {
-  width: 43.5%;
+  font-size: 1.25em;
+  border-width: -15em;
 }
 
 button {
@@ -242,6 +235,10 @@ input {
   cursor: pointer;
 }
 
+button#aktiveringsKnapp.knapper {
+  color: red;
+}
+
 .sokenavn:hover {
   color: #5aa8fb;
   cursor: pointer;
@@ -273,6 +270,11 @@ input {
   cursor: pointer;
 }
 
+span.arrNavn {
+  color: #d42b1e;
+  font-weight: bolder;
+}
+
 .egenVakt {
   color: red;
   font-weight: bolder;
@@ -282,7 +284,7 @@ input {
   font-weight: bolder;
 }
 
-.skjulBrukerKompetanseRolle, #skjulKontaktperson, #skjulFerdigstillArrangementKnapp, #skjulMannskapSok {
+#skjulKontaktperson, #skjulFerdigstillArrangementKnapp, #skjulMannskapSok {
   display: none;
 }
 

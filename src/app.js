@@ -2318,6 +2318,7 @@ class AvsluttArrangement extends React.Component {
   }
 }
 
+//Sjekker om en string er tom
 function erTom(str) {
   return (!str || 0 === str.length);
 }

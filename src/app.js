@@ -1776,6 +1776,8 @@ class KalenderDetaljer extends React.Component {
               datoString = datoArray[3]+"-"+month+"-"+datoArray[2];
             }
 
+            //Henter alle aktiverte brukere som ikke er passive når arrangementdatoen er og viser dem fram i en liste
+            //Gir mulighet til å melde bruker opp til arrangement hvis det ikke er nok meldt opp
             this.refs.arrangementMannskapSokListe.innerText = " ";
             this.refs.arrangementMannskapSokKnapp.onclick = () => {
               this.refs.arrangementMannskapSokListe.innerText = " ";
@@ -1786,21 +1788,19 @@ class KalenderDetaljer extends React.Component {
                     if (result == undefined) {
                       arrangement.sjekkInteresse(medlem.Medlemsnr, this.arrangement.arrid, (result) => {
                         if (result == undefined) {
-                          if (medlem.Aktivert == 1) {
-                            let sokListeLi = document.createElement("li");
-                            sokListeLi.innerText = medlem.Fornavn+" "+medlem.Etternavn+", Vaktpoeng: "+medlem.Vaktpoeng+" ";
-                            let sokListeKnapp = document.createElement("button");
-                            sokListeKnapp.innerText = "Meld interessert";
-                            sokListeKnapp.onclick = () => {
-                              arrangement.meldInteressert(medlem.Medlemsnr, this.arrangement.arrid, (result) => {
-                                console.log("Bruker: "+medlem.Fornavn+" meldt interessert");
-                                this.update();
-                              });
-                            }
-
-                            sokListeLi.appendChild(sokListeKnapp);
-                            sokListeUl.appendChild(sokListeLi);
+                          let sokListeLi = document.createElement("li");
+                          sokListeLi.innerText = medlem.Fornavn+" "+medlem.Etternavn+", Vaktpoeng: "+medlem.Vaktpoeng+" ";
+                          let sokListeKnapp = document.createElement("button");
+                          sokListeKnapp.innerText = "Meld interessert";
+                          sokListeKnapp.onclick = () => {
+                            arrangement.meldInteressert(medlem.Medlemsnr, this.arrangement.arrid, (result) => {
+                              console.log("Bruker: "+medlem.Fornavn+" meldt interessert");
+                              this.update();
+                            });
                           }
+
+                          sokListeLi.appendChild(sokListeKnapp);
+                          sokListeUl.appendChild(sokListeLi);
                         }
                       });
                     }

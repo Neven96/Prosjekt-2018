@@ -235,9 +235,14 @@ input {
   cursor: pointer;
 }
 
-button#aktiveringsKnapp.knapper {
+#deaktiveringsKnapp {
   color: red;
 }
+
+#aktiveringsKnapp {
+  color: green;
+}
+
 
 .sokenavn:hover {
   color: #5aa8fb;
@@ -284,7 +289,7 @@ span.arrNavn {
   font-weight: bolder;
 }
 
-.skjulBrukerKompetanseRolle, .skjulSokBrukerKnapper, #skjulKontaktperson, #skjulFerdigstillArrangementKnapp, #skjulMannskapSok {
+#skjulKontaktperson, #skjulFerdigstillArrangementKnapp, #skjulMannskapSok {
   display: none;
 }
 

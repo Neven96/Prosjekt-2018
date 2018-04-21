@@ -869,7 +869,7 @@ class BrukerSokDetaljer extends React.Component {
             <li ref="sokBrukerMedlemsnr"></li>
           </ul>
           <div ref="sokBrukerKnappeDiv">
-            <button ref="aktiveringsKnapp" id="aktiveringsKnapp" className="knapper"></button> <br />
+            <button ref="aktiveringsKnapp" className="knapper"></button> <br />
             <select ref="adminLevelSelect"></select>
             <button ref="adminKnapp" id="adminKnapp" className="knapper">Gjør admin</button> <br />
             <button ref="redigerSokBrukerKnapp" id="redigerSokBrukerKnapp" className="knapper">Rediger</button> <br />
@@ -969,6 +969,7 @@ class BrukerSokDetaljer extends React.Component {
           this.refs.sokBrukerRolleDiv.innerText = " ";
           if (this.sokBruker.Aktivert == 0) {
             this.refs.aktiveringsKnapp.innerText = "Aktiver";
+            this.refs.aktiveringsKnapp.id = "aktiveringsKnapp";
             this.refs.aktiveringsKnapp.onclick = () => {
               bruker.aktiverBruker(this.sokBruker.Medlemsnr, (result) => {
                 console.log("Bruker ble aktivert");
@@ -980,6 +981,7 @@ class BrukerSokDetaljer extends React.Component {
           } else if (this.sokBruker.Aktivert == 1 && this.sokBruker.Medlemsnr != this.innloggetBruker.Medlemsnr && this.sokBruker.Adminlvl <= this.innloggetBruker.Adminlvl) {
             this.refs.sokBrukerKnappeDiv.className = "";
             this.refs.aktiveringsKnapp.innerText = "Deaktiver";
+            this.regs.aktiveringsKnapp.id = "deaktiveringsKnapp";
             this.refs.aktiveringsKnapp.onclick = () => {
               let deaktiver = confirm("Er du sikker på at du vil deaktivere brukeren")
               if (deaktiver) {
@@ -1762,7 +1764,7 @@ class KalenderDetaljer extends React.Component {
 
                             sokListeLi.appendChild(sokListeKnapp);
                             sokListeUl.appendChild(sokListeLi);
-                          }  
+                          }
                         }
                       });
                     }

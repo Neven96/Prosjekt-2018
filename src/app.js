@@ -784,8 +784,9 @@ class BrukerSok extends React.Component {
     if (this.innloggetBruker.Adminlvl <= 0) {
       return(
         <div id="soktest">
-          <input ref="inn" type="text" autoFocus/> <button ref="sokKnapp">Søk</button>
-          <div ref="sokeResultat">
+          <input type="text" ref="inn" id="sokeFeltInput" autoFocus/>
+          <button ref="sokKnapp" className="sokeKnapper">Søk</button>
+          <div ref="sokeResultat" id="sokeResultat">
           </div>
         </div>
       )
@@ -794,10 +795,11 @@ class BrukerSok extends React.Component {
     } else if (this.innloggetBruker.Adminlvl >= 1) {
       return(
         <div id="soktest">
-          <input ref="inn" type="text" autoFocus/> <button ref="sokKnapp">Søk</button>
-          <button ref="sokAktivering">Nye brukere</button>
-          <button ref="sokDeaktivert">Deaktiverte brukere</button>
-          <div ref="sokeResultat">
+          <input type="text" ref="inn" id="sokeFeltInput" autoFocus/>
+          <button ref="sokKnapp" className="sokeKnapper">Søk</button>
+          <button ref="sokAktivering" className="sokeKnapper">Nye brukere</button>
+          <button ref="sokDeaktivert" className="sokeKnapper">Deaktiverte brukere</button>
+          <div ref="sokeResultat" id="sokeResultat">
           </div>
         </div>
       )

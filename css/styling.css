@@ -206,6 +206,10 @@ input {
   margin-bottom: 3px;
 }
 
+#sokeFeltInput {
+  font-size: 1.5em;
+}
+
 #soktest {
   text-align: center;
 }
@@ -214,8 +218,16 @@ input {
   list-style-type: none;
 }
 
+#sokeResultat {
+  font-size: 1.5em;
+}
+
 .sokenavn {
   padding: 0;
+}
+
+.sokeKnapper {
+  font-size: 1.5em;
 }
 
 .aktiver {

@@ -1587,6 +1587,7 @@ class KalenderDetaljer extends React.Component {
               }
 
               arrangement.hentInteresserte(this.arrangement.arrid, (result) => {
+                this.refs.arrInteresserte.innerText = " "
                 this.refs.arrInteresseListe.innerText = " "
                 //Dersom brukeren er admin, hentes ut antall interesserte
                 if (this.innloggetBruker.Adminlvl >= 1 && result.length >= 1) {
@@ -1762,7 +1763,7 @@ class KalenderDetaljer extends React.Component {
 
                             sokListeLi.appendChild(sokListeKnapp);
                             sokListeUl.appendChild(sokListeLi);
-                          }  
+                          }
                         }
                       });
                     }

@@ -241,43 +241,43 @@ class RegistrerBruker extends React.Component {
       <h3>Fyll inn alle felter</h3>
       <h4 id="registrerPassordNotice">(og ikke bruk ditt ekte passord)</h4>
       <table id="registrertable">
-      <tbody>
-      <tr>
-      <td>Fornavn: </td>
-      <td><input type="text" ref="registrerFnavnInput" size="20" /></td>
-      </tr>
-      <tr>
-      <td>Etternavn: </td>
-      <td><input type="text" ref="registrerEnavnInput" size="20" /></td>
-      </tr>
-      <tr>
-      <td>Telefonnummer: </td>
-      <td><input type="number" ref="registrerTlfInput" size="20" min="0" /></td>
-      </tr>
-      <tr>
-      <td>Adresse: </td>
-      <td><input type="text" ref="registrerAdrInput" size="20" /></td>
-      </tr>
-      <tr>
-      <td>Postnr: </td>
-      <td><input type="number" ref="registrerPostnrInput" maxLength="4" size="4" min="0" /></td>
-      </tr>
-      <tr>
-      <td>Poststed: </td>
-      <td><input type="text" ref="registrerPoststedInput" readOnly /></td>
-      </tr>
-      <tr>
-      <td>Epost: </td>
-      <td><input type="text" ref="registrerEpostInput" size="20" /></td>
-      </tr>
-      <tr>
-      <td>Passord: </td>
-      <td><input type="password" ref="registrerPassordInput" size="20" /></td>
-      </tr>
-      <tr>
-      <td></td>
-      </tr>
-      </tbody>
+        <tbody>
+          <tr>
+            <td>Fornavn: </td>
+            <td><input type="text" ref="registrerFnavnInput" size="20" /></td>
+          </tr>
+          <tr>
+            <td>Etternavn: </td>
+            <td><input type="text" ref="registrerEnavnInput" size="20" /></td>
+          </tr>
+          <tr>
+            <td>Telefonnummer: </td>
+            <td><input type="number" ref="registrerTlfInput" size="20" min="0" /></td>
+          </tr>
+          <tr>
+            <td>Adresse: </td>
+            <td><input type="text" ref="registrerAdrInput" size="20" /></td>
+          </tr>
+          <tr>
+            <td>Postnr: </td>
+            <td><input type="number" ref="registrerPostnrInput" maxLength="4" size="4" min="0" /></td>
+          </tr>
+          <tr>
+            <td>Poststed: </td>
+            <td><input type="text" ref="registrerPoststedInput" readOnly /></td>
+          </tr>
+          <tr>
+            <td>Epost: </td>
+            <td><input type="text" ref="registrerEpostInput" size="20" /></td>
+          </tr>
+          <tr>
+            <td>Passord: </td>
+            <td><input type="password" ref="registrerPassordInput" size="20" /></td>
+          </tr>
+          <tr>
+            <td></td>
+          </tr>
+        </tbody>
       </table>
       <p id="feilRegistrering" ref="feilRegistrering" className="feilMelding"></p>
       <button id="registrerKnapp" ref="registrerKnapp" className="knapper">Registrer</button>
@@ -527,7 +527,7 @@ class Profil extends React.Component {
     //Kaller på hentbruker to ganger fordi hvorfor ikke :P
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
-    //**
+    //Setter opp navn og ting for profil
     if (this.refs.profilDiv) {
       this.refs.profilNavn.innerText = "Navn: "+this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn;
       this.refs.profilAdresse.innerText = "Adresse: "+this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed;
@@ -536,6 +536,7 @@ class Profil extends React.Component {
       this.refs.profilMedlemsnr.innerText = "Medlemsnummer: "+this.innloggetBruker.Medlemsnr;
       this.refs.profilVaktpoeng.innerText = "Vaktpoeng: "+this.innloggetBruker.Vaktpoeng;
 
+      //Henter kompetansene og rollene til brukeren
       bruker.hentBrukerKompetanse(this.innloggetBruker.Medlemsnr, (result) => {
         for (let kompetanse of result) {
           let liKomp = document.createElement("li");
@@ -559,7 +560,7 @@ class Profil extends React.Component {
       });
     }
   }
-  //**
+  //Setter opp passivbiten og gir den mulighet for å bli lagd
   passivUpdate() {
     let datoStart; let datoSlutt; let arrayStart; let arraySlutt;
     if (this.refs.profilDiv) {
@@ -581,6 +582,7 @@ class Profil extends React.Component {
             arrayStart = datoStart.split(" ");
           }
 
+          //Setter opp datoen som sjekker om du er passiv i fremtiden
           datoSlutt = new Date();
           datoSlutt.setDate(passiv.Slutt_dato.getDate());
           datoSlutt.setMonth(passiv.Slutt_dato.getMonth());
@@ -600,7 +602,7 @@ class Profil extends React.Component {
           this.refs.profilPassivListe.appendChild(passivUl);
         }
       });
-      //**
+      //Setter inn ny passiv i databasen
       let startdato; let sluttdato;
       this.refs.profilPassivKnapp.onclick = () => {
         startdato = this.refs.profilPassivStart.value;
@@ -636,32 +638,32 @@ class RedigerProfil extends React.Component {
       <div id="redigerprofil">
         <h3>Rediger profil</h3>
         <table id="redigerprofiltable">
-        <tbody>
-        <tr>
-        <td>Fornavn: </td>
-        <td><input type="text" ref="oppdaterFornavnInput" /></td>
-        </tr>
-        <tr>
-        <td>Etternavn: </td>
-        <td><input type="text" ref="oppdaterEtternavnInput" /></td>
-        </tr>
-        <tr>
-        <td>Telefonnummer: </td>
-        <td><input type="number" ref="oppdaterTlfInput" maxLength="8" /></td>
-        </tr>
-        <tr>
-        <td>Adresse: </td>
-        <td><input type="text" ref="oppdaterAdrInput" /></td>
-        </tr>
-        <tr>
-        <td>Postnr: </td>
-        <td><input type="number" ref="oppdaterPostnrInput" /></td>
-        </tr>
-        <tr>
-        <td>Poststed: </td>
-        <td><input type="text" ref="oppdaterPoststedInput" readOnly /></td>
-        </tr>
-        </tbody>
+          <tbody>
+            <tr>
+              <td>Fornavn: </td>
+              <td><input type="text" ref="oppdaterFornavnInput" /></td>
+            </tr>
+            <tr>
+              <td>Etternavn: </td>
+              <td><input type="text" ref="oppdaterEtternavnInput" /></td>
+            </tr>
+            <tr>
+              <td>Telefonnummer: </td>
+              <td><input type="number" ref="oppdaterTlfInput" maxLength="8" /></td>
+            </tr>
+            <tr>
+              <td>Adresse: </td>
+              <td><input type="text" ref="oppdaterAdrInput" /></td>
+            </tr>
+            <tr>
+              <td>Postnr: </td>
+              <td><input type="number" ref="oppdaterPostnrInput" /></td>
+            </tr>
+            <tr>
+              <td>Poststed: </td>
+              <td><input type="text" ref="oppdaterPoststedInput" readOnly /></td>
+            </tr>
+          </tbody>
         </table>
         <p ref="feilOppdatering" className="feilMelding"></p>
         <button ref="oppdaterBruker">Oppdater</button>
@@ -704,18 +706,22 @@ class RedigerProfil extends React.Component {
         }
       });
     };
-    //**
+    //Oppdaterer brukeren utifra verdiene som er oppgitt
     this.refs.oppdaterBruker.onclick = () => {
       oppFnavn = this.refs.oppdaterFornavnInput.value;
       oppEnavn = this.refs.oppdaterEtternavnInput.value;
       oppTlf = this.refs.oppdaterTlfInput.value;
       oppAdr = this.refs.oppdaterAdrInput.value;
       oppPostnr = this.refs.oppdaterPostnrInput.value;
+
+      //Sjekker om noen av feltene er tomme eller om telefon eller postnummeret er feil lengde
       if (erTom(oppFnavn) || erTom(oppEnavn) || erTom(oppTlf) || erTom(oppAdr) || erTom(oppPostnr)) {
         this.refs.feilOppdatering.innerText = "Ingen felter kan være tomme";
       } else if (oppTlf.length > 8 || oppTlf.length < 8 || oppPostnr.length > 4) {
         this.refs.feilOppdatering.innerText = "Telefon eller postnummer er feil lengde";
       } else {
+        //Sjekker om postnummeret eksisterer
+        //Sjekker om telefonnummeret eksisterer
         bruker.eksistererStedPostnr(oppPostnr, (result) => {
           if (result != undefined) {
             console.log("Postnummeroppdater funker");
@@ -780,8 +786,9 @@ class BrukerSok extends React.Component {
     } else if (this.innloggetBruker.Adminlvl >= 1) {
       return(
         <div id="soktest">
-          <input ref="inn" type="text" autoFocus/> <button ref="sokKnapp">Søk</button> <button ref="sokAktivering">Nye brukere</button>
-          <button ref="sokDeaktivert">Deaktivert</button>
+          <input ref="inn" type="text" autoFocus/> <button ref="sokKnapp">Søk</button>
+          <button ref="sokAktivering">Nye brukere</button>
+          <button ref="sokDeaktivert">Deaktiverte brukere</button>
           <div ref="sokeResultat">
           </div>
         </div>
@@ -1143,32 +1150,32 @@ class BrukerSokRediger extends React.Component {
       <div id="redigerprofil">
         <h3>Rediger profil</h3>
         <table id="redigerprofiltable">
-        <tbody>
-        <tr>
-        <td>Fornavn: </td>
-        <td><input type="text" ref="oppdaterFornavnInput" /></td>
-        </tr>
-        <tr>
-        <td>Etternavn: </td>
-        <td><input type="text" ref="oppdaterEtternavnInput" /></td>
-        </tr>
-        <tr>
-        <td>Telefonnummer: </td>
-        <td><input type="number" ref="oppdaterTlfInput" maxLength="8" /></td>
-        </tr>
-        <tr>
-        <td>Adresse: </td>
-        <td><input type="text" ref="oppdaterAdrInput" /></td>
-        </tr>
-        <tr>
-        <td>Postnr: </td>
-        <td><input type="number" ref="oppdaterPostnrInput" /></td>
-        </tr>
-        <tr>
-        <td>Poststed: </td>
-        <td><input type="text" ref="oppdaterPoststedInput" readOnly /></td>
-        </tr>
-        </tbody>
+          <tbody>
+            <tr>
+              <td>Fornavn: </td>
+              <td><input type="text" ref="oppdaterFornavnInput" /></td>
+            </tr>
+            <tr>
+              <td>Etternavn: </td>
+              <td><input type="text" ref="oppdaterEtternavnInput" /></td>
+            </tr>
+            <tr>
+              <td>Telefonnummer: </td>
+              <td><input type="number" ref="oppdaterTlfInput" maxLength="8" /></td>
+            </tr>
+            <tr>
+              <td>Adresse: </td>
+              <td><input type="text" ref="oppdaterAdrInput" /></td>
+            </tr>
+            <tr>
+              <td>Postnr: </td>
+              <td><input type="number" ref="oppdaterPostnrInput" /></td>
+            </tr>
+            <tr>
+              <td>Poststed: </td>
+              <td><input type="text" ref="oppdaterPoststedInput" readOnly /></td>
+            </tr>
+          </tbody>
         </table>
         <p ref="feilOppdatering" className="feilMelding"></p>
         <button ref="oppdaterBruker">Oppdater</button>
@@ -1210,18 +1217,22 @@ class BrukerSokRediger extends React.Component {
           }
         });
       };
-      //**
+      //Oppdaterer brukeren som er søkt etter
       this.refs.oppdaterBruker.onclick = () => {
         oppFnavn = this.refs.oppdaterFornavnInput.value;
         oppEnavn = this.refs.oppdaterEtternavnInput.value;
         oppTlf = this.refs.oppdaterTlfInput.value;
         oppAdr = this.refs.oppdaterAdrInput.value;
         oppPostnr = this.refs.oppdaterPostnrInput.value;
+
+        //Sjekker om noen felter er tomme eller om telefon eller postnummeret er feil lengde
         if (erTom(oppFnavn) || erTom(oppEnavn) || erTom(oppTlf) || erTom(oppAdr) || erTom(oppPostnr)) {
           this.refs.feilOppdatering.innerText = "Ingen felter kan være tomme";
         } else if (oppTlf.length > 8 || oppTlf.length < 8 || oppPostnr.length > 4) {
           this.refs.feilOppdatering.innerText = "Telefon eller postnummer er feil lengde"
         } else {
+          //Sjekker om postnummeret eksisterer
+          //Sjekker om telefon eksisterer
           bruker.eksistererStedPostnr(oppPostnr, (result) => {
             console.log("Poststedoppdater funker");
             if (result != undefined) {
@@ -1629,8 +1640,8 @@ class KalenderDetaljer extends React.Component {
             if (result.roller == null) {
               this.refs.arrMannskapRoller.innerText = "Ingen roller er satt opp enda";
             } else if (result.roller != null) {
-              //** ønske om implementering av roller fra databasen
-              this.refs.arrMannskapRoller.innerText = "Roller: "+result.roller;
+              //Henter rollene som er satt opp i arrangementet
+              this.refs.arrMannskapRoller.innerText = "Roller: \n"+result.roller;
             }
 
             arrangement.eksistererArrangementVakt(this.innloggetBruker.Medlemsnr, listeid, (result) => {
@@ -1666,7 +1677,8 @@ class KalenderDetaljer extends React.Component {
               }
             });
           });
-          //**
+
+          //Lager knappene for å redigere og slette arrangementet samt mer
           if (this.innloggetBruker.Adminlvl >= 1) {
             let redigerArrKnapp = document.createElement("button");
             let slettArrKnapp = document.createElement("button");
@@ -1698,7 +1710,7 @@ class KalenderDetaljer extends React.Component {
                 });
               }
             }
-            //**
+            //Sjekker om arrangementet er ferdig og viser ikke knappene hvis arrangementet er ferdig
             if (this.arrangement.ferdig == 0 && this.arrangement.startdato >= iDag) {
               redigerArrKnapp.innerText = "Rediger";
               slettArrKnapp.innerText = "Slett";
@@ -1817,11 +1829,12 @@ class KalenderDetaljer extends React.Component {
     }
   }
 
+  //Egen funksjon for å skrive ut kontaktpersonene, fordi de ikke trenger å oppdateres som resten
   kontaktUpdate() {
     //Kaller på hentbruker to ganger fordi hvorfor ikke :P
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
-    //**
+
     if (arrid) {
       arrangement.hentArrangement(arrid, (result) => {
         if (this.refs.arrangementDiv) {
@@ -1907,8 +1920,8 @@ class KalenderAdmin extends React.Component {
             </tbody>
           </table>
           <p ref="opprettArrangementAdvarsel"></p>
-          <button ref="opprettArrangement">Opprett arrangement</button>
-          <button ref="tilbakeArrangement">Lukk</button>
+          <button ref="opprettArrangement">Ferdig</button>
+          <button ref="tilbakeArrangement">Avbryt</button>
         </div>
       </div>
     );
@@ -1918,7 +1931,8 @@ class KalenderAdmin extends React.Component {
     //Kaller på hentbruker to ganger fordi hvorfor ikke :P
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
-    //**
+
+    //Henter all informasjon som er skrevet og lager arrangementet
     let arrNavn; let arrBeskrivelse; let arrDato; let arrSted; let kontaktFornavn; let kontaktEtternavn; let kontaktTlf; let kontaktEpost;
     this.refs.opprettArrangement.onclick = () => {
       arrNavn = this.refs.arrNavn.value;
@@ -1929,10 +1943,16 @@ class KalenderAdmin extends React.Component {
       kontaktEtternavn = this.refs.kontaktEtternavn.value;
       kontaktTlf = this.refs.kontaktTlf.value;
       kontaktEpost = this.refs.kontaktEpost.value;
-      //**
+
+      //Sjekker om noen av feltene er tomme og om telefonnummeret er riktig lengde og om det er en epost som skrives inn
       if (erTom(arrNavn) || erTom(arrBeskrivelse) || erTom(arrDato) || erTom(arrSted) || erTom(kontaktFornavn) || erTom(kontaktEtternavn) || erTom(kontaktTlf) || erTom(kontaktEpost)) {
         this.refs.opprettArrangementAdvarsel.innerText = "Fyll inn alle felter!";
+      } else if (kontaktTlf.length > 8 || kontaktTlf.length < 8) {
+        this.refs.opprettArrangementAdvarsel.innerText = "Telefonnummeret er feil lengde"
+      } else if (!kontaktEpost.includes("@") || !kontaktEpost.includes(".")) {
+        this.refs.opprettArrangementAdvarsel.innerText = "Eposten er feil";
       } else {
+        //Oppretter arrangementet og henter id-en og oppretter en mannskapsliste for arrangementet
         arrangement.opprettArrangement(arrNavn, arrBeskrivelse, arrDato, arrSted, this.innloggetBruker.Medlemsnr, (result) => {
           console.log("Arrangement opprettet");
           arrangement.hentArrangementId(arrNavn, arrDato, arrSted, (result) => {
@@ -1943,6 +1963,7 @@ class KalenderAdmin extends React.Component {
           });
         });
 
+        //Sjekker om det arrangementkontakten eksisterer og oppretter en og setter den til arrangementet
         arrangement.eksistererArrangementKontakt(kontaktTlf, kontaktEpost, (result) => {
           if (result == undefined) {
             arrangement.opprettArrangementKontakt(kontaktFornavn, kontaktEtternavn, kontaktTlf, kontaktEpost, (result) => {
@@ -1958,6 +1979,7 @@ class KalenderAdmin extends React.Component {
           } else if (result != undefined) {
             console.log("Arrangementkontakt eksisterer allerede");
 
+            //Hvis arrangementkontakten eksisterer, henter ut den og setter den til arrangementet
             arrangement.velgArrangementKontakt(kontaktTlf, kontaktEpost, (result) => {
               arrangement.oppdaterArrangementKontakt(result.Kontakt_id, arrNavn, arrDato, arrSted, (result) => {
                 console.log("Kontakt lagt til i arrangement");
@@ -2126,7 +2148,8 @@ class RedigerArrangement extends React.Component {
             }
           });
         };
-        //**
+
+        //Henter ut inforamsjonen som ble skrevet inn og redigerer arrangementet
         this.refs.redigerArrangementKnapp.onclick = () => {
           arrnavn = this.refs.oppdaterArrNavn.value
           beskrivelse = this.refs.oppdaterArrBeskrivelse.value
@@ -2141,6 +2164,7 @@ class RedigerArrangement extends React.Component {
           antallMannskap = this.refs.antallMannskap.value;
           rollerMannskap = this.refs.rollerMannskap.value;
 
+          //Sjekker om noen felter er tomme, og deretter redigerer arrangementet og mannskapslisten
           if (erTom(arrnavn) || erTom(beskrivelse) || erTom(arrDato) || erTom(oppmotetid) || erTom(sted) || erTom(postnr) || erTom(starttid)) {
 
           } else {
@@ -2203,7 +2227,7 @@ class AvsluttArrangement extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
     let string; let array;
-    //**
+    //Gjør klar og ferdigstiller arrangementet
     if (arrid) {
       arrangement.hentArrangement(arrid, (result) => {
         this.arrangement = result;
@@ -2220,7 +2244,7 @@ class AvsluttArrangement extends React.Component {
             this.refs.arrangementAvsluttDato.innerText = "Oppmøte: "+array[2]+" "+array[1]+" "+array[3];
           }
         }
-        //**
+        //Henter de som var satt opp til vakt på arrangementet og gir en sjekkboks for å si om de møtte opp på vakt eller ikke
         arrangement.hentMannskapsliste(this.arrangement.arrid, (result) => {
           arrangement.hentMannskapsVakter(result.listeid, (result) => {
             for (let medlem of result) {
@@ -2241,6 +2265,8 @@ class AvsluttArrangement extends React.Component {
               this.refs.arrangementAvsluttVakter.appendChild(medlemP);
             }
           });
+
+          //Ferdigstiller arrangementet og alle som var satt opp på vakt til det
           this.refs.avsluttArrangementKnapp.onclick = () => {
             let erDuSikker = confirm("Vil du ferdigstille arrangementet?")
             if (erDuSikker) {

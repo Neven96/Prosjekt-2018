@@ -282,7 +282,7 @@ input {
   font-weight: bolder;
 }
 
-.skjulBrukerKompetanseRolle, #skjulKontaktperson, #skjulFerdigstillArrangementKnapp, #skjulMannskapSok {
+.skjulBrukerKompetanseRolle, .skjulSokBrukerKnapper, #skjulKontaktperson, #skjulFerdigstillArrangementKnapp, #skjulMannskapSok {
   display: none;
 }
 

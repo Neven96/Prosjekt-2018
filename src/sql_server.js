@@ -61,8 +61,9 @@ class Bruker {
     return JSON.parse(ting);
   }
 
+  //Henter alle brukere som er aktivert og sorterer etter vaktpoeng
   hentBrukereFraVaktpoeng(callback) {
-    connection.query("SELECT * FROM Medlem ORDER BY Vaktpoeng ASC", (error, result) => {
+    connection.query("SELECT * FROM Medlem WHERE Aktivert = 1 ORDER BY Vaktpoeng ASC", (error, result) => {
       if (error) throw error;
 
       callback(result);
@@ -160,6 +161,8 @@ class Bruker {
     });
   }
 
+  //Sjekker om brukeren er passiv fra en dato til en annen
+  //Fungerer ikke/brukes ikke
   sokBrukerArrangement(dato, callback) {
     connection.query("SELECT * FROM Medlem, Passiv WHERE Medlem.Medlemsnr = Passiv.Medlemsnr AND Passiv.Slutt_dato < ? OR Passiv.Start_dato > ? ORDER BY Medlem.Vaktpoeng ASC", [dato, dato], (error, result) => {
       if(error) throw error;
@@ -168,6 +171,7 @@ class Bruker {
     });
   }
 
+  //henter alle brukerer som mangler aktivering
   hentBrukerAktivering(callback) {
     connection.query("SELECT * FROM Medlem WHERE Aktivert = ? ORDER BY Fornavn ASC", [0], (error, result) => {
       if (error) throw error;
@@ -176,6 +180,7 @@ class Bruker {
     });
   }
 
+  //henter alle brukere som er deaktiverte
   hentBrukerDeaktivert(callback) {
     connection.query("SELECT * FROM Medlem WHERE Aktivert = ? ORDER BY Fornavn ASC", [2], (error, result) => {
       if (error) throw error;
@@ -211,6 +216,7 @@ class Bruker {
     });
   }
 
+  //Setter bruker som passiv fra en dato
   brukerSettPassiv(medlemsnr, startdato, sluttdato, callback) {
     connection.query("INSERT INTO Passiv (Medlemsnr, Start_dato, Slutt_dato) VALUES (?, ?, ?)", [medlemsnr, startdato, sluttdato], (error, result) => {
       if (error) throw error;
@@ -219,6 +225,7 @@ class Bruker {
     });
   }
 
+  //henter alle passivdatoer til en bruker
   hentBrukerPassiv(medlemsnr, callback) {
     connection.query("SELECT * FROM Passiv WHERE Medlemsnr = ?", [medlemsnr], (error, result) => {
       if (error) throw error;
@@ -227,6 +234,7 @@ class Bruker {
     });
   }
 
+  //Sjekker om brukeren er passiv på en dato
   sjekkBrukerPassiv(medlemsnr, dato, callback) {
     connection.query("SELECT 1 FROM Passiv WHERE Medlemsnr = ? AND (Start_dato < ? AND Slutt_dato > ?)", [medlemsnr, dato, dato], (error, result) => {
       if (error) throw error;
@@ -271,7 +279,8 @@ class Bruker {
     });
   }
 
-  //Henter
+  //Henter alle roller og kompetanser til brukeren hvor kompetanse ikke har gåttut
+  //fungerer ikke/brukes ikke
   hentBrukerKompetanseRolle(medlemsnr, callback) {
     connection.query("SELECT k.Kompetanse_navn, bk.Varighet_slutt, r.Rolle_navn FROM  Kompetanse k, Bruker_kompetanse bk, Medlem m, Bruker_rolle br, Rolle r, Rolle_kompetanse rk WHERE m.Medlemsnr = ? AND m.Medlemsnr = bk.Medlemsnr AND bk.Kompetanse_id = k.Kompetanse_id AND m.Medlemsnr = br.Medlemsnr AND br.Rolle_id = r.Rolle_id AND r.Rolle_id = rk.Rolle_id AND rk.Kompetanse_id = k.Kompetanse_id ORDER BY r.Rolle_id ASC;", [medlemsnr], (error, result) => {
       if (error) throw error;
@@ -280,6 +289,7 @@ class Bruker {
     });
   }
 
+  //Henter all kompetanse
   hentKompetanse(callback) {
     connection.query("SELECT * FROM Kompetanse", (error, result) => {
       if (error) throw error;
@@ -288,6 +298,7 @@ class Bruker {
     });
   }
 
+  //Henter alle roller
   hentRoller(callback) {
     connection.query("SELECT * FROM Rolle", (error, result) => {
       if (error) throw error;
@@ -296,6 +307,7 @@ class Bruker {
     });
   }
 
+  //Gir brukeren en kompetanse
   giBrukerKompetanse(medlemsnr, kompetanseid, callback) {
     connection.query("INSERT INTO Bruker_kompetanse (Medlemsnr, Kompetanse_id) VALUES (?, ?)", [medlemsnr, kompetanseid], (error, result) => {
       if (error) throw error;
@@ -304,6 +316,7 @@ class Bruker {
     });
   }
 
+  //Gir brukeren en rolle
   giBrukerRolle(medlemsnr, rolleid, callback) {
     connection.query("INSERT INTO Bruker_rolle (Medlemsnr, Rolle_id) VALUES (?, ?)", [medlemsnr, rolleid], (error, result) => {
       if (error) throw error;
@@ -312,6 +325,7 @@ class Bruker {
     });
   }
 
+  //Fjerner brukerens kompetanse
   fjernBrukerKompetanse(medlemsnr, kompetanseid, callback) {
     connection.query("DELETE FROM Bruker_kompetanse WHERE Medlemsnr = ? AND Kompetanse_id = ?", [medlemsnr, kompetanseid], (error, result) => {
       if (error) throw error;
@@ -320,6 +334,7 @@ class Bruker {
     });
   }
 
+  //Fjerner brukerens rolle
   fjernBrukerRolle(medlemsnr, rolleid, callback) {
     connection.query("DELETE FROM Bruker_rolle WHERE Medlemsnr = ? AND Rolle_id = ?", [medlemsnr, rolleid], (error, result) => {
       if (error) throw error;
@@ -381,6 +396,7 @@ class Arrangement {
     });
   }
 
+  //Henter arrangmentId utifra informasjon når arrangementet ble opprettet
   hentArrangementId(arrnavn, dato, sted, callback) {
     connection.query("SELECT arrid FROM Arrangement WHERE arrnavn = ? AND startdato = ? AND oppmøtested = ?", [arrnavn, dato, sted], (error, result) => {
       if (error) throw error;
@@ -389,6 +405,7 @@ class Arrangement {
     });
   }
 
+  //Henter manskapsliste til et arrangement
   hentMannskapsliste(arrid, callback) {
     connection.query("SELECT * FROM Mannskapsliste WHERE arrid = ?", [arrid], (error, result) => {
       if (error) throw error;
@@ -424,6 +441,7 @@ class Arrangement {
     });
   }
 
+  //Henter ut alle interesserte i et arrangement
   hentInteresserte(arrid, callback) {
     connection.query("SELECT * FROM Interesse WHERE Arrid = ?", [arrid], (error, result) => {
       if (error) throw error;
@@ -646,6 +664,8 @@ class Arrangement {
     });
   }
 
+  //Setter vakten til å være ferdig, samt arrangementet
+  //Deler også ut vaktpoeng til de som har deltatt
   ferdigstillVaktVaktpoeng(medlemsnr, arrid, callback) {
     connection.query("UPDATE Vakt, Medlem, Arrangement, Mannskapsliste SET Medlem.Vaktpoeng = Medlem.Vaktpoeng + Arrangement.vaktpoeng, Vakt.oppdatert = 1 WHERE Arrangement.arrid = ? AND Medlem.Medlemsnr = ? AND (Vakt.Medlemsnr = ? AND Arrangement.arrid = Mannskapsliste.arrid AND Mannskapsliste.listeid = Vakt.listeid)", [arrid, medlemsnr, medlemsnr], (error, result) => {
       if (error) throw error;
@@ -654,6 +674,7 @@ class Arrangement {
     });
   }
 
+  //Ferdigstiller arrangement
   ferdigstillArrangement(arrid, callback) {
     connection.query("UPDATE Arrangement SET ferdig = 1 WHERE arrid = ?", [arrid], (error, result) => {
       if (error) throw error;
@@ -670,7 +691,6 @@ class Arrangement {
       callback();
     });
   }
-
   slettMannskapsliste(arrid, callback) {
     connection.query("DELETE FROM Mannskapsliste WHERE arrid = ?", [arrid], (error, result) => {
       if (error) throw error;
@@ -678,7 +698,6 @@ class Arrangement {
       callback();
     });
   }
-
   slettInteresserte(arrid, callback) {
     connection.query("DELETE FROM Interesse WHERE arrid = ?", [arrid], (error, result) => {
       if (error) throw error;
@@ -686,7 +705,6 @@ class Arrangement {
       callback();
     });
   }
-
   slettVakter(listeid, callback) {
     connection.query("DELETE FROM Vakt WHERE listeid = ?", [listeid], (error, result) => {
       if (error) throw error;

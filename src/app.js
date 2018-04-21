@@ -1748,19 +1748,21 @@ class KalenderDetaljer extends React.Component {
                     if (result == undefined) {
                       arrangement.sjekkInteresse(medlem.Medlemsnr, this.arrangement.arrid, (result) => {
                         if (result == undefined) {
-                          let sokListeLi = document.createElement("li");
-                          sokListeLi.innerText = medlem.Fornavn+" "+medlem.Etternavn+", Vaktpoeng: "+medlem.Vaktpoeng+" ";
-                          let sokListeKnapp = document.createElement("button");
-                          sokListeKnapp.innerText = "Meld interessert";
-                          sokListeKnapp.onclick = () => {
-                            arrangement.meldInteressert(medlem.Medlemsnr, this.arrangement.arrid, (result) => {
-                              console.log("Bruker: "+medlem.Fornavn+" meldt interessert");
-                              this.update();
-                            });
-                          }
+                          if (medlem.Aktivert == 1) {
+                            let sokListeLi = document.createElement("li");
+                            sokListeLi.innerText = medlem.Fornavn+" "+medlem.Etternavn+", Vaktpoeng: "+medlem.Vaktpoeng+" ";
+                            let sokListeKnapp = document.createElement("button");
+                            sokListeKnapp.innerText = "Meld interessert";
+                            sokListeKnapp.onclick = () => {
+                              arrangement.meldInteressert(medlem.Medlemsnr, this.arrangement.arrid, (result) => {
+                                console.log("Bruker: "+medlem.Fornavn+" meldt interessert");
+                                this.update();
+                              });
+                            }
 
-                          sokListeLi.appendChild(sokListeKnapp);
-                          sokListeUl.appendChild(sokListeLi);
+                            sokListeLi.appendChild(sokListeKnapp);
+                            sokListeUl.appendChild(sokListeLi);
+                          }  
                         }
                       });
                     }

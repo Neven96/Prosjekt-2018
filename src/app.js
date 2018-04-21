@@ -799,12 +799,10 @@ class BrukerSok extends React.Component {
           <button ref="sokKnapp" className="sokeKnapper">Søk</button>
           <button ref="sokAktivering" className="sokeKnapper">Nye brukere</button>
           <button ref="sokDeaktivert" className="sokeKnapper">Deaktiverte brukere</button>
-          <div ref="sokeResultat" id="sokeResultat">
-          </div>
+          <div ref="sokeResultat" id="sokeResultat"></div>
         </div>
       )
     }
-
   }
 
   componentDidMount() {

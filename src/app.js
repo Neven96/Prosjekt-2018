@@ -946,12 +946,15 @@ class BrukerSokDetaljer extends React.Component {
           } else if (this.sokBruker.Aktivert == 1 && this.sokBruker.Medlemsnr != this.innloggetBruker.Medlemsnr && this.sokBruker.Adminlvl <= this.innloggetBruker.Adminlvl) {
             this.refs.aktiveringsKnapp.innerText = "Deaktiver";
             this.refs.aktiveringsKnapp.onclick = () => {
-              bruker.deaktiverBruker(this.sokBruker.Medlemsnr, (result) => {
-                console.log("Bruker ble deaktivert");
-                this.tomSelect();
-                this.update();
-                this.knapperKompetanseRollerUpdate();
-              });
+              let deaktiver = confirm("Er du sikker på at du vil deaktivere brukeren")
+              if (deaktiver) {
+                bruker.deaktiverBruker(this.sokBruker.Medlemsnr, (result) => {
+                  console.log("Bruker ble deaktivert");
+                  this.tomSelect();
+                  this.update();
+                  this.knapperKompetanseRollerUpdate();
+                });
+              }
             }
             //Fjerner alle knapper og liknende hvis bruker er deaktivert, eller du søker opp den innloggede brukeren, eller hvis brukeren er høyere admin enn den innloggede brukeren
           } else if (this.sokBruker.Aktivert == 2 || this.sokBruker.Medlemsnr == this.innloggetBruker.Medlemsnr || this.sokBruker.Adminlvl > this.innloggetBruker.Adminlvl || this.sokBruker.Medlemsnr == 10017) {
@@ -1998,8 +2001,8 @@ class RedigerArrangement extends React.Component {
           </table>
         </div>
         <div ref="redigerArrangementKnapperDiv" id="redigerArrangementKnapperDiv">
-          <button ref="redigerArrangementKnapp" id="redigerArrangementKnapp">Rediger</button>
-          <button ref="avbrytRedigerArrangementKnapp" id="avbrytRedigerArrangementKnapp">Lukk</button>
+          <button ref="redigerArrangementKnapp" id="redigerArrangementKnapp">Ferdig</button>
+          <button ref="avbrytRedigerArrangementKnapp" id="avbrytRedigerArrangementKnapp">Avbryt</button>
         </div>
       </div>
     );

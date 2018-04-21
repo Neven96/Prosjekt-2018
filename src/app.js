@@ -842,7 +842,7 @@ class BrukerSokDetaljer extends React.Component {
         <div className="sentrertboks" ref="brukerSokDetaljer">
           <NavLink exact to="/bruker/{this.innloggetBruker.Medlemsnr}/sok" className="linker">Tilbake</NavLink>
           <ul>
-            <li>Navn: {this.sokBruker.Fornavn} {this.sokBruker.Etternavn}</li>
+            <li ref="sokBrukerNavn"></li>
             <li>Tlf: {this.sokBruker.Telefon}</li>
             <li>Epost: {this.sokBruker.Epost}</li>
             <li>Adresse: {this.sokBruker.Adresse}</li>
@@ -908,6 +908,12 @@ class BrukerSokDetaljer extends React.Component {
           this.sokBruker.Adresse = "Deaktivert";
           this.sokBruker.Postnr = "Deaktivert";
         }
+
+        if (this.sokBruker.Adminlvl >= 1) {
+          this.refs.sokBrukerNavn.innerText = "Navn: "+this.sokBruker.Fornavn+" "+this.sokBruker.Etternavn+", (Administrator)";
+        } else if (this.sokBruker.Adminlvl <= 0) {
+          this.refs.sokBrukerNavn.innerText = "Navn: "+this.sokBruker.Fornavn+" "+this.sokBruker.Etternavn;
+        }
       }
     });
   }
@@ -930,6 +936,7 @@ class BrukerSokDetaljer extends React.Component {
               bruker.aktiverBruker(this.sokBruker.Medlemsnr, (result) => {
                 console.log("Bruker ble aktivert");
                 this.tomSelect();
+                this.update();
                 this.knapperKompetanseRollerUpdate();
               });
             }
@@ -939,6 +946,7 @@ class BrukerSokDetaljer extends React.Component {
               bruker.deaktiverBruker(this.sokBruker.Medlemsnr, (result) => {
                 console.log("Bruker ble deaktivert");
                 this.tomSelect();
+                this.update();
                 this.knapperKompetanseRollerUpdate();
               });
             }
@@ -958,6 +966,7 @@ class BrukerSokDetaljer extends React.Component {
             bruker.adminBruker(this.sokBruker.Medlemsnr, this.refs.adminLevelSelect.value, (result) =>{
               console.log("Brukeren ble gjort til Adminlvl: "+this.refs.adminLevelSelect.value);
               this.tomSelect();
+              this.update();
               this.knapperKompetanseRollerUpdate();
             });
           }
@@ -969,11 +978,18 @@ class BrukerSokDetaljer extends React.Component {
             }
           }
 
-          bruker.hentKompetanse((result) => {
+          bruker.hentBrukerIkkeKompetanse(this.sokBruker.Medlemsnr, (result) => {
+            this.refs.brukerKompetanseSelect.className = "";
+            this.refs.brukerKompetanseKnapp.className = "";
+
             for (let kompetanse of result) {
               let key = kompetanse.Kompetanse_navn;
               let verdi = kompetanse.Kompetanse_id;
               this.refs.brukerKompetanseSelect.add(new Option(key, verdi));
+            }
+            if (result.length == 0) {
+              this.refs.brukerKompetanseSelect.className = "skjulBrukerKompetanseRolle";
+              this.refs.brukerKompetanseKnapp.className = "skjulBrukerKompetanseRolle";
             }
           });
 
@@ -984,11 +1000,18 @@ class BrukerSokDetaljer extends React.Component {
             });
           }
 
-          bruker.hentRoller((result) => {
+          bruker.hentBrukerIkkeRoller(this.sokBruker.Medlemsnr, (result) => {
+            this.refs.brukerRolleSelect.className = "";
+            this.refs.brukerRolleKnapp.className = "";
+
             for (let rolle of result) {
               let key = rolle.Rolle_navn;
               let verdi = rolle.Rolle_id;
               this.refs.brukerRolleSelect.add(new Option(key, verdi));
+            }
+            if (result.length == 0 || result[0].Rolle_id == 14) {
+              this.refs.brukerRolleSelect.className = "skjulBrukerKompetanseRolle";
+              this.refs.brukerRolleKnapp.className = "skjulBrukerKompetanseRolle";
             }
           });
 

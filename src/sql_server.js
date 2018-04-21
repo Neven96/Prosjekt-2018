@@ -245,7 +245,7 @@ class Bruker {
   }
 
   //Henter kompetanse som brukeren ikke har
-  hentBrukerIkkeKompetanse(medlemsnr, iDag, callback) {
+  hentBrukerIkkeKompetanse(medlemsnr, callback) {
     connection.query("SELECT Kompetanse_id, Kompetanse_navn FROM Kompetanse k WHERE Kompetanse_id NOT IN(SELECT Kompetanse_id FROM Bruker_kompetanse bk WHERE bk.Medlemsnr = ?)", [medlemsnr], (error, result) => {
       if (error) throw error;
 
@@ -256,6 +256,15 @@ class Bruker {
   //Henter rollene til brukeren
   hentBrukerRoller(medlemsnr, callback) {
     connection.query("SELECT * FROM Rolle, Bruker_rolle WHERE Rolle.Rolle_id = Bruker_rolle.Rolle_id AND Bruker_rolle.Medlemsnr = ?", [medlemsnr], (error, result) => {
+      if (error) throw error;
+
+      callback(result);
+    });
+  }
+
+  //Henter rollene som brukeren ikke har
+  hentBrukerIkkeRoller(medlemsnr, callback) {
+    connection.query("SELECT Rolle_id, Rolle_navn FROM Rolle r WHERE Rolle_id NOT IN(SELECT Rolle_id FROM Bruker_rolle br WHERE br.Medlemsnr = ?)", [medlemsnr], (error, result) => {
       if (error) throw error;
 
       callback(result);

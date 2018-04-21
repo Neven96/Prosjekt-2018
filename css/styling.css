@@ -282,7 +282,7 @@ input {
   font-weight: bolder;
 }
 
-#skjulKontaktperson, #skjulFerdigstillArrangementKnapp, #skjulMannskapSok {
+.skjulBrukerKompetanseRolle, #skjulKontaktperson, #skjulFerdigstillArrangementKnapp, #skjulMannskapSok {
   display: none;
 }
 

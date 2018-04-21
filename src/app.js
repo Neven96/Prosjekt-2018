@@ -389,7 +389,7 @@ class LoggInn extends React.Component {
         <td><input type="text" ref="brukernavnInput" className="logginninput" autoFocus /></td>
         </tr>
         <tr>
-        <td>Logg inn: </td>
+        <td>Passord: </td>
         <td><input type="password" ref="passordInput" className="logginninput" /></td>
         </tr>
         </tbody>

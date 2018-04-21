@@ -1086,17 +1086,20 @@ class BrukerSokDetaljer extends React.Component {
             for (let kompetanse of result) {
               let liKomp = document.createElement("li");
               liKomp.innerText = kompetanse.Kompetanse_navn;
-              let fjernKompKnapp = document.createElement("button");
-              fjernKompKnapp.innerText = "Fjern";
+              if (this.sokBruker.Aktivert <= 1) {
+                let fjernKompKnapp = document.createElement("button");
+                fjernKompKnapp.innerText = "Fjern";
 
-              fjernKompKnapp.onclick = () => {
-                bruker.fjernBrukerKompetanse(this.sokBruker.Medlemsnr, kompetanse.Kompetanse_id, (result) => {
-                  console.log("Fjernet kompetanse fra bruker");
-                  this.knapperKompetanseRollerUpdate();
-                });
+                fjernKompKnapp.onclick = () => {
+                  bruker.fjernBrukerKompetanse(this.sokBruker.Medlemsnr, kompetanse.Kompetanse_id, (result) => {
+                    console.log("Fjernet kompetanse fra bruker");
+                    this.knapperKompetanseRollerUpdate();
+                  });
+                }
+
+                liKomp.appendChild(fjernKompKnapp);
               }
 
-              liKomp.appendChild(fjernKompKnapp);
               ulKomp.appendChild(liKomp);
             }
             this.refs.sokBrukerKompetanseDiv.appendChild(ulKomp);
@@ -1108,17 +1111,20 @@ class BrukerSokDetaljer extends React.Component {
             for (let rolle of result) {
               let liRolle = document.createElement("li");
               liRolle.innerText = rolle.Rolle_navn;
-              let fjernRolleKnapp = document.createElement("button");
-              fjernRolleKnapp.innerText = "Fjern";
+              if (this.sokBruker.Aktivert <= 1) {
+                let fjernRolleKnapp = document.createElement("button");
+                fjernRolleKnapp.innerText = "Fjern";
 
-              fjernRolleKnapp.onclick = () => {
-                bruker.fjernBrukerRolle(this.sokBruker.Medlemsnr, rolle.Rolle_id, (result) => {
-                  console.log("Fjernet rolle fra bruker");
-                  this.knapperKompetanseRollerUpdate();
-                });
+                fjernRolleKnapp.onclick = () => {
+                  bruker.fjernBrukerRolle(this.sokBruker.Medlemsnr, rolle.Rolle_id, (result) => {
+                    console.log("Fjernet rolle fra bruker");
+                    this.knapperKompetanseRollerUpdate();
+                  });
+                }
+
+                liRolle.appendChild(fjernRolleKnapp);
               }
 
-              liRolle.appendChild(fjernRolleKnapp);
               ulRolle.appendChild(liRolle);
             }
             this.refs.sokBrukerRolleDiv.appendChild(ulRolle);

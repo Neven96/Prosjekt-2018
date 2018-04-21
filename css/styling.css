@@ -284,7 +284,11 @@ span.arrNavn {
   font-weight: bolder;
 }
 
+<<<<<<< HEAD
 #skjulKontaktperson, #skjulFerdigstillArrangementKnapp, #skjulMannskapSok {
+=======
+.skjulBrukerKompetanseRolle, .skjulSokBrukerKnapper, #skjulKontaktperson, #skjulFerdigstillArrangementKnapp, #skjulMannskapSok {
+>>>>>>> 3fd1ed4119057e3b711a4752e7842f1d86d9c675
   display: none;
 }
 

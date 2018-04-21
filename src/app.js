@@ -850,9 +850,9 @@ class BrukerSokDetaljer extends React.Component {
         <div className="sentrertboks" ref="brukerSokDetaljer">
           <ul>
             <NavLink exact to="/bruker/{this.innloggetBruker.Medlemsnr}/sok" className="linker" >Tilbake</NavLink>
-            <li>Navn: {this.sokBruker.Fornavn} {this.sokBruker.Etternavn}</li>
-            <li>Tlf: {this.sokBruker.Telefon}</li>
-            <li>Epost: {this.sokBruker.Epost}</li>
+            <li ref="sokBrukerNavn"></li>
+            <li ref="sokBrukerTlf"></li>
+            <li ref="sokBrukerEpost"></li>
           </ul>
         </div>
       );
@@ -862,11 +862,11 @@ class BrukerSokDetaljer extends React.Component {
           <NavLink exact to="/bruker/{this.innloggetBruker.Medlemsnr}/sok" className="linker">Tilbake</NavLink>
           <ul>
             <li ref="sokBrukerNavn"></li>
-            <li>Tlf: {this.sokBruker.Telefon}</li>
-            <li>Epost: {this.sokBruker.Epost}</li>
-            <li>Adresse: {this.sokBruker.Adresse}</li>
-            <li>Postnummer og sted: {this.sokBruker.Postnr} {this.sokBrukerPoststed.Poststed}</li>
-            <li>Medlemsnr: {this.sokBruker.Medlemsnr}</li>
+            <li ref="sokBrukerTlf"></li>
+            <li ref="sokBrukerEpost"></li>
+            <li ref="sokBrukerAdresse"></li>
+            <li ref="sokBrukerPost"></li>
+            <li ref="sokBrukerMedlemsnr"></li>
           </ul>
           <div ref="sokBrukerKnappeDiv">
             <button ref="aktiveringsKnapp" id="aktiveringsKnapp" className="knapper"></button> <br />
@@ -888,8 +888,16 @@ class BrukerSokDetaljer extends React.Component {
   }
 
   componentDidMount() {
-    this.update();
-    this.knapperKompetanseRollerUpdate();
+    if (sokMedlemsnr) {
+      bruker.hentSokBruker(sokMedlemsnr, (result) => {
+        this.sokBruker = result;
+        bruker.hentPoststed(this.sokBruker.Postnr, (result) => {
+          this.sokBrukerPoststed = result;
+          this.update();
+          this.knapperKompetanseRollerUpdate();
+        });
+      });
+    }
   }
 
   update() {
@@ -897,41 +905,51 @@ class BrukerSokDetaljer extends React.Component {
     this.innloggetBruker = bruker.hentBruker();
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
 
+    let poststed;
+
+    //Ignorer denne, ikke noe spennende her (plystre, plystre)
+    if (this.sokBruker.Medlemsnr == 10017 && this.innloggetBruker.Medlemsnr != 10017) {
+      this.sokBruker.Epost = "Hemmelig";
+      this.sokBruker.Telefon = "Hemmelig";
+    }
+
     bruker.hentSokBruker(sokMedlemsnr, (result) => {
       this.sokBruker = result;
-      if (this.sokBruker) {
-        //Ignorer denne, ikke noe spennende her (plystre, plystre)
-        if (this.sokBruker.Medlemsnr == 10017 && this.innloggetBruker.Medlemsnr != 10017) {
-          this.sokBruker.Epost = "Hemmelig";
-          this.sokBruker.Telefon = "Hemmelig";
+      //Fjerner epost og telefon og adresse og liknende hvis bruker er deaktivert
+      if (this.sokBruker.Aktivert <= 1) {
+        if (this.sokBruker.Adminlvl >= 1) {
+          this.refs.sokBrukerNavn.innerText = "Navn: "+this.sokBruker.Fornavn+" "+this.sokBruker.Etternavn+", (Administrator)";
+        } else if (this.sokBruker.Adminlvl <= 0) {
+          this.refs.sokBrukerNavn.innerText = "Navn: "+this.sokBruker.Fornavn+" "+this.sokBruker.Etternavn;
         }
 
-        //Henter poststedet til brukeren
-        if (this.sokBruker.Aktivert <= 1) {
-          bruker.hentPoststed(this.sokBruker.Postnr, (result) => {
-            this.sokBrukerPoststed = result;
-            this.forceUpdate();
-          });
-        } else if (this.sokBruker.Aktivert == 2) {
-          bruker.hentPoststed(this.sokBruker.Postnr, (result) => {
-            this.sokBrukerPoststed = result;
-            this.sokBrukerPoststed.Poststed = "Deaktivert";
-            this.forceUpdate();
-          });
+        poststed = this.sokBrukerPoststed.Poststed;
+        this.refs.sokBrukerTlf.innerText = "Tlf: "+this.sokBruker.Telefon;
+        this.refs.sokBrukerEpost.innerText = "Epost: "+this.sokBruker.Epost;
+        if (this.innloggetBruker.Adminlvl >= 1) {
+          this.refs.sokBrukerAdresse.innerText = "Adresse: "+this.sokBruker.Adresse;
+          this.refs.sokBrukerPost.innerText = "Postnummer og sted: "+this.sokBruker.Postnr+" "+poststed;
+          this.refs.sokBrukerMedlemsnr.innerText = "Medlemsnr: "+this.sokBruker.Medlemsnr;
         }
-        //funker ikke
-        //Fjerner epost og telefon og adresse og liknende hvis bruker er deaktivert
-        if (this.sokBruker.Aktivert == 2) {
-          this.sokBruker.Epost = "Deaktivert";
-          this.sokBruker.Telefon = "Deaktivert";
-          this.sokBruker.Adresse = "Deaktivert";
-          this.sokBruker.Postnr = "Deaktivert";
-        }
+      } else if (this.sokBruker.Aktivert == 2) {
+        this.sokBruker.Epost = "Deaktivert";
+        this.sokBruker.Telefon = "Deaktivert";
+        this.sokBruker.Adresse = "Deaktivert";
+        this.sokBruker.Postnr = "Deaktivert";
+        poststed = "Deaktivert";
 
         if (this.sokBruker.Adminlvl >= 1) {
           this.refs.sokBrukerNavn.innerText = "Navn: "+this.sokBruker.Fornavn+" "+this.sokBruker.Etternavn+", (Administrator)";
         } else if (this.sokBruker.Adminlvl <= 0) {
           this.refs.sokBrukerNavn.innerText = "Navn: "+this.sokBruker.Fornavn+" "+this.sokBruker.Etternavn;
+        }
+
+        this.refs.sokBrukerTlf.innerText = "Tlf: "+this.sokBruker.Telefon;
+        this.refs.sokBrukerEpost.innerText = "Epost: "+this.sokBruker.Epost;
+        if (this.innloggetBruker.Adminlvl >= 1) {
+          this.refs.sokBrukerAdresse.innerText = "Adresse: "+this.sokBruker.Adresse;
+          this.refs.sokBrukerPost.innerText = "Postnummer og sted: "+this.sokBruker.Postnr+" "+poststed;
+          this.refs.sokBrukerMedlemsnr.innerText = "Medlemsnr: "+this.sokBruker.Medlemsnr;
         }
       }
     });
@@ -960,6 +978,7 @@ class BrukerSokDetaljer extends React.Component {
               });
             }
           } else if (this.sokBruker.Aktivert == 1 && this.sokBruker.Medlemsnr != this.innloggetBruker.Medlemsnr && this.sokBruker.Adminlvl <= this.innloggetBruker.Adminlvl) {
+            this.refs.sokBrukerKnappeDiv.className = "";
             this.refs.aktiveringsKnapp.innerText = "Deaktiver";
             this.refs.aktiveringsKnapp.onclick = () => {
               let deaktiver = confirm("Er du sikker på at du vil deaktivere brukeren")
@@ -974,7 +993,7 @@ class BrukerSokDetaljer extends React.Component {
             }
             //Fjerner alle knapper og liknende hvis bruker er deaktivert, eller du søker opp den innloggede brukeren, eller hvis brukeren er høyere admin enn den innloggede brukeren
           } else if (this.sokBruker.Aktivert == 2 || this.sokBruker.Medlemsnr == this.innloggetBruker.Medlemsnr || this.sokBruker.Adminlvl > this.innloggetBruker.Adminlvl || this.sokBruker.Medlemsnr == 10017) {
-            this.refs.brukerSokDetaljer.removeChild(this.refs.sokBrukerKnappeDiv);
+            this.refs.sokBrukerKnappeDiv.className = "skjulSokBrukerKnapper";
           }
 
           //Setter opp dropdownmeny for å gjøre brukeren til admin
@@ -1009,7 +1028,7 @@ class BrukerSokDetaljer extends React.Component {
               let verdi = kompetanse.Kompetanse_id;
               this.refs.brukerKompetanseSelect.add(new Option(key, verdi));
             }
-            if (result.length == 0) {
+            if (result.length == 0 || this.sokBruker.Aktivert == 2) {
               this.refs.brukerKompetanseSelect.className = "skjulBrukerKompetanseRolle";
               this.refs.brukerKompetanseKnapp.className = "skjulBrukerKompetanseRolle";
             }
@@ -1031,7 +1050,7 @@ class BrukerSokDetaljer extends React.Component {
               let verdi = rolle.Rolle_id;
               this.refs.brukerRolleSelect.add(new Option(key, verdi));
             }
-            if (result.length == 0 || result[0].Rolle_id == 14) {
+            if (result.length == 0 || result[0].Rolle_id == 14 || this.sokBruker.Aktivert == 2) {
               this.refs.brukerRolleSelect.className = "skjulBrukerKompetanseRolle";
               this.refs.brukerRolleKnapp.className = "skjulBrukerKompetanseRolle";
             }

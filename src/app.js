@@ -462,14 +462,38 @@ class Profil extends React.Component {
       <div id="profil" ref="profilDiv">
         <div id="profilvisning1">
           <p id="redigerprofilknapp"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</NavLink></p>
-          <ul className="sentrertboks" id="profilinfo">
-            <li ref="profilNavn"></li>
-            <li ref="profilAdresse"></li>
-            <li ref="profilNummer"></li>
-            <li ref="profilEpost"></li>
-            <li ref="profilMedlemsnr"></li>
-            <li ref="profilVaktpoeng"></li>
-          </ul>
+          <div className="sentrertboks">
+          <table id="profilinfo">
+          <tbody>
+          <tr>
+          <td>Navn: </td>
+          <td ref="profilNavn"></td>
+          </tr>
+          <td>Adresse: </td>
+          <td ref="profilAdresse"></td>
+          <tr>
+          <td>Telefonnummer: </td>
+          <td ref="profilNummer"></td>
+          </tr>
+          <tr>
+          <td>Epost: </td>
+          <td ref="profilEpost"></td>
+          </tr>
+          <tr>
+          <td>Medlemsnr: </td>
+          <td ref="profilMedlemsnr"></td>
+          </tr>
+          <tr>
+          <td>Vaktpoeng: </td>
+          <td ref="profilVaktpoeng"></td>
+          </tr>
+          <tr>
+          <td></td>
+          <td></td>
+          </tr>
+          </tbody>
+          </table>
+          </div>
           <div ref="profilPassivDiv" id="profilPassivDiv">
             <input type="date" ref="profilPassivStart" />
             <input type="date" ref="profilPassivSlutt"/> <br />
@@ -529,12 +553,12 @@ class Profil extends React.Component {
     this.innloggetBruker = bruker.hentOppdatertBruker(this.innloggetBruker.Medlemsnr);
     //Setter opp navn og ting for profil
     if (this.refs.profilDiv) {
-      this.refs.profilNavn.innerText = "Navn: "+this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn;
-      this.refs.profilAdresse.innerText = "Adresse: "+this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed;
-      this.refs.profilNummer.innerText = "Telefonnummer: "+this.innloggetBruker.Telefon;
-      this.refs.profilEpost.innerText = "Epost: "+this.innloggetBruker.Epost;
-      this.refs.profilMedlemsnr.innerText = "Medlemsnummer: "+this.innloggetBruker.Medlemsnr;
-      this.refs.profilVaktpoeng.innerText = "Vaktpoeng: "+this.innloggetBruker.Vaktpoeng;
+      this.refs.profilNavn.innerText = this.innloggetBruker.Fornavn+" "+this.innloggetBruker.Etternavn;
+      this.refs.profilAdresse.innerText = this.innloggetBruker.Adresse+" "+this.innloggetBruker.Postnr+" "+this.brukerSted.Poststed;
+      this.refs.profilNummer.innerText = this.innloggetBruker.Telefon;
+      this.refs.profilEpost.innerText = this.innloggetBruker.Epost;
+      this.refs.profilMedlemsnr.innerText = this.innloggetBruker.Medlemsnr;
+      this.refs.profilVaktpoeng.innerText = this.innloggetBruker.Vaktpoeng;
 
       //Henter kompetansene og rollene til brukeren
       bruker.hentBrukerKompetanse(this.innloggetBruker.Medlemsnr, (result) => {

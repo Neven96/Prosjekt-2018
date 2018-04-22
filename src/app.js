@@ -1475,7 +1475,7 @@ class KalenderDetaljer extends React.Component {
           <p ref="arrangementKnappeP">
             <span ref="arrKnapperSpan"></span>
             <br />
-            <span ref=></span>
+            <span ref="interesseKnappSpan"></span>
           </p>
         </div>
         <div ref="arrangementMannskapDiv" className="arrangementDetaljerDiv">
@@ -1809,8 +1809,7 @@ class KalenderDetaljer extends React.Component {
               datoString = datoArray[3]+"-"+month+"-"+datoArray[2];
             }
 
-            //Henter alle aktiverte brukere som ikke er passive når arrangementdatoen er
-            //og viser dem fram i en liste basert på vaktpoeng
+            //Henter alle aktiverte brukere som ikke er passive når arrangementdatoen er og viser dem fram i en liste
             //Gir mulighet til å melde bruker opp til arrangement hvis det ikke er nok meldt opp
             this.refs.arrangementMannskapSokListe.innerText = " ";
             this.refs.arrangementMannskapSokKnapp.onclick = () => {

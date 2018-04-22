@@ -1,31 +1,31 @@
-Røde Kors Vaktsystem - Team 007
+RÃ¸de Kors Vaktsystem - Team 007
 
 For Windows:
 
-1. Last ned NodeJS her: "https://nodejs.org/en/" og installer den
+1. Last ned NodeJS her: "https://nodejs.org/en/" og installer den.
 
-2. Åpne din terminal of choice, CMD eller PowerShell, og naviger til mappen hvor denne filen ligger
+2. Ã…pne en terminal av ditt valg, CMD eller PowerShell, og naviger til mappen hvor denne filen (installasjonsveil.) ligger. 
 
-3. Bruk kommandoen "npm install" for å installere NodeJS i mappen
+3. Bruk kommandoen "npm install" for Ã¥ installere NodeJS i mappen.
 
-4. Bruk kommandoen "npm start" for å starte programmet
+4. Bruk kommandoen "npm start" for Ã¥ starte programmet. 
 
 For Mac:
 
-1. Last nede NodeJS her: "https://nodejs.org/en/" og installer den
+1. Last nede NodeJS her: "https://nodejs.org/en/" og installer den.
 
-2. Åpne terminalen og naviger til mappen hvor denne filen ligger
+2. Ã…pne terminalen og naviger til mappen hvor denne filen ligger.
 
-3. Bruk kommandoen "npm install" for å installere NodeJS i mappen
+3. Bruk kommandoen "npm install" for Ã¥ installere NodeJS i mappen.
 
-4. Bruk kommandoen "npm start" for å starte programmet
+4. Bruk kommandoen "npm start" for Ã¥ starte programmet.
 
 For Linux Ubuntu:
 
-1. Installer NPM via kommandoen "sudo apt install npm" i terminalen
+1. Installer NPM via kommandoen "sudo apt install npm" i terminalen.
 
-2. Naviger til mappen hvor denn filen ligger
+2. Naviger til mappen hvor denne filen ligger.
 
-3. Bruk kommandoen "npm install" for å installere NodeJS i mappen
+3. Bruk kommandoen "npm install" for Ã¥ installere NodeJS i mappen.
 
-4. Bruk kommandoen "npm start" for å starte programmet
+4. Bruk kommandoen "npm start" for Ã¥ starte programmet.

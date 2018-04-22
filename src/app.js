@@ -62,7 +62,7 @@ class Hjem extends React.Component {
             <span className="spanbar"><button ref="loggUtKnapp" id="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
               this.forceUpdate(),
               history.push("/hjem/"),
-              console.log("Logget ut")}}>Logg ut</button></span>
+              //console.log("Logget ut")}}>Logg ut</button></span>
             <hr />
           </div>
         </div>
@@ -75,7 +75,7 @@ class Hjem extends React.Component {
           <button ref="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
             this.forceUpdate(),
             history.push("/"),
-            console.log("Logget ut")}}>Logg ut</button>
+            //console.log("Logget ut")}}>Logg ut</button>
         </div>
       );
     }
@@ -216,7 +216,7 @@ class GlemtPassord extends React.Component {
         bruker.hentBrukerPassord(fornavn, etternavn, epost, (result) => {
           if (result != undefined) {
             bruker.brukerByttePassord(epost, (result) => {
-              console.log("Passordet må byttes");
+              //console.log("Passordet må byttes");
             });
             alert("Passordet ditt er: "+result.Passord);
           } else if (result == undefined) {
@@ -330,17 +330,17 @@ class RegistrerBruker extends React.Component {
       } else {
         //Sjekker om du har oppgitt et ekte postnummer
         bruker.eksistererStedPostnr(postnr, (result) => {
-          console.log("Postnummerregistrering fungerer");
+          //console.log("Postnummerregistrering fungerer");
           if (result != undefined) {
 
             //Sjekker om eposten allerede er i bruk
             bruker.eksistererBrukerEpost(epost, (result) => {
-              console.log("Epostregistrering fungerer");
+              //console.log("Epostregistrering fungerer");
               if (result == undefined) {
 
                 //Sjekker om telefonnummeret allerede er i bruk
                 bruker.eksistererBrukerTlf(tlf, (result) => {
-                  console.log("Tlfregistrering fungerer");
+                  //console.log("Tlfregistrering fungerer");
                   if (result == undefined) {
 
                     //Registrerer brukeren
@@ -353,7 +353,7 @@ class RegistrerBruker extends React.Component {
                       epost = "";
                       passord = "";
                       history.push("/logginn");
-                      console.log("Registrert");
+                      //console.log("Registrert");
                     });
                   } else {
                     this.refs.feilRegistrering.innerText = "Brukeren er allerede registrert";
@@ -416,11 +416,11 @@ class LoggInn extends React.Component {
           this.refs.brukernavnInput.value = "";
           this.refs.passordInput.value = "";
           if(result != undefined) {
-            console.log("Logget inn");
+            //console.log("Logget inn");
             history.push("/hjem/");
           }
           else {
-            console.log("Feil epost/passord");
+            //console.log("Feil epost/passord");
             this.refs.feilInnlogging.innerText = "Feil epost/passord";
             bruker.loggUtBruker();
           }
@@ -642,10 +642,10 @@ class Profil extends React.Component {
         startdato = this.refs.profilPassivStart.value;
         sluttdato = this.refs.profilPassivSlutt.value;
         if (erTom(startdato) || erTom(sluttdato)) {
-          console.log("Tom");
+          //console.log("Tom");
         } else {
           bruker.brukerSettPassiv(this.innloggetBruker.Medlemsnr, startdato, sluttdato, (result) => {
-            console.log("Ny passivtid");
+            //console.log("Ny passivtid");
             this.refs.profilPassivStart.value = "";
             this.refs.profilPassivSlutt.value = "";
             this.passivUpdate();
@@ -758,12 +758,12 @@ class RedigerProfil extends React.Component {
         //Sjekker om telefonnummeret eksisterer
         bruker.eksistererStedPostnr(oppPostnr, (result) => {
           if (result != undefined) {
-            console.log("Postnummeroppdater funker");
+            //console.log("Postnummeroppdater funker");
             bruker.eksistererBrukerTlfOppdater(this.innloggetBruker.Medlemsnr, oppTlf, (result) => {
               if (result == undefined) {
-                console.log("Tlfsjekkoppdater funker");
+                //console.log("Tlfsjekkoppdater funker");
                 bruker.oppdaterBruker(this.innloggetBruker.Medlemsnr, oppFnavn, oppEnavn, oppTlf, oppAdr, oppPostnr, (result) => {
-                  console.log("Oppdatering funker");
+                  //console.log("Oppdatering funker");
                   history.push("/bruker/${this.innloggetBruker.Medlemsnr}");
                   this.forceUpdate();
                 });
@@ -1013,7 +1013,7 @@ class BrukerSokDetaljer extends React.Component {
             this.refs.aktiveringsKnapp.id = "aktiveringsKnapp";
             this.refs.aktiveringsKnapp.onclick = () => {
               bruker.aktiverBruker(this.sokBruker.Medlemsnr, (result) => {
-                console.log("Bruker ble aktivert");
+                //console.log("Bruker ble aktivert");
                 this.tomSelect();
                 this.update();
                 this.knapperKompetanseRollerUpdate();
@@ -1027,7 +1027,7 @@ class BrukerSokDetaljer extends React.Component {
               let deaktiver = confirm("Er du sikker på at du vil deaktivere brukeren")
               if (deaktiver) {
                 bruker.deaktiverBruker(this.sokBruker.Medlemsnr, (result) => {
-                  console.log("Bruker ble deaktivert");
+                  //console.log("Bruker ble deaktivert");
                   this.tomSelect();
                   this.update();
                   this.knapperKompetanseRollerUpdate();
@@ -1051,7 +1051,7 @@ class BrukerSokDetaljer extends React.Component {
           }
           this.refs.adminKnapp.onclick = () => {
             bruker.adminBruker(this.sokBruker.Medlemsnr, this.refs.adminLevelSelect.value, (result) =>{
-              console.log("Brukeren ble gjort til Adminlvl: "+this.refs.adminLevelSelect.value);
+              //console.log("Brukeren ble gjort til Adminlvl: "+this.refs.adminLevelSelect.value);
               this.tomSelect();
               this.update();
               this.knapperKompetanseRollerUpdate();
@@ -1123,7 +1123,7 @@ class BrukerSokDetaljer extends React.Component {
 
                 fjernKompKnapp.onclick = () => {
                   bruker.fjernBrukerKompetanse(this.sokBruker.Medlemsnr, kompetanse.Kompetanse_id, (result) => {
-                    console.log("Fjernet kompetanse fra bruker");
+                    //console.log("Fjernet kompetanse fra bruker");
                     this.tomSelect();
                     this.knapperKompetanseRollerUpdate();
                   });
@@ -1148,7 +1148,7 @@ class BrukerSokDetaljer extends React.Component {
 
                 fjernRolleKnapp.onclick = () => {
                   bruker.fjernBrukerRolle(this.sokBruker.Medlemsnr, rolle.Rolle_id, (result) => {
-                    console.log("Fjernet rolle fra bruker");
+                    //console.log("Fjernet rolle fra bruker");
                     this.tomSelect();
                     this.knapperKompetanseRollerUpdate();
                   });
@@ -1280,14 +1280,14 @@ class BrukerSokRediger extends React.Component {
           //Sjekker om postnummeret eksisterer
           //Sjekker om telefon eksisterer
           bruker.eksistererStedPostnr(oppPostnr, (result) => {
-            console.log("Poststedoppdater funker");
+            //console.log("Poststedoppdater funker");
             if (result != undefined) {
-              console.log("Postnummeroppdater funker");
+              //console.log("Postnummeroppdater funker");
               bruker.eksistererBrukerTlfOppdater(midMedlemsnr, oppTlf, (result) => {
                 if (result == undefined) {
-                  console.log("Tlfsjekkoppdater funker");
+                  //console.log("Tlfsjekkoppdater funker");
                   bruker.oppdaterBruker(midMedlemsnr, oppFnavn, oppEnavn, oppTlf, oppAdr, oppPostnr, (result) => {
-                    console.log("Oppdatering funker");
+                    //console.log("Oppdatering funker");
                     history.push("/bruker/${this.innloggetBruker.Medlemsnr}/sok");
                   });
                 }
@@ -1640,7 +1640,7 @@ class KalenderDetaljer extends React.Component {
                           vaktKnapp.innerText = "Meld av vakt";
                           vaktKnapp.onclick = () => {
                             arrangement.slettVakt(result.Medlemsnr, listeid, (result) => {
-                              console.log("Bruker meldt av vakt");
+                              //console.log("Bruker meldt av vakt");
                               this.update();
                             });
                           }
@@ -1679,7 +1679,7 @@ class KalenderDetaljer extends React.Component {
                             vaktKnapp.innerText = "Meld til vakt";
                             vaktKnapp.onclick = () => {
                               arrangement.lagVakt(result.Medlemsnr, listeid, (result) => {
-                                console.log("Bruker meldt opp til vakt");
+                                //console.log("Bruker meldt opp til vakt");
                                 this.update();
                               });
                             }
@@ -1711,7 +1711,7 @@ class KalenderDetaljer extends React.Component {
 
                     meldInteresseKnapp.onclick = () => {
                       arrangement.meldInteressert(this.innloggetBruker.Medlemsnr, this.arrangement.arrid, (result) => {
-                        console.log("Medlem: "+this.innloggetBruker.Fornavn+" meldte seg interessert i arrangement: "+this.arrangement.arrnavn);
+                        //console.log("Medlem: "+this.innloggetBruker.Fornavn+" meldte seg interessert i arrangement: "+this.arrangement.arrnavn);
                         this.update();
                       });
                     }
@@ -1723,7 +1723,7 @@ class KalenderDetaljer extends React.Component {
 
                     meldInteresseKnapp.onclick = () => {
                       arrangement.avmeldInteresse(this.innloggetBruker.Medlemsnr, this.arrangement.arrid, (result) => {
-                        console.log("Medlem: "+this.innloggetBruker.Fornavn+" meldte seg ikke lenger interessert i arrangement: "+this.arrangement.arrnavn);
+                        //console.log("Medlem: "+this.innloggetBruker.Fornavn+" meldte seg ikke lenger interessert i arrangement: "+this.arrangement.arrnavn);
                         this.update();
                       });
                     }
@@ -1751,14 +1751,14 @@ class KalenderDetaljer extends React.Component {
               if (slett) {
                 arrangement.hentMannskapsliste(this.arrangement.arrid, (result) => {
                   arrangement.slettVakter(result.listeid, (result) => {
-                    console.log("Vaktene til arrangement: "+this.arrangement.arrnavn+" slettet");
+                    //console.log("Vaktene til arrangement: "+this.arrangement.arrnavn+" slettet");
                     arrangement.slettInteresserte(this.arrangement.arrid, (result) => {
-                      console.log("De interesserte til arrangement: "+this.arrangement.arrnavn);
+                      //console.log("De interesserte til arrangement: "+this.arrangement.arrnavn);
                     });
                     arrangement.slettMannskapsliste(this.arrangement.arrid, (result) => {
-                      console.log("Mannskapsliste til arrangement: "+this.arrangement.arrnavn+" slettet");
+                      //console.log("Mannskapsliste til arrangement: "+this.arrangement.arrnavn+" slettet");
                       arrangement.slettArrangement(this.arrangement.arrid, (result) => {
-                        console.log("Arrangement med navn: "+this.arrangement.arrnavn+", og id:"+this.arrangement.arrid+" slettet");
+                        //console.log("Arrangement med navn: "+this.arrangement.arrnavn+", og id:"+this.arrangement.arrid+" slettet");
                         history.push("/bruker/{this.innloggetBruker.Medlemsnr}/arrangementer/");
                         this.forceUpdate();
                       });
@@ -1828,7 +1828,7 @@ class KalenderDetaljer extends React.Component {
                           sokListeKnapp.innerText = "Meld interessert";
                           sokListeKnapp.onclick = () => {
                             arrangement.meldInteressert(medlem.Medlemsnr, this.arrangement.arrid, (result) => {
-                              console.log("Bruker: "+medlem.Fornavn+" meldt interessert");
+                              //console.log("Bruker: "+medlem.Fornavn+" meldt interessert");
                               this.update();
                             });
                           }
@@ -2012,11 +2012,11 @@ class KalenderAdmin extends React.Component {
       } else {
         //Oppretter arrangementet og henter id-en og oppretter en mannskapsliste for arrangementet
         arrangement.opprettArrangement(arrNavn, arrBeskrivelse, arrDato, arrSted, this.innloggetBruker.Medlemsnr, (result) => {
-          console.log("Arrangement opprettet");
+          //console.log("Arrangement opprettet");
           arrangement.hentArrangementId(arrNavn, arrDato, arrSted, (result) => {
-            console.log("Hentet arrid: "+result.arrid);
+            //console.log("Hentet arrid: "+result.arrid);
             arrangement.opprettMannskapsliste(result.arrid, (result) => {
-              console.log("Mannskapsliste opprettet");
+              //console.log("Mannskapsliste opprettet");
             });
           });
         });
@@ -2025,22 +2025,22 @@ class KalenderAdmin extends React.Component {
         arrangement.eksistererArrangementKontakt(kontaktTlf, kontaktEpost, (result) => {
           if (result == undefined) {
             arrangement.opprettArrangementKontakt(kontaktFornavn, kontaktEtternavn, kontaktTlf, kontaktEpost, (result) => {
-              console.log("Arrangementkontakt opprettet")
+              //console.log("Arrangementkontakt opprettet")
               arrangement.velgArrangementKontakt(kontaktTlf, kontaktEpost, (result) => {
                 arrangement.oppdaterArrangementKontakt(result.Kontakt_id, arrNavn, arrDato, arrSted, (result) => {
-                  console.log("Kontakt lagt til i arrangement");
+                  //console.log("Kontakt lagt til i arrangement");
                   history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer/");
                   this.forceUpdate();
                 });
               });
             });
           } else if (result != undefined) {
-            console.log("Arrangementkontakt eksisterer allerede");
+            //console.log("Arrangementkontakt eksisterer allerede");
 
             //Hvis arrangementkontakten eksisterer, henter ut den og setter den til arrangementet
             arrangement.velgArrangementKontakt(kontaktTlf, kontaktEpost, (result) => {
               arrangement.oppdaterArrangementKontakt(result.Kontakt_id, arrNavn, arrDato, arrSted, (result) => {
-                console.log("Kontakt lagt til i arrangement");
+                //console.log("Kontakt lagt til i arrangement");
                 history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer/");
                 this.forceUpdate();
               });
@@ -2227,10 +2227,10 @@ class RedigerArrangement extends React.Component {
 
           } else {
             arrangement.redigerArrangement(this.arrangement.arrid, arrnavn, beskrivelse, arrDato, oppmotetid, sted, postnr, starttid, sluttid, utstyrsliste, vaktpoeng, (result) => {
-              console.log("Arrangementet er oppdatert");
+              //console.log("Arrangementet er oppdatert");
             });
             arrangement.redigerMannskapsliste(this.arrangement.arrid, antallMannskap, rollerMannskap, (result) => {
-              console.log("Mannskapslista er oppdatert");
+              //console.log("Mannskapslista er oppdatert");
               history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer/");
               this.forceUpdate();
             })
@@ -2332,16 +2332,16 @@ class AvsluttArrangement extends React.Component {
               for (let sjekkbokser of sjekkbokserKlasse) {
                 if (!sjekkbokser.checked) {
                   arrangement.ferdigstillVakt(sjekkbokser.id, result.listeid, (result) => {
-                    console.log("Bruker: "+sjekkbokser.id+" var ikke tilstede");
+                    //console.log("Bruker: "+sjekkbokser.id+" var ikke tilstede");
                   });
                 } else if (sjekkbokser.checked) {
                   arrangement.ferdigstillVaktVaktpoeng(sjekkbokser.id, this.arrangement.arrid, (result) => {
-                    console.log("Bruker: "+sjekkbokser.id+" fikk "+arrangement.vaktpoeng+" vaktpoeng");
+                    //console.log("Bruker: "+sjekkbokser.id+" fikk "+arrangement.vaktpoeng+" vaktpoeng");
                   });
                 }
               }
               arrangement.ferdigstillArrangement(this.arrangement.arrid, (result) => {
-                console.log("Arrangement: "+this.arrangement.arrnavn+" ble satt til ferdig");
+                //console.log("Arrangement: "+this.arrangement.arrnavn+" ble satt til ferdig");
                 history.push("/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer/");
               });
             }

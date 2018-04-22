@@ -1017,7 +1017,11 @@ class BrukerSokDetaljer extends React.Component {
           for (var i = 0; i <= this.innloggetBruker.Adminlvl; i++) {
             let key = "Adminlvl: "+i;
             let verdi = i.toString();
-            this.refs.adminLevelSelect.add(new Option(key,verdi));
+            let option = new Option(key,verdi)
+            this.refs.adminLevelSelect.add(option);
+            if (this.sokBruker.Adminlvl == verdi) {
+              option.selected = "selected";
+            }
           }
 
           this.refs.adminKnapp.onclick = () => {

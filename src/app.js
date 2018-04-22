@@ -1071,7 +1071,7 @@ class BrukerSokDetaljer extends React.Component {
               let verdi = rolle.Rolle_id;
               this.refs.brukerRolleSelect.add(new Option(key, verdi));
             }
-            if (result.length == 0 || result[0].Rolle_id == 14 || this.sokBruker.Aktivert == 2) {
+            if (result.length == 0 || result[0].Rolle_id == 15 || this.sokBruker.Aktivert == 2) {
               this.refs.brukerRolleSelect.className = "skjulBrukerKompetanseRolle";
               this.refs.brukerRolleKnapp.className = "skjulBrukerKompetanseRolle";
             }
@@ -1097,6 +1097,7 @@ class BrukerSokDetaljer extends React.Component {
                 fjernKompKnapp.onclick = () => {
                   bruker.fjernBrukerKompetanse(this.sokBruker.Medlemsnr, kompetanse.Kompetanse_id, (result) => {
                     console.log("Fjernet kompetanse fra bruker");
+                    this.tomSelect();
                     this.knapperKompetanseRollerUpdate();
                   });
                 }
@@ -1122,6 +1123,7 @@ class BrukerSokDetaljer extends React.Component {
                 fjernRolleKnapp.onclick = () => {
                   bruker.fjernBrukerRolle(this.sokBruker.Medlemsnr, rolle.Rolle_id, (result) => {
                     console.log("Fjernet rolle fra bruker");
+                    this.tomSelect();
                     this.knapperKompetanseRollerUpdate();
                   });
                 }

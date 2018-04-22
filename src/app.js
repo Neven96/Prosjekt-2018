@@ -61,9 +61,8 @@ class Hjem extends React.Component {
             <span className="spanbar"><NavLink exact to="/hjelp" className="menyLinker" replace>Hjelp</NavLink> </span>
             <span className="spanbar"><button ref="loggUtKnapp" id="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
               this.forceUpdate(),
-              history.push("/hjem/"),
-              //console.log("Logget ut")
-            }}>Logg ut</button></span>
+              history.push("/hjem/")
+              /*console.log("Logget ut")*/}}>Logg ut</button></span>
             <hr />
           </div>
         </div>
@@ -75,9 +74,8 @@ class Hjem extends React.Component {
         <div>
           <button ref="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
             this.forceUpdate(),
-            history.push("/"),
-            //console.log("Logget ut")
-          }}>Logg ut</button>
+            history.push("/")
+            /*console.log("Logget ut")*/}}>Logg ut</button>
         </div>
       );
     }

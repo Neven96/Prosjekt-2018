@@ -462,37 +462,39 @@ class Profil extends React.Component {
       <div id="profil" ref="profilDiv">
         <div id="profilvisning1">
           <p id="redigerprofilknapp"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/redigerprofil" className="linker">Rediger profil</NavLink></p>
-          <div className="sentrertboks">
-          <table id="profilinfo">
-          <tbody>
-          <tr>
-          <td>Navn: </td>
-          <td ref="profilNavn"></td>
-          </tr>
-          <td>Adresse: </td>
-          <td ref="profilAdresse"></td>
-          <tr>
-          <td>Telefonnummer: </td>
-          <td ref="profilNummer"></td>
-          </tr>
-          <tr>
-          <td>Epost: </td>
-          <td ref="profilEpost"></td>
-          </tr>
-          <tr>
-          <td>Medlemsnr: </td>
-          <td ref="profilMedlemsnr"></td>
-          </tr>
-          <tr>
-          <td>Vaktpoeng: </td>
-          <td ref="profilVaktpoeng"></td>
-          </tr>
-          <tr>
-          <td></td>
-          <td></td>
-          </tr>
-          </tbody>
-          </table>
+            <div className="sentrertboks">
+              <table id="profilinfo">
+                <tbody>
+                  <tr>
+                    <td>Navn: </td>
+                    <td ref="profilNavn"></td>
+                  </tr>
+                  <tr>
+                    <td>Adresse: </td>
+                    <td ref="profilAdresse"></td>
+                  </tr>
+                  <tr>
+                    <td>Telefonnummer: </td>
+                    <td ref="profilNummer"></td>
+                  </tr>
+                  <tr>
+                    <td>Epost: </td>
+                    <td ref="profilEpost"></td>
+                  </tr>
+                  <tr>
+                    <td>Medlemsnr: </td>
+                    <td ref="profilMedlemsnr"></td>
+                  </tr>
+                  <tr>
+                    <td>Vaktpoeng: </td>
+                    <td ref="profilVaktpoeng"></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
           </div>
           <div ref="profilPassivDiv" id="profilPassivDiv">
             <input type="date" ref="profilPassivStart" />

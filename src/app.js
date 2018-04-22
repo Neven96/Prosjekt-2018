@@ -54,11 +54,11 @@ class Hjem extends React.Component {
         <div>
           <div className="navbar">
             <hr />
-            <span className="spanbar"><NavLink exact to="/hjem" className="menyLinker">Hjem</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="menyLinker">Arrangementer</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}" className="menyLinker">Profil</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/sok" className="menyLinker">Søk</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/hjelp" className="menyLinker">Hjelp</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/hjem" className="menyLinker" replace>Hjem</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="menyLinker" replace>Arrangementer</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}" className="menyLinker" replace>Profil</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/sok" className="menyLinker" replace>Søk</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/hjelp" className="menyLinker" replace>Hjelp</NavLink> </span>
             <span className="spanbar"><button ref="loggUtKnapp" id="loggUtKnapp" className="knapper" onClick={() => {bruker.loggUtBruker(),
               this.forceUpdate(),
               history.push("/hjem/"),

@@ -1039,7 +1039,7 @@ class BrukerSokDetaljer extends React.Component {
             this.refs.sokBrukerKnappeDiv.className = "skjulSokBrukerKnapper";
           }
 
-          //Setter opp dropdownmeny for å gjøre brukeren til admin
+          //Setter opp dropdownmeny for å gjøre brukeren til admin og gjør brukeren til admin når du trykker på knappen
           for (var i = 0; i <= this.innloggetBruker.Adminlvl; i++) {
             let key = "Adminlvl: "+i;
             let verdi = i.toString();
@@ -1049,7 +1049,6 @@ class BrukerSokDetaljer extends React.Component {
               option.selected = "selected";
             }
           }
-
           this.refs.adminKnapp.onclick = () => {
             bruker.adminBruker(this.sokBruker.Medlemsnr, this.refs.adminLevelSelect.value, (result) =>{
               console.log("Brukeren ble gjort til Adminlvl: "+this.refs.adminLevelSelect.value);
@@ -1058,6 +1057,8 @@ class BrukerSokDetaljer extends React.Component {
               this.knapperKompetanseRollerUpdate();
             });
           }
+
+          //Knapp for å gå til redigering av bruker
           if (this.refs.redigerSokBrukerKnapp) {
             this.refs.redigerSokBrukerKnapp.onclick = () => {
               history.push("/bruker/{this.innloggetBruker.Medlemsnr}/sok/{result.Medlemsnr}/rediger");
@@ -1066,6 +1067,7 @@ class BrukerSokDetaljer extends React.Component {
             }
           }
 
+          //Henter kompetansen som brukeren ikke har, og setter opp i en select og gir brukeren kompetanse når knappen trykkes
           bruker.hentBrukerIkkeKompetanse(this.sokBruker.Medlemsnr, (result) => {
             this.refs.brukerKompetanseSelect.className = "";
             this.refs.brukerKompetanseKnapp.className = "";
@@ -1080,7 +1082,6 @@ class BrukerSokDetaljer extends React.Component {
               this.refs.brukerKompetanseKnapp.className = "skjulBrukerKompetanseRolle";
             }
           });
-
           this.refs.brukerKompetanseKnapp.onclick = () => {
             bruker.giBrukerKompetanse(this.sokBruker.Medlemsnr, this.refs.brukerKompetanseSelect.value, (result) => {
               this.tomSelect();
@@ -1088,6 +1089,7 @@ class BrukerSokDetaljer extends React.Component {
             });
           }
 
+          //Henter rollene som brukeren ikke har og setter dem inn i en select og gir den til brukeren når du trykker på knappen
           bruker.hentBrukerIkkeRoller(this.sokBruker.Medlemsnr, (result) => {
             this.refs.brukerRolleSelect.className = "";
             this.refs.brukerRolleKnapp.className = "";
@@ -1102,7 +1104,6 @@ class BrukerSokDetaljer extends React.Component {
               this.refs.brukerRolleKnapp.className = "skjulBrukerKompetanseRolle";
             }
           });
-
           this.refs.brukerRolleKnapp.onclick = () => {
             bruker.giBrukerRolle(this.sokBruker.Medlemsnr, this.refs.brukerRolleSelect.value, (result) => {
               this.tomSelect();
@@ -1110,8 +1111,8 @@ class BrukerSokDetaljer extends React.Component {
             });
           }
 
+          //Henter all kompetanse som brukeren har og skriver det ut i en liste
           bruker.hentBrukerKompetanse(this.sokBruker.Medlemsnr, (result) => {
-
             let ulKomp = document.createElement("ul");
             for (let kompetanse of result) {
               let liKomp = document.createElement("li");
@@ -1130,14 +1131,13 @@ class BrukerSokDetaljer extends React.Component {
 
                 liKomp.appendChild(fjernKompKnapp);
               }
-
               ulKomp.appendChild(liKomp);
             }
             this.refs.sokBrukerKompetanseDiv.appendChild(ulKomp);
           });
 
+          //Henter ut alle rollene som brukeren har og setter dem opp i en liste
           bruker.hentBrukerRoller(this.sokBruker.Medlemsnr, (result) => {
-
             let ulRolle = document.createElement("ul");
             for (let rolle of result) {
               let liRolle = document.createElement("li");

@@ -396,7 +396,7 @@ class Arrangement {
     });
   }
 
-  //Henter arrangmentId utifra informasjon når arrangementet ble opprettet
+  //Henter arrangementId utifra informasjon når arrangementet ble opprettet
   hentArrangementId(arrnavn, dato, sted, callback) {
     connection.query("SELECT arrid FROM Arrangement WHERE arrnavn = ? AND startdato = ? AND oppmøtested = ?", [arrnavn, dato, sted], (error, result) => {
       if (error) throw error;

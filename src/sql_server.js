@@ -154,7 +154,7 @@ class Bruker {
 
   //Søker etter bruker via fornavn, etternavn eller begge
   sokBruker(inn, callback) {
-    connection.query("SELECT * FROM Medlem WHERE CONCAT (Fornavn, ' ', Etternavn) LIKE ? OR Etternavn LIKE ? ORDER BY Fornavn ASC", [inn + "%", inn + "%"], (error, result) => {
+    connection.query("SELECT * FROM Medlem WHERE CONCAT (Fornavn, ' ', Etternavn) LIKE ? OR Etternavn LIKE ? OR Telefon Like ? ORDER BY Fornavn ASC", [inn + "%", inn + "%", inn + "%"], (error, result) => {
       if(error) throw error;
 
       callback(result);

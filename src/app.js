@@ -40,9 +40,9 @@ class Hjem extends React.Component {
         <div>
           <div className="navbar">
             <hr />
-            <span className="spanbar"><NavLink exact to="/hjem" className="menyLinker" className="menyLinker" replace>Hjem</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/hjelp" className="menyLinker" className="menyLinker" replace>Hjelp</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/logginn" className="menyLinker" className="menyLinker" replace>Logg inn</NavLink></span>
+            <span className="spanbar"><NavLink exact to="/hjem" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Hjem</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/hjelp" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Hjelp</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/logginn" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Logg inn</NavLink></span>
             <hr />
           </div>
         </div>
@@ -177,7 +177,6 @@ class Hjelp extends React.Component {
     return(
       <div className="sentrertboks" id="hjelptekst">
         <p>Hei, velkommen til hjelpsiden for Røde Kors, her får du hjelp</p>
-        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7143.224087472589!2d10.4165877!3d63.4107823!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x5273344a7d7ea94a!2sTrondheim+R%C3%B8de+Kors!5e0!3m2!1sno!2sno!4v1524489562107" width="400" height="300" frameBorder="0" style={{"border":"0"}} allowFullScreen></iframe>
       </div>
     );
   }
@@ -384,18 +383,18 @@ class LoggInn extends React.Component {
         <h3>Logg inn på din brukerkonto</h3>
         <p ref="feilInnlogging" id="feilInnlogging" className="feilMelding"></p>
         <table id="logginntable">
-        <tbody>
-        <tr>
-        <td>Epost: </td>
-        <td><input type="text" ref="brukernavnInput" className="logginninput" autoFocus /></td>
-        </tr>
-        <tr>
-        <td>Passord: </td>
-        <td><input type="password" ref="passordInput" className="logginninput" /></td>
-        </tr>
-        </tbody>
+          <tbody>
+            <tr>
+              <td>Epost: </td>
+              <td><input type="text" ref="brukernavnInput" className="logginninput" autoFocus /></td>
+            </tr>
+            <tr>
+              <td>Passord: </td>
+              <td><input type="password" ref="passordInput" className="logginninput" /></td>
+            </tr>
+          </tbody>
         </table>
-        <span><button ref="loggInnKnapp">Logg inn</button>
+        <span><button ref="loggInnKnapp" className="logginnknapp">Logg inn</button>
         <NavLink exact to="/glemtpassord" className="glemtpassordknapp">Glemt passord</NavLink></span>
         <p>Har du ikke bruker, registrer deg <span><NavLink exact to="/registrerBruker" className="registrerherknapp">her</NavLink></span></p>
       </div>
@@ -429,6 +428,12 @@ class LoggInn extends React.Component {
       }
     };
     //Kjører funksjonen over når man trykker enter inne i passordInput boksen
+    this.refs.brukernavnInput.onkeyup = (event) => {
+      event.preventDefault();
+      if (event.keyCode === 13) {
+        this.refs.loggInnKnapp.click();
+      }
+    }
     this.refs.passordInput.onkeyup = (event) => {
       event.preventDefault();
       if (event.keyCode === 13) {
@@ -489,10 +494,6 @@ class Profil extends React.Component {
                   <tr>
                     <td>Vaktpoeng: </td>
                     <td ref="profilVaktpoeng"></td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td></td>
                   </tr>
                 </tbody>
               </table>
@@ -813,8 +814,7 @@ class BrukerSok extends React.Component {
         <div id="soktest">
           <input type="text" ref="inn" id="sokeFeltInput" autoFocus/>
           <button ref="sokKnapp" className="sokeKnapper">Søk</button>
-          <div ref="sokeResultat" id="sokeResultat">
-          </div>
+          <div ref="sokeResultat" id="sokeResultat"></div>
         </div>
       )
       //Hvis den innloggede brukeren er admin, så får den se knapper som vil vise
@@ -1474,8 +1474,7 @@ class KalenderDetaljer extends React.Component {
             <span ref="arrUtstyrsliste"></span>
           </p>
           <p ref="arrangementKnappeP">
-            <span ref="arrKnapperSpan"></span>
-            <br />
+            <span ref="arrKnapperSpan"></span> <br />
             <span ref="interesseKnappSpan"></span>
           </p>
         </div>
@@ -1936,44 +1935,44 @@ class KalenderAdmin extends React.Component {
   render() {
     return(
       <div id="opprettArrangement" className="arrangementDetaljerDiv">
-        <div ref="opprettArrangementDiv">
+        <div id="opprettArrangementDiv" ref="opprettArrangementDiv">
           <h2>Arrangement</h2>
-          <table id="opprettarrangementtable">
+          <table style={{width:"100%"}}>
             <tbody>
               <tr>
-                <td><h3>Navn: </h3></td>
-                <td><input className="inputform" type="text" ref="arrNavn" placeholder="Arrangementnavn" /></td>
+                <td>Navn: </td>
+                <td><input type="text" ref="arrNavn" placeholder="Arrangementnavn" /></td>
               </tr>
               <tr>
-                <td><h3>Beskrivelse: </h3></td>
-                <td><textarea rows="5" cols="30" className="inputform" ref="arrBeskrivelse" placeholder="Beskrivelse" /></td>
+                <td>Beskrivelse: </td>
+                <td><textarea rows="5" cols="30" ref="arrBeskrivelse" placeholder="Beskrivelse" /></td>
               </tr>
               <tr>
-                <td><h3>Startdato: </h3></td>
-                <td><input className="inputform" type="date" ref="arrDato"/></td>
+                <td>Startdato: </td>
+                <td><input type="date" ref="arrDato"/></td>
               </tr>
               <tr>
-                <td><h3>Sted: </h3></td>
-                <td><input className="inputform" type="text" ref="arrSted" placeholder="Lokasjon" /></td>
+                <td>Sted: </td>
+                <td><input type="text" ref="arrSted" placeholder="Lokasjon" /></td>
               </tr>
             </tbody>
           </table>
         </div>
         <div id="opprettArrangementKontakt" ref="opprettArrangementKontakt">
           <h2>Kontaktperson</h2>
-          <table id="opprettarrangementkontakttable">
+          <table style={{width:"100%"}}>
             <tbody>
               <tr>
-                <td><h3>Navn: </h3></td>
-                <td><input className="inputform" type="text" ref="kontaktFornavn" placeholder="Fornavn" /> <input className="inputform" type="text" ref="kontaktEtternavn" placeholder="Etternavn" /></td>
+                <td>Navn: </td>
+                <td><input type="text" ref="kontaktFornavn" placeholder="Fornavn" /> <input type="text" ref="kontaktEtternavn" placeholder="Etternavn" /></td>
               </tr>
               <tr>
-                <td><h3>Telefon: </h3></td>
-                <td><input className="inputform" type="number" ref="kontaktTlf" /></td>
+                <td>Telefon: </td>
+                <td><input type="number" ref="kontaktTlf" /></td>
               </tr>
               <tr>
-                <td><h3>Epost: </h3></td>
-                <td><input className="inputform" type="text" ref="kontaktEpost" placeholder="Epost" /></td>
+                <td>Epost: </td>
+                <td><input type="text" ref="kontaktEpost" placeholder="Epost" /></td>
               </tr>
             </tbody>
           </table>
@@ -2073,36 +2072,36 @@ class RedigerArrangement extends React.Component {
           <table style={{width:"100%"}}>
             <tbody>
               <tr>
-                <td><h3>Arrangementnavn*: </h3></td>
-                <td><input className="inputform" type="text" ref="oppdaterArrNavn" id="oppdaterArrNavn" placeholder="Arrangementnavn" /></td>
+                <td>Arrangementnavn*: </td>
+                <td><input type="text" ref="oppdaterArrNavn" id="oppdaterArrNavn" placeholder="Arrangementnavn" /></td>
               </tr>
               <tr>
-                <td><h3>Arrangementbeskrivelse*: </h3></td>
-                <td><textarea rows="5" cols="40" className="inputform" ref="oppdaterArrBeskrivelse" id="oppdaterArrBeskrivelse" placeholder="Beskrivelse" /></td>
+                <td>Arrangementbeskrivelse*: </td>
+                <td><textarea rows="5" cols="40" ref="oppdaterArrBeskrivelse" id="oppdaterArrBeskrivelse" placeholder="Beskrivelse" /></td>
               </tr>
               <tr>
-                <td><h3>Dato og oppmøtetid*: </h3></td>
-                <td><input className="inputform" type="date" ref="oppdaterDato" id="oppdaterDato" /> <input className="inputform" type="time" ref="oppdaterOppmote" id="oppdaterOppmote" /></td>
+                <td>Dato og oppmøtetid*: </td>
+                <td><input type="date" ref="oppdaterDato" id="oppdaterDato" /> <input type="time" ref="oppdaterOppmote" id="oppdaterOppmote" /></td>
               </tr>
               <tr>
-                <td><h3>Sted*: </h3></td>
-                <td><input className="inputform" type="text" ref="oppdaterSted" id="oppdaterSted" placeholder="Oppmøtested" /></td>
+                <td>Sted*: </td>
+                <td><input type="text" ref="oppdaterSted" id="oppdaterSted" placeholder="Oppmøtested" /></td>
               </tr>
               <tr>
-                <td><h3>Postnummer*/sted: </h3></td>
-                <td><input className="inputform" type="number" ref="oppdaterPostnr" id="oppdaterPostnr" /> <input className="inputform" type="text" ref="oppdaterPoststed" id="oppdaterPoststed" readOnly/></td>
+                <td>Postnummer*/sted: </td>
+                <td><input type="number" ref="oppdaterPostnr" id="oppdaterPostnr" /> <input type="text" ref="oppdaterPoststed" id="oppdaterPoststed" readOnly/></td>
               </tr>
               <tr>
-                <td><h3>Arrangementstart*/-slutt</h3></td>
-                <td><input className="inputform" type="time" ref="oppdaterStartTid" id="oppdaterStartTid" /> <input className="inputform" type="time" ref="oppdaterSluttTid" /></td>
+                <td>Arrangementstart*/-slutt</td>
+                <td><input type="time" ref="oppdaterStartTid" id="oppdaterStartTid" /> <input type="time" ref="oppdaterSluttTid" /></td>
               </tr>
               <tr>
-                <td><h3>Utsyrsliste: </h3></td>
-                <td><textarea rows="5" cols="40" className="inputform" ref="oppdaterUtstyrsliste" id="oppdaterUtstyrsliste" placeholder="Utstyrsliste" /></td>
+                <td>Utsyrsliste: </td>
+                <td><textarea rows="5" cols="40" ref="oppdaterUtstyrsliste" id="oppdaterUtstyrsliste" placeholder="Utstyrsliste" /></td>
               </tr>
               <tr>
-                <td><h3>Vaktpoeng: </h3></td>
-                <td><input className="inputform" type="number" ref="oppdaterVaktPoeng" id="oppdaterVaktPoeng" /></td>
+                <td>Vaktpoeng: </td>
+                <td><input type="number" ref="oppdaterVaktPoeng" id="oppdaterVaktPoeng" /></td>
               </tr>
             </tbody>
           </table>
@@ -2112,12 +2111,12 @@ class RedigerArrangement extends React.Component {
           <table style={{width:"100%"}}>
             <tbody>
               <tr>
-                <td><h3>Mannskap: </h3></td>
-                <td><input className="inputform" type="number" ref="antallMannskap" id="antallMannskap" /></td>
+                <td>Mannskap: </td>
+                <td><input type="number" ref="antallMannskap" id="antallMannskap" /></td>
               </tr>
               <tr>
-                <td><h3>Roller: </h3></td>
-                <td><textarea rows="5" cols="40" className="inputform" ref="rollerMannskap" id="rollerMannskap" placeholder="Roller til arrangementet" /></td>
+                <td>Roller: </td>
+                <td><textarea rows="5" cols="40" ref="rollerMannskap" id="rollerMannskap" placeholder="Roller til arrangementet" /></td>
               </tr>
             </tbody>
           </table>

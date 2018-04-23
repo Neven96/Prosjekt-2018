@@ -23,7 +23,7 @@ ul {
   margin-right: auto;
 }
 
-a.menyLinker.active {
+a.menyLinker.active, span.arrNavn  {
   color: #d42b1e;
   font-weight: bold;
 }
@@ -39,16 +39,6 @@ a.menyLinker.active {
   background-color: #d42b1e;
   /* text-align: center; */
   /* zoom: 150%; */
-}
-
-#nyhetercol {
-  /* list-style-type: none;
-  margin-top: 6px;
-  margin-bottom: 6px;
-  margin-left: 0;
-  margin-right: 6px;
-  display: list-item;
-  text-align: -webkit-match-parent; */
 }
 
 strong {
@@ -94,7 +84,8 @@ strong {
   position: relative;
   zoom: 150%;
   text-align: center;
-  margin-top: 1.5em;
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
 
 .feilMelding {
@@ -105,16 +96,8 @@ strong {
   font-size: 16px;
 }
 
-#loggInnInfoPassord {
-  font-size: 9px;
-}
-
 #registrerPassordNotice {
-  font-size: 8px;
-}
-
-#loggInnKnapp {
-  text-decoration: none;
+  font-size: 9px;
 }
 
 #loggUtKnapp {
@@ -122,7 +105,7 @@ strong {
   margin-bottom: -6px;
 }
 
-#opprettArrangementKnapp {
+#opprettArrangementKnapp, #sokeFeltInput, #sokeResultat, .sokeKnapper, .arrNavn {
   font-size: 1.5em;
 }
 
@@ -130,8 +113,7 @@ strong {
   list-style-type: none;
   margin-left: auto;
   margin-right: auto;
-  padding-top: 1em;
-  padding-bottom: 1em;
+  padding: 0.5em;
   width: 50%;
   background-color: #f8f8f9;
   border-style: groove;
@@ -158,17 +140,10 @@ strong {
   margin-right: 25%;
 }
 
-
-#profilvisning1 {
-  /* float: left; */
-  /* width: 49%; */
-}
-
 #profilvisning2 {
   width: 50%;
   margin: auto;
   text-align: center;
-  /* height: 100% */
 }
 
 #redigerprofil {
@@ -181,7 +156,7 @@ strong {
   font-size: 1.25em;
 }
 
-#redigerprofiltable, #registrertable{
+#redigerprofiltable, #registrertable {
   text-align: center;
   margin-left: auto;
   margin-right: auto;
@@ -189,8 +164,16 @@ strong {
   font-size: 1.25em;
 }
 
+#opprettarrangementtable, #opprettarrangementkontakttable {
+  align-content: center;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
+  font-size: 1em;
+}
+
 #logginntable {
-  border-collapse: collapse;
   text-align: center;
   margin-left: auto;
   margin-right: auto;
@@ -209,10 +192,6 @@ input {
   margin-bottom: 3px;
 }
 
-#sokeFeltInput {
-  font-size: 1.5em;
-}
-
 #soktest {
   text-align: center;
 }
@@ -221,16 +200,8 @@ input {
   list-style-type: none;
 }
 
-#sokeResultat {
-  font-size: 1.5em;
-}
-
 .sokenavn {
   padding: 0;
-}
-
-.sokeKnapper {
-  font-size: 1.5em;
 }
 
 .aktiver {
@@ -238,18 +209,12 @@ input {
   padding: 0;
 }
 
-.aktiver:hover{
-  text-decoration: underline;
-  cursor: pointer;
-}
-
 .deaktiver {
   color: gray;
   padding: 0;
 }
 
-.deaktiver:hover {
-  color: gray;
+.aktiver:hover, .deaktiver:hover {
   text-decoration: underline;
   cursor: pointer;
 }
@@ -263,7 +228,6 @@ input {
   background-color: green;
   color: white;
 }
-
 
 .sokenavn:hover {
   color: #5aa8fb;
@@ -284,11 +248,12 @@ input {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
-  width: 55%;
+  width: 60%;
 }
 
-.arrNavn {
-  font-size: 1.5em;
+.inputform {
+  border: 1.25px solid black;
+  border-radius: 4px;
 }
 
 .arrangementDiv:hover {
@@ -296,17 +261,7 @@ input {
   cursor: pointer;
 }
 
-span.arrNavn {
-  color: #d42b1e;
-  font-weight: bolder;
-}
-
-.egenVakt {
-  color: red;
-  font-weight: bolder;
-}
-
-#arrnavn {
+.egenVakt, #arrnavn {
   font-weight: bolder;
 }
 
@@ -335,8 +290,4 @@ span.arrNavn {
   width: 50%;
   background-color: #f8f8f9;
   border-style: groove;
-}
-
-#registrerKnapp {
-  margin-bottom: 6px;
 }

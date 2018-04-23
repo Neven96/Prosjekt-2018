@@ -543,6 +543,17 @@ class Profil extends React.Component {
           <p id="kommendearr"><NavLink exact to="/bruker/${this.innloggetBruker.Medlemsnr}/arrangementer" className="linker">Kommende arrangementer</NavLink></p>
           {/* react-big-calendar */}
           <BigCalendar
+            messages={{
+                next: "Neste",
+                previous: "Tilbake",
+                today: "I dag",
+                month: "Måned",
+                week: "Uke",
+                date: "Dato",
+                time: "Tid",
+                event: "Arrangement"
+            }}
+            views={["month","week"]}
             style={{ height: 500}}
             events={this.state.events}
             step={60}

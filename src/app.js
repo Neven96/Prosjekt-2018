@@ -40,9 +40,9 @@ class Hjem extends React.Component {
         <div>
           <div className="navbar">
             <hr />
-            <span className="spanbar"><NavLink exact to="/hjem" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Hjem</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/hjelp" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Hjelp</NavLink> </span>
-            <span className="spanbar"><NavLink exact to="/logginn" className="menyLinker" activeStyle={{color : 'red', fontWeight: 'bold'}} replace>Logg inn</NavLink></span>
+            <span className="spanbar"><NavLink exact to="/hjem" className="menyLinker" replace>Hjem</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/hjelp" className="menyLinker" replace>Hjelp</NavLink> </span>
+            <span className="spanbar"><NavLink exact to="/logginn" className="menyLinker" replace>Logg inn</NavLink></span>
             <hr />
           </div>
         </div>

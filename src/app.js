@@ -562,6 +562,7 @@ class Profil extends React.Component {
             endAccessor='startDate'
             defaultDate={new Date()}
             onSelectEvent={event => this.setArrinfo(event)}
+            culture='nb-no'
           />
         </div>
       </div>

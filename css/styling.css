@@ -265,7 +265,7 @@ input {
   font-weight: bolder;
 }
 
-.skjulBrukerKompetanseRolle, .skjulSokBrukerKnapper, #skjulKontaktperson, #skjulFerdigstillArrangementKnapp, #skjulMannskapSok {
+.skjulBrukerKompetanseRolle, .skjulSokBrukerKnapper, .skjulArrangementTing, #skjulKontaktperson, #skjulFerdigstillArrangementKnapp, #skjulMannskapSok {
   display: none;
 }
 

@@ -172,14 +172,38 @@ class Nyheter extends React.Component {
 }
 
 class Hjelp extends React.Component {
+  constructor() {
+    super();
+
+    this.innloggetBruker = {};
+  }
   //Side for hjelp med profil og innlogging og andre ting
   render() {
-    return(
-      <div className="sentrertboks" id="hjelptekst">
-        <p>Hei, velkommen til hjelpsiden for Røde Kors, her får du hjelp</p>
-        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7143.224087472589!2d10.4165877!3d63.4107823!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x5273344a7d7ea94a!2sTrondheim+R%C3%B8de+Kors!5e0!3m2!1sno!2sno!4v1524489562107" width="400" height="300" frameBorder="0" style={{"border":"0"}} allowFullScreen></iframe>
-      </div>
-    );
+    this.innloggetBruker = bruker.hentBruker();
+    if (!this.innloggetBruker) {
+      return(
+        <div className="sentrertboks" id="hjelptekst">
+          <p>For å registrere deg må du trykke på logg inn knappen oppe i høyre hjørne. Trykk deretter på registrer bruker. Etter å ha fullført registreringen må du vente på at en administrator godkjenner din bruker før du kan logge inn.</p>
+          <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7143.224087472589!2d10.4165877!3d63.4107823!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x5273344a7d7ea94a!2sTrondheim+R%C3%B8de+Kors!5e0!3m2!1sno!2sno!4v1524489562107" width="400" height="300" frameBorder="0" style={{"border":"0"}} allowFullScreen></iframe>
+        </div>
+      );
+    } else if (this.innloggetBruker) {
+      return(
+        <div className="sentrertboks" id="hjelptekst">
+          <p>Arrangementer: <br />
+            Under kommende arrangementer vil du se alle de kommende arrangementene. For å melde seg som interessert til vakt går man inn på det spesifikke arrangementet og klikker på «meld interesse». <br />
+            Hvis en vaktleder godkjenner forespørselen vil navnet ditt komme opp som markert i seksjonen «Mannskap og roller» på det gitte arrangementet. Eksempel: Ola Nordmann <br />
+            Under tidligere arrangementer kan du se alle arrangementer som har vært, om du deltok eller ikke. Trykker du på et arrangement her kan du leste informasjonen for det gitte arrangementet, og kanskje mimre tilbake.
+          </p>
+          <p>Søk: <br />
+            Her kan du som bruker søke opp alle medlemmer i Røde Kors. Kontaktinformasjon til frivillige du skal jobbe med på kommende kurs og arrangementer vil være mulig å finne her. <br />
+            Du kan søke på navn og telefonnummer. Søkeresultater med sort skrift er aktive brukere, de med rødt er brukere som venter på å bli godkjent av ledelsen, mens grå er tidligere medlemmer. Dersom du søker på en bruker som er vaktleder/admin vil (administrator) komme opp på personen. <br />
+            Dersom du lurer på noe kontakter du en av disse:
+          </p>
+          <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7143.224087472589!2d10.4165877!3d63.4107823!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x5273344a7d7ea94a!2sTrondheim+R%C3%B8de+Kors!5e0!3m2!1sno!2sno!4v1524489562107" width="400" height="300" frameBorder="0" style={{"border":"0"}} allowFullScreen></iframe>
+        </div>
+      )
+    }
   }
 }
 
@@ -1635,7 +1659,7 @@ class KalenderDetaljer extends React.Component {
                         }
 
                         //Lager knapp for å at admin eller du skal kunne melde deg av vakt
-                        if (this.arrangement.startdato >= iDag && this.innloggetBruker.Adminlvl >= 1) {
+                        if (this.arrangement.startdato >= iDag && this.innloggetBruker.Adminlvl >= 1 && this.arrangement.ferdig == 0) {
                           let vaktKnappSpan = document.createElement("span");
                           let vaktKnapp = document.createElement("button");
                           vaktKnapp.innerText = "Meld av vakt";
@@ -1674,7 +1698,7 @@ class KalenderDetaljer extends React.Component {
                           interesseMedlemP.innerText += result.Fornavn+" "+result.Etternavn+", Vaktpoeng: "+result.Vaktpoeng+" ";
 
                           //Lager en knapp for at en admin skal kunne melde opp personer til vakt
-                          if (mannskapPlasser - bruktePlasser >= 1 && this.arrangement.startdato >= iDag) {
+                          if (mannskapPlasser - bruktePlasser >= 1 && this.arrangement.startdato >= iDag && this.arrangement.ferdig == 0) {
                             let vaktKnappSpan = document.createElement("span");
                             let vaktKnapp = document.createElement("button");
                             vaktKnapp.innerText = "Meld til vakt";
@@ -1776,12 +1800,15 @@ class KalenderDetaljer extends React.Component {
               this.refs.arrKnapperSpan.appendChild(slettArrKnapp);
             } else if (this.arrangement.startdato < iDag) {
               if(this.arrangement.ferdig == 1) {
-                this.refs.arrangementDiv.removeChild(this.refs.arrangementKnappeP);
+                this.refs.arrangementKnappeP.className = "skjulArrangementTing";
+                this.refs.arrangementMannskapSok.className = "skjulArrangementTing";
               } else if (this.arrangement.ferdig == 0) {
                 redigerArrKnapp.innerText = "Rediger";
                 this.refs.arrKnapperSpan.appendChild(redigerArrKnapp);
-                this.refs.arrangementKnappeP.removeChild(this.refs.interesseKnappSpan);
+                this.refs.arrangementMannskapSok.className = "skjulArrangementTing";
               }
+            } else if (this.arrangement.ferdig == 1) {
+              this.refs.arrangementMannskapSok.className = "skjulArrangementTing";
             }
 
             let month; let datoString; let datoArray;

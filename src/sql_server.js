@@ -723,3 +723,27 @@ let bruker = new Bruker();
 let arrangement = new Arrangement();
 
 export {bruker, arrangement};
+
+// ___,A.A_  __
+// \   ,   7"_/
+//  ~"T(  r r)
+//    | \    Y
+//    |  ~\ .|
+//    |   |`-'
+//    |   |
+//    |   |
+//    |   |
+//    |   |
+//    j   l
+//   /     \
+//  Y       Y
+//  l   \ : |
+//  /\   )( (
+// /  \  I| |\
+// Y    I l| | Y
+// j    ( )( ) l
+// / .    \ ` | |\
+// Y   \    i  | ! Y
+// l   .\_  I  |/  |
+// \ /   [\[][]/] j
+// ~~~~~~~~~~~~~~~~~~~~~~~

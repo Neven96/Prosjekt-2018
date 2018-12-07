@@ -1,9 +1,8 @@
 # Prosjekt-2018
 
 
-Todo:
+School project.
 
-SQL:
+Nothing exiting here, just shitty code...
 
-Kode- og database-error:
-
+Read on own risk
